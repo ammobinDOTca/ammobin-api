@@ -1,4 +1,4 @@
-# ammobin-api
+# ammobin-api [![Build Status](https://travis-ci.org/ammobinDOTca/ammobin-api.svg?branch=master)](https://travis-ci.org/ammobinDOTca/ammobin-api)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ammobinDOTca/ammobin-api.svg)](https://greenkeeper.io/)
 
