@@ -1,0 +1,29 @@
+version: '2'
+services:
+  client:
+    image: ammobindotca/ammo-bin-client:latest
+    restart: always
+    ports:
+      - 127.0.0.1:4000:3000
+  api:
+    env_file: .env 
+    #build: .
+    image: ammobindotca/ammobin-api:latest
+    restart: always
+    ports:
+      - 127.0.0.1:8080:8080
+    links:
+      - redis
+  redis:
+    image: redis:3.0-alpine
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis-data:/data
+  images:
+    image: willnorris/imageproxy:latest
+    restart: always
+    entrypoint:  /go/bin/imageproxy -cache /tmp/imageproxy  -addr 0.0.0.0:8080  # -referrers localhost:3000,ammobin.ca
+    ports:
+      -  8081:8080
+
