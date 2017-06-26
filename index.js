@@ -44,7 +44,7 @@ function addSrcRefToLinks(items) {
     if (i.link.indexOf('?') === -1) {
       i.link += '?'
     }
-    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'referred=ammobin.ca')}`;
+    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}`;
     return i;
   });
 }
