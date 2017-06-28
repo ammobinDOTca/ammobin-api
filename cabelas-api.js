@@ -1,7 +1,7 @@
 const natural = require('natural');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const wrapAPIKey = 'smRn1TTT63rpvp7QkXU6mKZmsAGM8cD6';
+const wrapAPIKey = require('./wrap-api-key');
 
 const colClassifer = new natural.LogisticRegressionClassifier();
 [
