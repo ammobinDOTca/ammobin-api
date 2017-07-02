@@ -13,7 +13,7 @@
     "ammobin-classifier": "0.0.12",
     "axios": "^0.16.1",
     "boom": "^5.1.0",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.2",
     "hapi": "^16.1.1",
     "hapi-cron": "0.0.3",
     "jsonp": "^0.2.1",
