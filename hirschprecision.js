@@ -12,6 +12,11 @@ module.exports = function (type) {
         wrapAPIKey
       }
     }).then(d => {
+      if(!d.data.data.items){
+        console.warn('no items found for hirsch ' + type);
+        return [];
+      }
+      
       return d.data.data.items;
     });
   }
