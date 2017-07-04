@@ -2,6 +2,28 @@ const axios = require('axios');
 const wrapAPIKey = require('./wrap-api-key');
 const classifier = require('ammobin-classifier');
 
+
+function classifyRimfire(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
+function classifyCenterfire(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyCenterFire(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
+function classifyShotgun(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyShotgun(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
 module.exports = function (type) {
   function fn(ammotype) {
     return axios({
@@ -24,9 +46,9 @@ module.exports = function (type) {
 
   switch (type) {
     case 'rimfire':
-      return fn('1_9').then(classifier.classifyRimfire);
+      return fn('1_9').then(classifyRimfire);
     case 'shotgun':
-      return fn('1_48').then(classifier.classifyShotgun);
+      return fn('1_48').then(classifyShotgun);
     case 'centerfire':
       return Promise.all([
         fn('1_33'), // pistol
