@@ -2,6 +2,27 @@ const axios = require('axios');
 const wrapAPIKey = require('./wrap-api-key');
 const classifier = require('ammobin-classifier');
 
+function classifyRimfire(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
+function classifyCenterfire(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyCenterFire(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
+function classifyShotgun(items) {
+  return items.map(i => {
+    i.calibre = classifier.classifyShotgun(i.calibre || i.name || '').toUpperCase()
+    return i;
+  });
+}
+
 module.exports = function (type) {
   function fn(ammotype) {
     return axios({
@@ -24,11 +45,11 @@ module.exports = function (type) {
 
   switch (type) {
     case 'rimfire':
-      return fn('98_105').then(classifier.classifyRimfire);
+      return fn('98_105').then(classifyRimfire);
     case 'shotgun':
       return Promise.resolve([]);
     case 'centerfire':
-      return fn('98_106').then(classifier.classifyCenterFire);
+      return fn('98_106').then(classifyCenterfire);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }
