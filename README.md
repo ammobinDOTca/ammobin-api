@@ -4,6 +4,9 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ammobinDOTca/ammobin-api.svg)](https://greenkeeper.io/)
 
+### how to run
+```docker run ammobindotca/ammobin-api -p 8080:8080```
+
 ### todo
 - store clicks in proper db
 - refactor api into separate file
