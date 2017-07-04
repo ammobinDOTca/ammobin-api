@@ -55,7 +55,7 @@ module.exports = function (type) {
         fn('1_40') // rifle
       ])
         .then(results => results.reduce((final, r) => final.concat(r), []))
-        .then(classifyCenterFire);
+        .then(classifyCenterfire);
 
     default:
       return Promise.reject(new Error('unknown type: ' + type));
