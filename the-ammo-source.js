@@ -34,11 +34,11 @@ module.exports = function (type) {
         wrapAPIKey
       }
     }).then(d => {
-      if(!d.data.data.items){
-        console.warn('no items found for theammosource '+type);
+      if (!d.data.data.items) {
+        console.warn('no items found for theammosource ' + type);
         return [];
       }
-      
+
       return d.data.data.items;
     });
   }

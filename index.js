@@ -18,6 +18,7 @@ const makeCanadianTireReq = require('./canadian-tire');
 const makeWolverine = require('./wolverine-api');
 const theAmmoSource = require('./the-ammo-source');
 const hirsch = require('./hirschprecision');
+const wildWest = require('./wild-west');
 
 const PROXY_URL = 'https://images.ammobin.ca';
 
@@ -416,6 +417,8 @@ function getItems(source, type) {
           prom = theAmmoSource(type);
         } else if (source === 'hirsch') {
           prom = hirsch(type);
+        } else if (source === 'wildwest') {
+          prom = wildWest(type);
         }
 
         if (!prom) {
@@ -460,6 +463,7 @@ const SOURCES = [
   'jobrook',
   'theammosource',
   'hirsch',
+  'wildwest'
 ]
 
 // Create a server with a host and port
@@ -498,14 +502,6 @@ server.route({
   }
 });
 
-// server.route({
-// 	method:'GET',
-// 	path:'/dank',
-// 	handler: function(req,rep){
-// 		rep('all junk stuff');
-// 	}
-// });
-
 server.route({
   method: 'GET',
   path: '/track-outbound-click',
@@ -529,7 +525,8 @@ server.route({
       'wolverinesupplies.com',
       'jobrookoutdoors.com',
       'theammosource.com',
-      'hirschprecision.com'
+      'hirschprecision.com',
+      'gun-shop.ca'
     ].indexOf(host) === -1) {
       return reply(boom.badRequest('invalid target url'));
     }
