@@ -19,6 +19,7 @@ const makeWolverine = require('./wolverine-api');
 const theAmmoSource = require('./the-ammo-source');
 const hirsch = require('./hirschprecision');
 const wildWest = require('./wild-west');
+const tigerArms = require('./tiger-arms');
 
 const PROXY_URL = 'https://images.ammobin.ca';
 
@@ -45,7 +46,7 @@ function addSrcRefToLinks(items) {
     if (i.link.indexOf('?') === -1) {
       i.link += '?'
     }
-    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}`;
+    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}&vendor=${encodeURIComponent(i.vendor)}`;
     return i;
   });
 }
@@ -419,6 +420,8 @@ function getItems(source, type) {
           prom = hirsch(type);
         } else if (source === 'wildwest') {
           prom = wildWest(type);
+        } else if (source === 'tiger') {
+          prom = tigerArms(type);
         }
 
         if (!prom) {
@@ -463,7 +466,8 @@ const SOURCES = [
   'jobrook',
   'theammosource',
   'hirsch',
-  'wildwest'
+  'wildwest',
+  'tiger'
 ]
 
 // Create a server with a host and port
@@ -526,7 +530,8 @@ server.route({
       'jobrookoutdoors.com',
       'theammosource.com',
       'hirschprecision.com',
-      'gun-shop.ca'
+      'gun-shop.ca',
+      'tigerarms.ca',
     ].indexOf(host) === -1) {
       return reply(boom.badRequest('invalid target url'));
     }
