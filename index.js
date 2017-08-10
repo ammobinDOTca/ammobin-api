@@ -604,7 +604,7 @@ server.route({
         const result = results.reduce((final, result) => {
           return final.concat(result);
         }, [])
-          .filter(r => r && (r.price > 0) && r.calibre !== 'UNKNOWN')
+          .filter(r => r && (r.price > 0) && r.calibre && r.calibre !== 'UNKNOWN')
           .sort(function (a, b) {
             if (a.price > b.price) {
               return 1
