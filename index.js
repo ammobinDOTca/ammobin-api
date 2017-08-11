@@ -20,7 +20,7 @@ const theAmmoSource = require('./the-ammo-source');
 const hirsch = require('./hirschprecision');
 const wildWest = require('./wild-west');
 const tigerArms = require('./tiger-arms');
-
+const magdump = require('./mapdump');
 const PROXY_URL = 'https://images.ammobin.ca';
 
 function proxyImages(items) {
@@ -422,6 +422,8 @@ function getItems(source, type) {
           prom = wildWest(type);
         } else if (source === 'tiger') {
           prom = tigerArms(type);
+        } else if (source === 'magdump') {
+          prom = magdump(type);
         }
 
         if (!prom) {
@@ -467,7 +469,8 @@ const SOURCES = [
   'theammosource',
   'hirsch',
   'wildwest',
-  'tiger'
+  'tiger',
+  'magdump'
 ]
 
 // Create a server with a host and port
@@ -532,6 +535,7 @@ server.route({
       'hirschprecision.com',
       'gun-shop.ca',
       'tigerarms.ca',
+      'magdump.ca',
     ].indexOf(host) === -1) {
       return reply(boom.badRequest('invalid target url'));
     }
