@@ -7,13 +7,13 @@ const classifier = require('ammobin-classifier');
 
 function classifyCenterfire(items) {
   return items.map(i => {
-    i.calibre = classifier.classifyCenterFire(i.name || '');
+    i.calibre = classifier.classifyCenterFire(i.name || '').toUpperCase();
     return i;
   });
 }
 
 const classifyRimfire = items => items.map(i => {
-  i.calibre = classifier.classifyRimfire(i.name || '');
+  i.calibre = classifier.classifyRimfire(i.name || '').toUpperCase();
   return i;
 });
 
