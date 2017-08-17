@@ -51,7 +51,6 @@ function addSrcRefToLinks(items) {
   });
 }
 
-
 function classifyRimfire(items) {
   return items.map(i => {
     i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
