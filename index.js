@@ -45,6 +45,8 @@ function addSrcRefToLinks(items) {
 
     if (i.link.indexOf('?') === -1) {
       i.link += '?'
+    } else {
+      i.link += '&'
     }
     i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}&vendor=${encodeURIComponent(i.vendor)}`;
     return i;

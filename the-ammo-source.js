@@ -41,7 +41,8 @@ function getStuff(cPath) {
         }
 
         result.link = tha.find('.listing a').prop('href');
-        result.img = 'https://www.theammosource.com/' + tha.find('listingProductImage').prop('src');
+        const src = tha.find('.listingProductImage').prop('src');
+        result.img = src ? ('https://www.theammosource.com/' + src) : null;
         result.name = tha.find('.itemTitle').text();
 
         tha.find('.productListing-data').each((index, subrow) => {
