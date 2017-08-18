@@ -86,7 +86,7 @@ function getCounts(items) {
     if (i.count > 1) {
       i.unitCost = i.price / i.count;
       if (i.unitCost < 0.01) {
-        i.unitCost = null; // something went wrong with the classifer
+        i.unitCost = null; // something went wrong with the classifier
       }
     } else {
       i.unitCost = null;
