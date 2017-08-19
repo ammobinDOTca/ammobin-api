@@ -1,5 +1,4 @@
 const axios = require('axios');
-const wrapAPIKey = require('./wrap-api-key');
 const classifier = require('ammobin-classifier');
 const cheerio = require('cheerio');
 
@@ -28,15 +27,23 @@ function combine(results) {
   return results.reduce((final, r) => final.concat(r), []);
 }
 
-function getStuff(cPath) {
-  return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}`)
+function getStuff(cPath, page = 1) {
+  return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
     .then(r => {
       const $ = cheerio.load(r.data)
       const items = [];
       $('.productListing-odd , .productListing-even').each((index, row) => {
         const result = {};
         const tha = $(row);
-        if (tha.find('.productListing-data img').prop('alt') === 'Sold Out') {
+
+        //wish there was a better way to do this, but the html is not making it easy
+        let soldOut = false;
+        tha.find('.productListing-data img').each((i, subrow) => {
+          soldOut = soldOut || $(subrow).prop('alt') === 'Sold Out';
+        });
+
+        if (soldOut) {
+          console.log('sold out', tha.find('.itemTitle').text())
           return;
         }
 
@@ -59,11 +66,16 @@ function getStuff(cPath) {
         items.push(result);
       });
 
-      return items;
+      const itemCounts = $('#productsListingTopNumber').text().split(' ').map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+
+      if (itemCounts[1] < itemCounts[2]) {
+        console.log(`loaded ${itemCounts[0]} - ${itemCounts[1]} out of ${itemCounts[2]}`)
+        return getStuff(cPath, page + 1)
+          .then(res => items.concat(res))
+      } else {
+        return items;
+      }
     });
-
-  // TODO: paginate
-
 }
 
 
@@ -100,7 +112,6 @@ module.exports = function (type) {
       return Promise.all([
         '1_108_119', // 10mm
         '1_108_481', // 17 Hornet
-
         '1_108_482', // 204 Ruger
         '1_108_152', // 22 Hornet & 222 Remington
         '1_108_941', // 22 Nosler
@@ -196,16 +207,7 @@ module.exports = function (type) {
       )
         .then(combine)
         .then(classifyCenterfire);
-
-    // return Promise.all([
-    //   fn('1_33'), // pistol
-    //   fn('1_40') // rifle
-    // ])
-    //   .then(results => results.reduce((final, r) => final.concat(r), []))
-    //   .then(classifyCenterfire);
-
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }
-
 }
