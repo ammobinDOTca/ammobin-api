@@ -6,6 +6,10 @@
     "language": "en",
     // words - list of words to be always considered correct
     "words": [
+        "hirsch",
+        "magdump",
+        "mapdump",
+        "rangeviewsports",
         "rimfire"
     ],
     // flagWords - list of words to be always considered incorrect
