@@ -18,7 +18,6 @@
     "hapi-cron": "0.0.3",
     "jsonp": "^0.2.1",
     "moment": "^2.18.1",
-    "natural": "^0.5.1",
     "redis": "^2.7.1"
   },
   "devDependencies": {
