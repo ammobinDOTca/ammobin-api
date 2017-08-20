@@ -124,15 +124,27 @@ function getItems(source, type) {
             ]).then(results => results.reduce((final, r) => final.concat(r), []));
           } else if (type === 'centerfire') {
             prom = Promise.all([
-              cabelas.makeCabelasReq('916').then(classifyCenterfire),
-              cabelas.makeCabelasCalibre('933', '20476').then(classifyCenterfire), // 223 rem
-              cabelas.makeCabelasCalibre('933', '19413').then(classifyCenterfire), // 303 brit
-              cabelas.makeCabelasCalibre('933', '20494').then(classifyCenterfire), // 7.62x39
-              cabelas.makeCabelasCalibre('933', '20561').then(classifyCenterfire), // 7mm-08
-              cabelas.makeCabelasCalibre('933', '20486').then(classifyCenterfire), // 308 wim
-              cabelas.makeCabelasCalibre('933', '20483').then(classifyCenterfire), // .30-06 Springfield
-
-            ]).then(results => results.reduce((final, r) => final.concat(r), []));
+              cabelas.makeCabelasReq('916'),
+              cabelas.makeCabelasCalibre('933', '19365'),// 204 ruger
+              cabelas.makeCabelasCalibre('933', '20529'),// 22-250 rem
+              cabelas.makeCabelasCalibre('933', '20476'), // 223 rem
+              cabelas.makeCabelasCalibre('933', '20554'),//243 win
+              cabelas.makeCabelasCalibre('933', '20543'), // 270 win
+              cabelas.makeCabelasCalibre('933', '20556'), // 270 wsm
+              cabelas.makeCabelasCalibre('933', '20641'), // 300 rem mag
+              cabelas.makeCabelasCalibre('933', '20547'), // 30 30 win
+              cabelas.makeCabelasCalibre('933', '19413'), // 303 brit
+              cabelas.makeCabelasCalibre('933', '20486'), // 308 wim
+              cabelas.makeCabelasCalibre('933', '20483'), // .30-06 Springfield
+              cabelas.makeCabelasCalibre('933', '20516'), // 338 lapua
+              cabelas.makeCabelasCalibre('933', '20491'), // 40/70
+              cabelas.makeCabelasCalibre('933', '20494'), // 7.62x39
+              cabelas.makeCabelasCalibre('933', '20561'), // 7mm-08
+              cabelas.makeCabelasCalibre('933', '20552'), // 7mm rem mag
+              cabelas.makeCabelasCalibre('933', '20557'), // 7mm wm
+            ])
+              .then(results => results.reduce((final, r) => final.concat(r), []))
+              .then(classifyCenterfire);
           }
         } else if (source === 'faoc') {
           function makeFaocReq(ammotype) {

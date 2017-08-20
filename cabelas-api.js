@@ -1,61 +1,66 @@
-const natural = require('natural');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const wrapAPIKey = require('./wrap-api-key');
 
-const colClassifer = new natural.LogisticRegressionClassifier();
-[
+const columns =
+  [
 
-  [
-    'link',
-    "Article #"
-  ],
-  [
-    'brand',
-    "Brand"
-  ],
-  [
-    'type',
-    "Generic Name"
-  ],
-  [
-    'calibre',
-    'Gauge',
-    'Calibre',
-    "Caliber"
-  ],
-  [
-    'velocity',
-    "Velocity (FPS)"
-  ],
-  [
-    'bullet',
-    "Bullet Type",
-    "Type"
-  ],
-  [
-    'weight',
-    "Bullet Weight",
-    "Shot Size"
-  ],
-  [
-    'count',
-    "Rounds per Box"
-  ],
-  [
-    'price',
-    "Price"
-  ],
-  [
-    'status',
-    "Status",
-  ]
-].forEach(group => group.forEach(g => colClassifer.addDocument(g, group[0])))
-colClassifer.train();
+    [
+      'link',
+      "Article #"
+    ],
+    [
+      'brand',
+      "Brand"
+    ],
+    [
+      'type',
+      "Generic Name"
+    ],
+    [
+      'calibre',
+      'Gauge',
+      'Calibre',
+      "Caliber"
+    ],
+    [
+      'velocity',
+      "Velocity (FPS)"
+    ],
+    [
+      'bullet',
+      "Bullet Type",
+      "Type"
+    ],
+    [
+      'weight',
+      "Bullet Weight",
+      "Shot Size"
+    ],
+    [
+      'count',
+      "Rounds per Box"
+    ],
+    [
+      'price',
+      "Price"
+    ],
+    [
+      'status',
+      "Status",
+    ]
+  ].map(c => c.map(s => s.toLowerCase()));
 
 function classify(d) {
   const titles = d.data.data.titles;
-  const myTitles = titles.map(t => colClassifer.classify(t));
+  const myTitles = titles.map(t => {
+    const find = columns.find(colNames => colNames.indexOf(t.toLowerCase()) >= 0);
+    if (find) {
+      return find[0]; // if found a match, return the common property name
+    } else {
+      return '';
+    }
+  });
 
   const items = d.data.data.items;
 
@@ -70,6 +75,7 @@ function classify(d) {
       if (!prop) {
         continue;
       }
+
       if (prop === 'link') {
         value = 'http://www.cabelas.ca' + value;
       } else if (prop === 'price') {
@@ -103,11 +109,11 @@ function makeCabelasReq(ammoType) {
 }
 
 /**
- * makeCabelasCalibre
- * @param {string} ammotype
- * @param {string} subtype
- *@returns {Promise<{data:{data:{items:string[][],titles:string[]}}}> same format as wrapapi
- */
+  * makeCabelasCalibre
+  * @param {string} ammotype
+  *  @param {string} subtype
+  * @returns {Promise<{data:{data:{items:string[][],titles:string[]}}}> same format as wrapapi
+  */
 function makeCabelasCalibre(ammotype, subtype) {
   return axios.get(`http://www.cabelas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
     .then(r => {
