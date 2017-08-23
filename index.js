@@ -7,10 +7,11 @@ const hapiCron = require('hapi-cron');
 const moment = require('moment');
 const boom = require('boom');
 const url = require('url');
-console.time('loadClass')
+
 const classifier = require('ammobin-classifier');
-console.timeEnd('loadClass')
+
 const client = redis.createClient({ host: 'redis' });
+const influx = require('./influx');
 
 const wrapAPIKey = require('./wrap-api-key');
 const cabelas = require('./cabelas-api');
@@ -536,7 +537,8 @@ server.route({
     }
 
     const targetUrl = url.parse(request.query.url);
-    const host = targetUrl.hostname.replace('www.', '');
+
+    const host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : '';
     if ([
       'canadiantire.ca',
       'sail.ca',
@@ -560,24 +562,26 @@ server.route({
     }
 
     // Track vendor click; todo: use something better than redis
+    influx.logClick(request.query.url, request.query.host, request.headers['User-Agent'])
+      .then(() => {
+        const key = `TRACK_CLICK_${host}_${moment.utc().format('YYYY-MM-DD')}`;
+        client.get(key, (err, res) => {
+          if (err) {
+            console.error('failed to get ' + key, err);
+          }
+          const val = res
+            ? parseInt(res, 10) + 1
+            : 1;
 
-    const key = `TRACK_CLICK_${host}_${moment.utc().format('YYYY-MM-DD')}`;
-    client.get(key, (err, res) => {
-      if (err) {
-        console.error('failed to get ' + key, err);
-      }
-      const val = res
-        ? parseInt(res, 10) + 1
-        : 1;
-
-      client.set(key, val, (err1) => {
-        if (err1) {
-          console.error('failed to set ' + key, err1);
-        }
-        return reply
-          .redirect(request.query.url);
-      });
-    });
+          client.set(key, val, (err1) => {
+            if (err1) {
+              console.error('failed to set ' + key, err1);
+            }
+            return reply
+              .redirect(request.query.url);
+          });
+        });
+      })
   }
 })
 
