@@ -3,7 +3,6 @@
 ### how to run
 ```docker run ammobindotca/ammobin-api -p 8080:8080```
 
-
 ### dev stuff
 1. add
 ```
@@ -12,8 +11,8 @@
 ```
 to /etc/hosts
 
-2. ```docker run --rm -p 8086:8086 influxdb:alpine```
-3. ```docker run --rm -p 6379:6379 redis:alpine ```
+2. ```docker-compose run -d```
+3. ```npm run dev```
 
 ### todo
 - store clicks + prices in proper db

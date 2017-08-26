@@ -2,3 +2,5 @@ node_modules
 redis-data
 npm-debug.log
 .env
+influx-data
+redis-data
