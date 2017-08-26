@@ -614,6 +614,43 @@ server.route({
   }
 });
 
+server.route({
+  method: 'GET',
+  path: '/best-popular-prices',
+  handler: function (request, reply) {
+    const day = moment.utc().format('YYYY-MM-DD');
+
+    const keys = SOURCES.map(s => `${day}_${s}_centerfire`)
+    return new Promise((resolve, reject) => {
+      client.mget(keys, (err, res) => err ? reject(err) : resolve(res.map(r => r ? JSON.parse(r) : null)))
+    })
+      .then(results => {
+        const result = results.reduce((final, result) => {
+          return result && result.length ? final.concat(result) : final;
+        }, [])
+          .reduce((response, item) => {
+            if (!item || !item.calibre) {
+              return response;
+            }
+            if (item.calibre.toUpperCase() === '.223 / 5.56 NATO') {
+              console.log(item)
+
+              response.min556Price = response.unitCost > 0 && response.min556Price > 0 ? Math.min(item.unitCost, response.min556Price) : item.unitCost;
+            } else if (item.calibre.toUpperCase() === '7.62 X 39MM') {
+              response.min762Price = response.unitCost > 0 && response.min762Price > 0 ? Math.min(item.unitCost, response.min762Price) : item.unitCost;
+            } else if (item.calibre.toUpperCase() === '9MM') {
+              response.min9Price = response.unitCost > 0 && response.min9Price ? Math.min(item.unitCost, response.min9Price) : item.unitCost;
+            }
+
+            return response;
+          }, {});
+        console.log(result)
+        reply(result);
+      })
+      .catch(e => console.error(e))
+  }
+})
+
 // Add the route
 server.route({
   method: 'GET',
