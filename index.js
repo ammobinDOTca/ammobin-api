@@ -608,17 +608,15 @@ server.route({
           return result && result.length ? final.concat(result) : final;
         }, [])
           .reduce((response, item) => {
-            if (!item || !item.calibre) {
+            if (!item || !item.calibre || !item.unitCost || item.calibre === 'UNKNOWN') {
               return response;
             }
 
-            if (item.calibre.toUpperCase() === '.223 / 5.56 NATO') {
-              response.min556Price = item.unitCost > 0 && response.min556Price > 0 ? Math.min(item.unitCost, response.min556Price) : item.unitCost;
-            } else if (item.calibre.toUpperCase() === '7.62 X 39MM') {
-              response.min762Price = item.unitCost > 0 && response.min762Price > 0 ? Math.min(item.unitCost, response.min762Price) : item.unitCost;
-            } else if (item.calibre.toUpperCase() === '9MM') {
-              response.min9Price = item.unitCost > 0 && response.min9Price > 0 ? Math.min(item.unitCost, response.min9Price) : item.unitCost;
+            if (!response[item.calibre]) {
+              response[item.calibre] = Number.MAX_SAFE_INTEGER;
             }
+
+            response[item.calibre] = Math.min(response[item.calibre], item.unitCost);
 
             return response;
           }, {});
