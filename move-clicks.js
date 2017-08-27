@@ -1,5 +1,5 @@
 const redis = require('redis');
-const client = new redis.createClient();
+const client = redis.createClient({ host: 'redis' });
 const influx = require('./influx');
 const moment = require('moment')
 
