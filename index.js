@@ -562,26 +562,11 @@ server.route({
     }
 
     // Track vendor click; todo: use something better than redis
-    influx.logClick(request.query.url, request.query.host, request.headers['User-Agent'])
+    return influx.logClick(request.query.url, request.query.host, request.headers['User-Agent'])
       .then(() => {
-        const key = `TRACK_CLICK_${host}_${moment.utc().format('YYYY-MM-DD')}`;
-        client.get(key, (err, res) => {
-          if (err) {
-            console.error('failed to get ' + key, err);
-          }
-          const val = res
-            ? parseInt(res, 10) + 1
-            : 1;
-
-          client.set(key, val, (err1) => {
-            if (err1) {
-              console.error('failed to set ' + key, err1);
-            }
-            return reply
-              .redirect(request.query.url);
-          });
-        });
-      })
+        return reply
+          .redirect(request.query.url);
+      });
   }
 })
 

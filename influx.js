@@ -1,6 +1,6 @@
 const Influx = require('influx');
 
-const influx = new Influx.InfluxDB({
+const influxClicksDb = new Influx.InfluxDB({
   host: 'influx',
   database: 'clicks',
   schema: [
@@ -18,10 +18,10 @@ const influx = new Influx.InfluxDB({
   ]
 });
 
-const prom = influx.getDatabaseNames()
+const prom = influxClicksDb.getDatabaseNames()
   .then(names => {
     if (!names.includes('clicks')) {
-      return influx.createDatabase('clicks');
+      return influxClicksDb.createDatabase('clicks');
     }
   })
   .catch(e => {
@@ -34,13 +34,15 @@ module.exports = {
   logClick(url, vendor, userAgent) {
     return prom
       .then(() =>
-        influx.writePoints([
+        influxClicksDb.writePoints([
           {
             measurement: 'clicks',
             tags: { userAgent, vendor },
-            fields: { url },
+            fields: { url }
           }
         ])
       )
-  }
+  },
+  // tmp. remove once redis no longer sole db
+  influxClicksDb
 }
