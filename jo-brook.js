@@ -1,16 +1,33 @@
-const axios = require('axios');
-const wrapAPIKey = require('./wrap-api-key');
+
+const helpers = require('./helpers');
 
 function makeJoBrook(ammotype) {
-  return axios({
-    url: "https://wrapapi.com/use/meta-ammo-ca/jobrook/jobrook/latest",
-    method: 'post',
-    data: {
-      ammotype,
-      wrapAPIKey
-    }
-  })
-    .then(d => { return d.data.data ? d.data.data.items : []; });
+  return helpers.makeWrapApiReq('jobrook', ammotype)
+    .then(d => d.items || []);
 }
 
-module.exports = makeJoBrook;
+function jobrook(type) {
+  switch (type) {
+    case 'rimfire':
+      return makeJoBrook('rimfire')
+        .then(helpers.classifyRimfire);
+
+    case 'centerfire':
+      return Promise.all([
+        makeJoBrook('rifle'),
+        makeJoBrook('pistol'),
+        makeJoBrook('bulk'),
+      ])
+        .then(helpers.combineResults)
+        .then(helpers.classifyCenterfire);
+
+    case 'shotgun':
+      return makeJoBrook('shotgun')
+        .then(helpers.classifyShotgun);
+
+    default:
+      throw new Error(`unknown type ${type}`);
+  }
+}
+
+module.exports = jobrook;

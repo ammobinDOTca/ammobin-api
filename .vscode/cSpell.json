@@ -7,12 +7,21 @@
     // words - list of words to be always considered correct
     "words": [
         "Cabelas",
+        "Centerfire",
+        "Tenda",
+        "alflahertys",
+        "ammobin",
         "ammotype",
+        "bullseyelondon",
+        "canadaammo",
+        "canadiantire",
+        "faoc",
         "hirsch",
         "magdump",
         "mapdump",
         "mget",
         "rangeviewsports",
+        "reliablegun",
         "rimfire"
     ],
     // flagWords - list of words to be always considered incorrect

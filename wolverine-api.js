@@ -1,4 +1,5 @@
 const axios = require('axios');
+const helpers = require('./helpers');
 
 /**
  * makeWolverine api req
@@ -69,4 +70,27 @@ function makeWolverine(type) {
     })
 }
 
-module.exports = makeWolverine;
+function wolverinesupplies(type) {
+  switch (type) {
+    case 'rimfire':
+      return makeWolverine('rimfire')
+        .then(helpers.classifyRimfire);
+
+    case 'centerfire':
+      return Promise.all([
+        makeWolverine('rifle'),
+        makeWolverine('pistol')
+      ])
+        .then(helpers.combineResults)
+        .then(helpers.classifyCenterfire);
+
+    case 'shotgun':
+      return makeWolverine('shotgun')
+        .then(helpers.classifyShotgun);
+
+    default:
+      throw new Error(`unknown type: ${type}`);
+  }
+}
+
+module.exports = wolverinesupplies;

@@ -1,31 +1,6 @@
 const axios = require('axios');
-const classifier = require('ammobin-classifier');
 const cheerio = require('cheerio');
-
-function classifyRimfire(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
-function classifyCenterfire(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyCenterFire(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
-function classifyShotgun(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyShotgun(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
-function combine(results) {
-  return results.reduce((final, r) => final.concat(r), []);
-}
+const helpers = require('./helpers');
 
 function getStuff(cPath, page = 1) {
   return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
@@ -91,8 +66,8 @@ module.exports = function (type) {
       ]
         .map(getStuff)
       )
-        .then(combine)
-        .then(classifyRimfire);
+        .then(helpers.combineResults)
+        .then(helpers.classifyRimfire);
 
     case 'shotgun':
       return Promise.all([
@@ -105,8 +80,9 @@ module.exports = function (type) {
       ]
         .map(getStuff)
       )
-        .then(combine)
-        .then(classifyShotgun);
+        .then(helpers.combineResults)
+        .then(helpers.classifyShotgun);
+
     case 'centerfire':
       return Promise.all([
         '1_108_119', // 10mm
@@ -204,8 +180,8 @@ module.exports = function (type) {
       ]
         .map(getStuff)
       )
-        .then(combine)
-        .then(classifyCenterfire);
+        .then(helpers.combineResults)
+        .then(helpers.classifyCenterfire);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }

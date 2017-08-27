@@ -1,12 +1,7 @@
 const axios = require('axios');
+const helpers = require('./helpers');
 
-
-/**
-  * make canadian tire search
-  * @param {string} page
-  * @returns {Promise<{}>}
-  */
-module.exports = function (page) {
+function work(page) {
 
   // TODO: need to get all result pages  ("pagination": {"total": 6, )
 
@@ -55,3 +50,27 @@ module.exports = function (page) {
       })
   });
 }
+
+function canadiantire(type) {
+  if (type === 'rimfire') {
+    return work('Rimfire Ammunition')
+      .then(helpers.classifyRimfire);
+
+  } else if (type === 'centerfire') {
+    return work('Centerfire Ammunition')
+      .then(helpers.classifyCenterfire);
+
+  } else if (type === 'shotgun') {
+    return Promise.all([
+      work('Lead Shotgun Shells'),
+      work('Steel Shotgun Shells'),
+      work('Slugs & Buckshots'),
+    ])
+      .then(helpers.combineResults)
+      .then(helpers.classifyShotgun);
+  } else {
+    throw new Error(`unknown type: ${type}`)
+  }
+}
+
+module.exports = canadiantire;
