@@ -23,6 +23,7 @@ const wildWest = require('./wild-west');
 const tigerArms = require('./tiger-arms');
 const magdump = require('./mapdump');
 const rangeviewsports = require('./rangeviewsports');
+const makeJoBrook = require('./jo-brook');
 const PROXY_URL = 'https://images.ammobin.ca';
 
 function proxyImages(items) {
@@ -402,16 +403,7 @@ function getItems(source, type) {
           }
         } else if (source === 'jobrook') {
 
-          function makeJoBrook(ammotype) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/jobrook/jobrook/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                wrapAPIKey
-              }
-            }).then(d => { return d.data.data ? d.data.data.items : []; });
-          }
+
           switch (type) {
             case 'rimfire':
               prom = makeJoBrook('rimfire').then(classifyRimfire);
@@ -562,7 +554,7 @@ server.route({
     }
 
     // Track vendor click; todo: use something better than redis
-    return influx.logClick(request.query.url, request.query.host, request.headers['User-Agent'])
+    return influx.logClick(request.query.url, host, request.headers['user-agent'])
       .then(() => {
         return reply
           .redirect(request.query.url);
@@ -606,9 +598,11 @@ server.route({
     const day = moment.utc().format('YYYY-MM-DD');
 
     const keys = SOURCES.map(s => `${day}_${s}_centerfire`)
-    return new Promise((resolve, reject) => {
-      client.mget(keys, (err, res) => err ? reject(err) : resolve(res.map(r => r ? JSON.parse(r) : null)))
-    })
+    return new Promise((resolve, reject) =>
+      client.mget(keys, (err, res) => err ? reject(err) : resolve(res))
+    )
+      .then(res => res.map(r => r ? JSON.parse(r) : null))
+
       .then(results => {
         const result = results.reduce((final, result) => {
           return result && result.length ? final.concat(result) : final;
@@ -618,8 +612,6 @@ server.route({
               return response;
             }
             if (item.calibre.toUpperCase() === '.223 / 5.56 NATO') {
-              console.log(item)
-
               response.min556Price = response.unitCost > 0 && response.min556Price > 0 ? Math.min(item.unitCost, response.min556Price) : item.unitCost;
             } else if (item.calibre.toUpperCase() === '7.62 X 39MM') {
               response.min762Price = response.unitCost > 0 && response.min762Price > 0 ? Math.min(item.unitCost, response.min762Price) : item.unitCost;
@@ -629,7 +621,7 @@ server.route({
 
             return response;
           }, {});
-        console.log(result)
+
         reply(result);
       })
       .catch(e => console.error(e))

@@ -43,7 +43,6 @@ function getStuff(cPath, page = 1) {
         });
 
         if (soldOut) {
-          console.log('sold out', tha.find('.itemTitle').text())
           return;
         }
 
@@ -69,7 +68,7 @@ function getStuff(cPath, page = 1) {
       const itemCounts = $('#productsListingTopNumber').text().split(' ').map(s => parseInt(s, 10)).filter(n => !isNaN(n));
 
       if (itemCounts[1] < itemCounts[2]) {
-        console.log(`loaded ${itemCounts[0]} - ${itemCounts[1]} out of ${itemCounts[2]}`)
+        console.log(`loaded ammo source ${itemCounts[0]} - ${itemCounts[1]} out of ${itemCounts[2]}`)
         return getStuff(cPath, page + 1)
           .then(res => items.concat(res))
       } else {

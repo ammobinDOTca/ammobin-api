@@ -37,7 +37,6 @@ function fn(type) {
         result.img = tha.find('img').prop('data-src');
         result.name = tha.find('.entry-title').text();
         result.price = parseFloat(tha.find('.amount').text().replace('$', ''));
-        //console.log((tha.find('.amount').text()))
         result.vendor = 'Wild West';
         result.province = 'AB'
         items.push(result);

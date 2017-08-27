@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-const PAGE_SIZE = 36;
 
 /**
   * make canadian tire search
@@ -9,7 +8,7 @@ const PAGE_SIZE = 36;
   */
 module.exports = function (page) {
 
-  // TODO need to get all result pages  ("pagination": {"total": 6, )
+  // TODO: need to get all result pages  ("pagination": {"total": 6, )
 
   return axios.get(`http://api.canadiantire.ca/search/api/v0/product/en/?site=ct;store=0600;x1=c.cat-level-1;q1=Playing;x2=c.cat-level-2;q2=Hunting;x3=c.cat-level-3;q3=Ammunition;x4=c.cat-level-4;q4=${encodeURIComponent(page)};format=json;count=36;q=*;callback=callback`, {
     headers: {
@@ -47,8 +46,6 @@ module.exports = function (page) {
       }
     })
       .then(r => {
-        console.log('loaded list2')
-
         const list = Object.keys(r.data).map(k => r.data[k]);
 
         return items.map(i => {

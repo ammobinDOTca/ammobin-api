@@ -16,13 +16,6 @@ function classifyCenterfire(items) {
   });
 }
 
-function classifyShotgun(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyShotgun(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
 module.exports = function (type) {
   function fn(ammotype) {
     return axios({
@@ -33,11 +26,11 @@ module.exports = function (type) {
         wrapAPIKey
       }
     }).then(d => {
-      if(!d.data.data.items){
+      if (!d.data.data.items) {
         console.warn('no items found for hirsch ' + type);
         return [];
       }
-      
+
       return d.data.data.items;
     });
   }

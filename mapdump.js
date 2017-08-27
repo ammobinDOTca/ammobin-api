@@ -1,9 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
 const classifier = require('ammobin-classifier');
-
 
 function classifyCenterfire(items) {
   return items.map(i => {
@@ -30,13 +28,9 @@ function fn(type) {
         result.name = tha.find('.product-card__name').text();
         const priceTxt = tha.find('.product-card__price').text().split('$');
         result.price = parseFloat(priceTxt.length === 1 ? priceTxt[0] : priceTxt[1]);
-        //console.log((tha.find('.amount').text()))
         result.vendor = 'Map Dump';
         result.province = 'AB'
 
-        if (result.name.indexOf('XCR Pistol')) {
-          console.log(type)
-        }
         items.push(result);
       })
 
