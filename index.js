@@ -611,12 +611,13 @@ server.route({
             if (!item || !item.calibre) {
               return response;
             }
+
             if (item.calibre.toUpperCase() === '.223 / 5.56 NATO') {
-              response.min556Price = response.unitCost > 0 && response.min556Price > 0 ? Math.min(item.unitCost, response.min556Price) : item.unitCost;
+              response.min556Price = item.unitCost > 0 && response.min556Price > 0 ? Math.min(item.unitCost, response.min556Price) : item.unitCost;
             } else if (item.calibre.toUpperCase() === '7.62 X 39MM') {
-              response.min762Price = response.unitCost > 0 && response.min762Price > 0 ? Math.min(item.unitCost, response.min762Price) : item.unitCost;
+              response.min762Price = item.unitCost > 0 && response.min762Price > 0 ? Math.min(item.unitCost, response.min762Price) : item.unitCost;
             } else if (item.calibre.toUpperCase() === '9MM') {
-              response.min9Price = response.unitCost > 0 && response.min9Price ? Math.min(item.unitCost, response.min9Price) : item.unitCost;
+              response.min9Price = item.unitCost > 0 && response.min9Price > 0 ? Math.min(item.unitCost, response.min9Price) : item.unitCost;
             }
 
             return response;
