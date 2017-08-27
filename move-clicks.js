@@ -3,6 +3,10 @@ const client = redis.createClient({ host: 'redis' });
 const influx = require('./influx');
 const moment = require('moment')
 
+/**
+ * move the clicks out of redis and into influx
+ */
+
 client.keys('*CLICK*', (err, keys) => {
   if (err) {
     throw err;

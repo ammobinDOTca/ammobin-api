@@ -28,7 +28,6 @@ function fn(page) {
 
         const link = tha.find('a').prop('href');
         if (tha.find('.badge--sold-out').length || !link) {
-          // console.log(result.name, 'sold out', link)
           return;
         }
 
