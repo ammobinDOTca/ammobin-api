@@ -29,6 +29,7 @@ const sail = require('./sail');
 const reliablegun = require('./reliablegun');
 const tenda = require('./tenda');
 const canadaammo = require('./canadaammo');
+const frontierfirearms = require('./frontierfirearms');
 
 const PROXY_URL = 'https://images.ammobin.ca';
 
@@ -138,6 +139,9 @@ function makeSearch(source, type) {
     case 'wolverinesupplies.com':
       return wolverinesupplies(type);
 
+    case 'frontierfirearms.ca':
+      return frontierfirearms(type);
+
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
   }
@@ -201,7 +205,8 @@ const SOURCES = [
   'gun-shop.ca',
   'tigerarms.ca',
   'magdump.ca',
-  'rangeviewsports.ca'
+  'rangeviewsports.ca',
+  'frontierfirearms.ca'
 ];
 
 
@@ -233,25 +238,7 @@ server.route({
     const targetUrl = url.parse(request.query.url);
 
     const host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : '';
-    if ([
-      'canadiantire.ca',
-      'sail.ca',
-      'alflahertys.com',
-      'firearmsoutletcanada.com',
-      'bullseyelondon.com',
-      'reliablegun.com',
-      'cabelas.ca',
-      'gotenda.com',
-      'canadaammo.com',
-      'wolverinesupplies.com',
-      'jobrookoutdoors.com',
-      'theammosource.com',
-      'hirschprecision.com',
-      'gun-shop.ca',
-      'tigerarms.ca',
-      'magdump.ca',
-      'rangeviewsports.ca'
-    ].indexOf(host) === -1) {
+    if (SOURCES.indexOf(host) === -1) {
       return reply(boom.badRequest('invalid target url'));
     }
 
