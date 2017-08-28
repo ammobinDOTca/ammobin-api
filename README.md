@@ -15,8 +15,7 @@ to /etc/hosts
 3. ```npm run dev```
 
 ### todo
-- store clicks + prices in proper db
-- refactor api into separate files
+- track prices in proper db
 - enable worker queue for pulling data
 
 ### docker hub
