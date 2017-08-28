@@ -10,7 +10,7 @@ function makeAlReq(ammotype, page = 1) {
       console.log(`alflahertys: loaded ${ammotype} page${d.page} of ${d.lastPage}`);
       if (!isNaN(d.lastPage) && d.page < d.lastPage) {
         return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-          .then(() => makeAlReq(ammotype, page + 1))
+          .then(() => makeAlReq(ammotype, d.page + 1))
           .then(dd => d.items.concat(dd));
       } else {
         return d.items;
