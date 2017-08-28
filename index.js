@@ -30,8 +30,10 @@ const reliablegun = require('./reliablegun');
 const tenda = require('./tenda');
 const canadaammo = require('./canadaammo');
 const frontierfirearms = require('./frontierfirearms');
-
+const helpers = require('./helpers');
 const PROXY_URL = 'https://images.ammobin.ca';
+
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 function proxyImages(items) {
   return items.map(i => {
@@ -148,7 +150,7 @@ function makeSearch(source, type) {
 }
 
 function getItems(source, type) {
-  const key = `${moment.utc().format('YYYY-MM-DD')}_${source}_${type}`;
+  const key = `${moment.utc().format(DATE_FORMAT)}_${source}_${type}`;
   return new Promise((resolve, reject) => {
     client.get(key, (err, res) => {
       if (err) {
@@ -241,9 +243,25 @@ server.route({
     if (SOURCES.indexOf(host) === -1) {
       return reply(boom.badRequest('invalid target url'));
     }
+    const date = moment.utc().format(DATE_FORMAT);
 
-    // Track vendor click; todo: use something better than redis
-    return influx.logClick(request.query.url, host, request.headers['user-agent'])
+    return new Promise((resolve, reject) =>
+      client.mget([
+        'rimfire',
+        'shotgun',
+        'centerfire'
+      ].map(type => `${date}_${host}_${type}`), (err, res) => err ? reject(err) : resolve(res.map(JSON.parse))))
+      .then(helpers.combineResults)
+      .then(results => {
+        const encoded = encodeURIComponent(request.query.url)
+        const record = results.find(r => r && r.link.indexOf(encoded));
+
+        if (!record) {
+          console.warn('WARN: unable to find matching record for ' + request.query.url);
+        }
+
+        return influx.logClick(request.query.url, request.headers['user-agent'], record ? record : {});
+      })
       .then(() => {
         return reply
           .redirect(request.query.url);
