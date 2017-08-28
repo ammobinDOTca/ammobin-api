@@ -7,12 +7,18 @@ const influxClicksDb = new Influx.InfluxDB({
     {
       measurement: 'click',
       fields: {
-        // todo add item + cost + per round count
-        url: Influx.FieldType.STRING
+        url: Influx.FieldType.STRING,
+        cost: Influx.FieldType.FLOAT,
+        unitCost: Influx.FieldType.FLOAT,
+        count: Influx.FieldType.INTEGER,
+        name: Influx.FieldType.STRING,
       },
       tags: [
         'userAgent',
-        'vendor'
+        'vendor',
+        'province',
+        'brand',
+        'calibre',
       ]
     }
   ]
@@ -31,14 +37,26 @@ const prom = influxClicksDb.getDatabaseNames()
 
 
 module.exports = {
-  logClick(url, vendor, userAgent) {
+  logClick(url, userAgent, item) {
     return prom
       .then(() =>
         influxClicksDb.writePoints([
           {
             measurement: 'clicks',
-            tags: { userAgent, vendor },
-            fields: { url }
+            tags: {
+              userAgent,
+              vendor: item.vendor,
+              province: item.province,
+              brand: item.brand,
+              calibre: item.calibre
+            },
+            fields: {
+              url,
+              price: item.price || 0,
+              unitCost: item.unitCost || 0,
+              count: item.count || 0,
+              name: item.name,
+            }
           }
         ])
       )
