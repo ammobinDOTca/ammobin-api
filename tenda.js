@@ -1,9 +1,21 @@
 const helpers = require('./helpers');
 
-function makeTendaRequest(ammotype) {
+function makeTendaRequest(ammotype, page = 1) {
   return helpers.makeWrapApiReq('tenda', ammotype)
-    .then(d => d.items);
-  // TODO: paginate the hoe
+    .then(d => {
+      if (!d.items) {
+        console.error(`failed to load tenda:${ammotype}_${page}`, d.data);
+        return null;
+      }
+      console.log(`tenda: loaded ${ammotype} page${d.page} of ${d.lastPage}`);
+      if (!isNaN(d.lastPage) && d.page < d.lastPage) {
+        return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
+          .then(() => makeTendaRequest(ammotype, page + 1))
+          .then(dd => d.items.concat(dd));
+      } else {
+        return d.items;
+      }
+    });
 }
 
 function tenda(type) {
