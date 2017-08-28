@@ -2,28 +2,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const classifier = require('ammobin-classifier');
-
-
-function classifyBullets(items, ammo) {
-  return items.map(i => {
-    const f = classifier.classifyAmmo(i.name || '');
-
-    if (f.type === ammo) {
-      i.calibre = f.calibre.toUpperCase();
-    }
-
-    return i;
-  });
-}
-
-function classifyShotgun(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyShotgun(i.name || '').toUpperCase();
-    return i;
-  });
-}
+const helpers = require('./helpers');
 
 function fn(type) {
   return axios.get(`https://gun-shop.ca/product-category/ammunition/${type}/?orderby=price-desc`)
@@ -53,9 +32,9 @@ module.exports = function (type) {
     case 'centerfire':
       return Promise.all([fn('bulk-ammo'), fn('box-ammo')])
         .then(results => results.reduce((final, r) => final.concat(r), []))
-        .then(i => classifyBullets(i, type));
+        .then(i => helpers.classifyBullets(i, type));
     case 'shotgun':
-      return fn('shotgun-ammo').then(classifyShotgun);
+      return fn('shotgun-ammo').then(helpers.classifyShotgun);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }

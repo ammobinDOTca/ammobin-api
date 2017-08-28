@@ -1,19 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const classifier = require('ammobin-classifier');
-
-
-function classify(type) {
-  return items => items.map(i => {
-    const c = classifier.classifyAmmo(i.name || '');
-    if (c.type === type) {
-      i.calibre = c.calibre.toUpperCase();
-    }
-    return i;
-  });
-}
+const helpers = require('./helpers');
 
 function fn(page) {
   return axios.get(`https://www.rangeviewsports.ca/collections/ammo?page=${page}&sort_by=best-selling`)
@@ -51,8 +39,6 @@ function fn(page) {
 
 }
 
-const merge = results => results.reduce((final, r) => final.concat(r), []);
-
 module.exports = function (type) {
   switch (type) {
     case 'rimfire':
@@ -60,8 +46,8 @@ module.exports = function (type) {
     case 'shotgun':
       // TODO: read number of pages to actually get
       return Promise.all([fn(1), fn(2), fn(3)])
-        .then(merge)
-        .then(classify(type));
+        .then(helpers.combineResults)
+        .then(items => helpers.classifyBullets(items, type));
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }

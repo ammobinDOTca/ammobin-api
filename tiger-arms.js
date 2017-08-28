@@ -2,29 +2,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const classifier = require('ammobin-classifier');
-
-
-function classifyBullets(items, ammo) {
-  return items.map(i => {
-    const f = classifier.classifyAmmo(i.name || '');
-
-    if (f.type === ammo) {
-      i.calibre = f.calibre.toUpperCase();
-    }
-
-    return i;
-  })
-    .filter(f => f.calibre);
-}
-
-function classifyShotgun(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyShotgun(i.name || '').toUpperCase();
-    return i;
-  });
-}
+const helpers = require('./helpers');
 
 function fn(type, page = 1) {
   return axios.get(`http://www.tigerarms.ca/product-category/ammunition/${type}/page/${page}/`)
@@ -63,13 +41,13 @@ module.exports = function (type) {
   switch (type) {
     case 'rimfire':
       return fn('rifle-ammo')
-        .then(i => classifyBullets(i, type));
+        .then(i => helpers.classifyBullets(i, type));
     case 'centerfire':
       return Promise.all([fn('handgun-ammo'), fn('rifle-ammo')])
         .then(results => results.reduce((final, r) => final.concat(r), []))
-        .then(i => classifyBullets(i, type));
+        .then(i => helpers.classifyBullets(i, type));
     case 'shotgun':
-      return fn('shotgun-ammo').then(classifyShotgun);
+      return fn('shotgun-ammo').then(helpers.classifyShotgun);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }

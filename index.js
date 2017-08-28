@@ -1,7 +1,6 @@
 'use strict';
 
 const Hapi = require('hapi');
-const axios = require('axios');
 const redis = require('redis');
 const hapiCron = require('hapi-cron');
 const moment = require('moment');
@@ -13,17 +12,24 @@ const classifier = require('ammobin-classifier');
 const client = redis.createClient({ host: 'redis' });
 const influx = require('./influx');
 
-const wrapAPIKey = require('./wrap-api-key');
 const cabelas = require('./cabelas-api');
-const makeCanadianTireReq = require('./canadian-tire');
-const makeWolverine = require('./wolverine-api');
+const canadiantire = require('./canadian-tire');
+const wolverinesupplies = require('./wolverine-api');
 const theAmmoSource = require('./the-ammo-source');
 const hirsch = require('./hirschprecision');
 const wildWest = require('./wild-west');
 const tigerArms = require('./tiger-arms');
 const magdump = require('./mapdump');
 const rangeviewsports = require('./rangeviewsports');
-const makeJoBrook = require('./jo-brook');
+const jobrook = require('./jo-brook');
+const faoc = require('./faoc');
+const alflahertys = require('./alflahertys');
+const bullseyelondon = require('./bullseyelondon');
+const sail = require('./sail');
+const reliablegun = require('./reliablegun');
+const tenda = require('./tenda');
+const canadaammo = require('./canadaammo');
+
 const PROXY_URL = 'https://images.ammobin.ca';
 
 function proxyImages(items) {
@@ -57,27 +63,6 @@ function addSrcRefToLinks(items) {
 }
 
 
-function classifyRimfire(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
-function classifyCenterfire(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyCenterFire(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
-function classifyShotgun(items) {
-  return items.map(i => {
-    i.calibre = classifier.classifyShotgun(i.calibre || i.name || '').toUpperCase()
-    return i;
-  });
-}
-
 function classifyBrand(items) {
   return items.map(i => {
     i.brand = classifier.classifyBrand(i.brand || i.name || '')
@@ -100,6 +85,64 @@ function getCounts(items) {
   });
 }
 
+function makeSearch(source, type) {
+  switch (source) {
+    case 'cabelas.ca':
+      return cabelas(type);
+
+    case 'firearmsoutletcanada.com':
+      return faoc(type);
+
+    case 'alflahertys.com':
+      return alflahertys(type);
+
+    case 'bullseyelondon.com':
+      return bullseyelondon(type);
+
+    case 'sail.ca':
+      return sail(type);
+
+    case 'reliablegun.com':
+      return reliablegun(type);
+
+    case 'canadiantire.ca':
+      return canadiantire(type);
+
+    case 'gotenda.com':
+      return tenda(type);
+
+    case 'canadaammo.com':
+      return canadaammo(type);
+
+    case 'jobrookoutdoors.com':
+      return jobrook(type);
+
+    case 'theammosource.com':
+      return theAmmoSource(type);
+
+    case 'hirschprecision.com':
+      return hirsch(type);
+
+    case 'gun-shop.ca':
+      return wildWest(type);
+
+    case 'tigerarms.ca':
+      return tigerArms(type);
+
+    case 'magdump.ca':
+      return magdump(type);
+
+    case 'rangeviewsports.ca':
+      return rangeviewsports(type);
+
+    case 'wolverinesupplies.com':
+      return wolverinesupplies(type);
+
+    default:
+      throw new Error(`unknown source: ${source} + type: ${type}`);
+  }
+}
+
 function getItems(source, type) {
   const key = `${moment.utc().format('YYYY-MM-DD')}_${source}_${type}`;
   return new Promise((resolve, reject) => {
@@ -110,343 +153,20 @@ function getItems(source, type) {
         return resolve(JSON.parse(res));
       } else {
         console.log('making scrape for ', source, type, new Date());
-        let prom;
 
-        if (source === 'cabelas') {
-
-          if (type === 'rimfire') {
-            prom = cabelas.makeCabelasReq("936").then(classifyRimfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              cabelas.makeCabelasReq('928').then(classifyShotgun),
-              cabelas.makeCabelasReq('922').then(classifyShotgun),
-              cabelas.makeCabelasReq('923').then(classifyShotgun),
-              cabelas.makeCabelasReq('924').then(classifyShotgun),
-              cabelas.makeCabelasReq('926').then(classifyShotgun),
-            ]).then(results => results.reduce((final, r) => final.concat(r), []));
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              cabelas.makeCabelasReq('916'),
-              cabelas.makeCabelasCalibre('933', '19365'),// 204 ruger
-              cabelas.makeCabelasCalibre('933', '20529'),// 22-250 rem
-              cabelas.makeCabelasCalibre('933', '20476'), // 223 rem
-              cabelas.makeCabelasCalibre('933', '20554'),//243 win
-              cabelas.makeCabelasCalibre('933', '20543'), // 270 win
-              cabelas.makeCabelasCalibre('933', '20556'), // 270 wsm
-              cabelas.makeCabelasCalibre('933', '20641'), // 300 rem mag
-              cabelas.makeCabelasCalibre('933', '20547'), // 30 30 win
-              cabelas.makeCabelasCalibre('933', '19413'), // 303 brit
-              cabelas.makeCabelasCalibre('933', '20486'), // 308 wim
-              cabelas.makeCabelasCalibre('933', '20483'), // .30-06 Springfield
-              cabelas.makeCabelasCalibre('933', '20516'), // 338 lapua
-              cabelas.makeCabelasCalibre('933', '20491'), // 40/70
-              cabelas.makeCabelasCalibre('933', '20494'), // 7.62x39
-              cabelas.makeCabelasCalibre('933', '20561'), // 7mm-08
-              cabelas.makeCabelasCalibre('933', '20552'), // 7mm rem mag
-              cabelas.makeCabelasCalibre('933', '20557'), // 7mm wm
-            ])
-              .then(results => results.reduce((final, r) => final.concat(r), []))
-              .then(classifyCenterfire);
-          }
-        } else if (source === 'faoc') {
-          function makeFaocReq(ammotype) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/faoc/faoc/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                wrapAPIKey
-              }
-            }).then(d => { return d.data.data.items; });
-          }
-          if (type === 'rimfire') {
-            prom = makeFaocReq('rimfire-ammunition').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeFaocReq('rifle-ammunition'),
-              makeFaocReq('pistol-ammunition'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeFaocReq('shotgun-ammuntion')
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'alflahertys') {
-          // -------------------------
-          function makeAlReq(ammotype, page = 1) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/alflahertys/alflahertys/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                page,
-                wrapAPIKey
-              }
-            }).then(d => {
-              if (!d.data.data) {
-                console.error(`failed to load ${source}:${ammotype}_${page}`, d.data);
-                return [];
-              }
-              console.log(`${source}: loaded ${ammotype} page${d.data.data.page} of ${d.data.data.lastPage}`);
-              if (!isNaN(d.data.data.lastPage) && d.data.data.page < d.data.data.lastPage) {
-                return new Promise((resolve, reject) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-                  .then(() => makeAlReq(ammotype, page + 1))
-                  .then(dd => d.data.data.items.concat(dd));
-              } else {
-                return d.data.data.items;
-              }
-            });
-          }
-          if (type === 'rimfire') {
-            prom = makeAlReq('Rimfire-Ammo').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeAlReq('Rifle-Ammunition'), // multi page
-              makeAlReq('Bulk-Rifle'),
-              makeAlReq('Pistol-Ammo'),// multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeAlReq('Shotgun-Ammo')// multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'bullseye') {
-          function makeBullsReq(ammotype) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/bullseye/bullseye/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                wrapAPIKey
-              }
-            }).then(d => { return d.data.data.items; });
-          }
-          if (type === 'rimfire') {
-            prom = makeBullsReq('rimfire-ammunition').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeBullsReq('pistol-ammunition'),
-              makeBullsReq('rifle-ammunition'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeBullsReq('shotgun')
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'sail') {
-          // -------------------------
-          function makeSailReq(ammotype, page = 1) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/sail/sail/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                page,
-                wrapAPIKey
-              }
-            }).then(d => {
-
-              if (!d.data.data) {
-                console.error(`failed to load ${source}:${ammotype}_${page}`, d.data);
-                return [];
-              }
-
-              console.log(`${source}:  loaded ${ammotype} page${d.data.data.page} of ${d.data.data.lastPage}`);
-              if (!isNaN(d.data.data.lastPage) && d.data.data.page < d.data.data.lastPage) {
-                return new Promise((resolve, reject) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-                  .then(_ => makeSailReq(ammotype, page + 1))
-                  .then(dd => d.data.data.items.concat(dd));
-              } else {
-                return d.data.data.items;
-              }
-
-            });
-          }
-          if (type === 'rimfire') {
-            prom = makeSailReq('rimfire').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeSailReq('centerfire'), // multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeSailReq('shells-steel'),// multi page
-              makeSailReq('shells-lead')// multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'reliable') {
-          // -------------------------
-          function makeReliableRequest(ammotype, page = 1) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/reliablegun/reliablegun/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                page,
-                wrapAPIKey
-              }
-            }).then(d => {
-
-              if (!d.data.data) {
-                console.error(`failed to load ${source}:${ammotype}_${page}`, d.data);
-                return [];
-              }
-
-              console.log(`${source}:  loaded ${ammotype} page${d.data.data.page} of ${d.data.data.lastPage}`);
-              if (!isNaN(d.data.data.lastPage) && d.data.data.page < d.data.data.lastPage) {
-                return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-                  .then(() => makeReliableRequest(ammotype, page + 1))
-                  .then(dd => d.data.data.items.concat(dd));
-              } else {
-                return d.data.data.items;
-              }
-
-            });
-          }
-          if (type === 'rimfire') {
-            prom = makeReliableRequest('rimfire-ammunition').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeReliableRequest('rifle-ammunition'), // multi page
-              makeReliableRequest('hand-gun-ammunition'), // multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeReliableRequest('shotgun-ammunition'),// multi page
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'canadiantire') {
-          if (type === 'rimfire') {
-            prom = makeCanadianTireReq('Rimfire Ammunition').then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeCanadianTireReq('Centerfire Ammunition'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeCanadianTireReq('Lead Shotgun Shells'),
-              makeCanadianTireReq('Steel Shotgun Shells'),
-              makeCanadianTireReq('Slugs & Buckshots'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'tenda') {
-          function makeTendaRequest(ammotype) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/tenda/tenda/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                wrapAPIKey
-              }
-            }).then(d => { return d.data.data.items; });
-            // todo paginate the hoe
-          }
-          if (type === 'rimfire') {
-            prom = Promise.all([
-              makeTendaRequest('rimfire-ammo'),
-              makeTendaRequest('bulk-ammo'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyRimfire);
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              makeTendaRequest('rifle-ammo'),
-              makeTendaRequest('handgun-ammo'),
-              makeTendaRequest('bulk-ammo'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeTendaRequest('shotgun-ammo'),
-              makeTendaRequest('bulk-ammo'),
-
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'canadaammo') {
-          function makeCanadaAmmoRequest(ammotype) {
-            return axios({
-              url: "https://wrapapi.com/use/meta-ammo-ca/canadaammo/canadaammo/latest",
-              method: 'post',
-              data: {
-                ammotype,
-                wrapAPIKey
-              }
-            }).then(d => { return d.data.data ? d.data.data.items : []; }); // dont always have shotgun ammo ...
-          }
-          if (type === 'rimfire') {
-            prom = Promise.resolve([]); // dont have a separate rimfire category
-          } else if (type === 'centerfire') {
-            prom = Promise.all([
-              // these may include rimfire ammo in the future, may need to filter those out
-              makeCanadaAmmoRequest('rifle-ammo'),
-              makeCanadaAmmoRequest('handgun-ammo'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyCenterfire);
-          } else if (type === 'shotgun') {
-            prom = Promise.all([
-              makeCanadaAmmoRequest('shotgun-ammo'),
-            ]).then(results => results.reduce((final, r) => final.concat(r), [])).then(classifyShotgun);
-          }
-        } else if (source === 'wolverine') {
-          switch (type) {
-            case 'rimfire':
-              prom = makeWolverine('rimfire').then(classifyRimfire);
-              break;
-            case 'centerfire':
-              prom = Promise.all([
-                makeWolverine('rifle'),
-                makeWolverine('pistol')
-              ])
-                .then(results => results.reduce((final, r) => final.concat(r), []))
-                .then(classifyCenterfire);
-              break;
-            case 'shotgun':
-              prom = makeWolverine('shotgun').then(classifyShotgun);
-              break;
-            default:
-          }
-        } else if (source === 'jobrook') {
-
-
-          switch (type) {
-            case 'rimfire':
-              prom = makeJoBrook('rimfire').then(classifyRimfire);
-              break;
-            case 'centerfire':
-              prom = Promise.all([
-                makeJoBrook('rifle'),
-                makeJoBrook('pistol'),
-                makeJoBrook('bulk'),
-              ])
-                .then(results => results.reduce((final, r) => final.concat(r), []))
-                .then(classifyCenterfire);
-              break;
-            case 'shotgun':
-              prom = makeJoBrook('shotgun').then(classifyShotgun);
-              break;
-            default:
-          }
-        } else if (source === 'theammosource') {
-          prom = theAmmoSource(type);
-        } else if (source === 'hirsch') {
-          prom = hirsch(type);
-        } else if (source === 'wildwest') {
-          prom = wildWest(type);
-        } else if (source === 'tiger') {
-          prom = tigerArms(type);
-        } else if (source === 'magdump') {
-          prom = magdump(type);
-        } else if (source === 'rangeviewsports') {
-          prom = rangeviewsports(type);
-        }
-
-        if (!prom) {
-          console.log('unknown type + vendor', source, type);
-        }
-        prom
+        makeSearch(source, type)
           .then(classifyBrand)
           .then(i => proxyImages(i))
           .then(i => addSrcRefToLinks(i))
           .then(getCounts)
           .then(items => {
 
-            console.log(`found  ${items.length} ${type} for ${source}`);
+            if (items.length) {
+              console.log(`found ${items.length} ${source} ${type}`);
+            } else {
+              console.warn(`WARN: no results for ${source} ${type}`, new Date())
+            }
+
             client.set(key, JSON.stringify(items), (err) => {
               if (err) {
                 return reject(err);
@@ -455,7 +175,7 @@ function getItems(source, type) {
             })
           })
           .catch(e => {
-            console.error(`failed to load ${type} for ${source}`, e);
+            console.error(`ERROR: failed to load ${source} ${type} => ${e}`);
             resolve([]);// let other stuff work
           });
       }
@@ -465,24 +185,25 @@ function getItems(source, type) {
 }
 
 const SOURCES = [
-  'faoc',
-  'cabelas',
-  'alflahertys',
-  'bullseye',
-  'sail',
-  'canadiantire',
-  'reliable',
-  'tenda',
-  'canadaammo',
-  'wolverine',
-  'jobrook',
-  'theammosource',
-  'hirsch',
-  'wildwest',
-  'tiger',
-  'magdump',
-  'rangeviewsports'
-]
+  'canadiantire.ca',
+  'sail.ca',
+  'alflahertys.com',
+  'firearmsoutletcanada.com',
+  'bullseyelondon.com',
+  'reliablegun.com',
+  'cabelas.ca',
+  'gotenda.com',
+  'canadaammo.com',
+  'wolverinesupplies.com',
+  'jobrookoutdoors.com',
+  'theammosource.com',
+  'hirschprecision.com',
+  'gun-shop.ca',
+  'tigerarms.ca',
+  'magdump.ca',
+  'rangeviewsports.ca'
+];
+
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -498,25 +219,6 @@ server.route({
   path: '/',
   handler: function (request, reply) {
     reply('hi');
-  }
-});
-// TODO: this should break apart by calibare + best deals...
-server.route({
-  method: 'GET',
-  path: '/price-ranges',
-  handler: function (request, reply) {
-    Promise.all(
-      [
-        // 'rimfire', 'shotgun', 'centerfire'
-      ].map(t =>
-        axios(`http://127.0.0.1:8080/${t}`)
-          .then(res => ({ type: t, min: res.data[0].price, max: res.data[res.data.length - 1].price }))
-        ))
-      .then(results => reply(results))
-      .catch(e => {
-        console.error(`failed to get price ranges`, e)
-        reply(boom.badImplementation(`failed to load price summaries`));
-      });
   }
 });
 
