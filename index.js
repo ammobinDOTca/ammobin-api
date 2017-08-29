@@ -6,8 +6,13 @@ const hapiCron = require('hapi-cron');
 const moment = require('moment');
 const boom = require('boom');
 const url = require('url');
-
 const classifier = require('ammobin-classifier');
+
+const axios = require('axios');
+const version = require('./package.json').version;
+const axiosVersion = require('./node_modules/axios/package.json').version;
+axios.defaults.headers.common['User-Agent'] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}`; // be a nice web citizen and tell people who we are..
+
 
 const client = redis.createClient({ host: 'redis' });
 const influx = require('./influx');
@@ -32,8 +37,8 @@ const canadaammo = require('./canadaammo');
 const frontierfirearms = require('./frontierfirearms');
 const tradex = require('./tradex');
 const helpers = require('./helpers');
-const PROXY_URL = 'https://images.ammobin.ca';
 
+const PROXY_URL = 'https://images.ammobin.ca';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 function proxyImages(items) {
@@ -61,7 +66,7 @@ function addSrcRefToLinks(items) {
     } else {
       i.link += '&'
     }
-    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}&vendor=${encodeURIComponent(i.vendor)}`;
+    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}`;
     return i;
   });
 }
@@ -410,7 +415,10 @@ server.route({
         reply(Object.keys(itemsGrouped).map(k => itemsGrouped[k]));
 
       })
-      .catch(e => { console.error(e); reply(`failed to load ammo lists. ${e}`) })
+      .catch(e => {
+        console.error('ERROR: failed to load ammo list', e);
+        reply(`failed to load ammo lists. ${e}`);
+      });
   }
 });
 
@@ -426,7 +434,7 @@ server.register({
         url: `/${t}`
       },
       callback: () => {
-        console.info(`load_${t} has run!`);
+        console.info(new Date(), `load_${t} has run!`);
       }
     }))
   }

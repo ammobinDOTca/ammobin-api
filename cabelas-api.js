@@ -54,7 +54,6 @@ const columns =
 function classify(d) {
 
   if (!d.titles || !d.items) {
-    console.warn('did not load resutls for cabelas', d);
     return null;
   }
 
@@ -109,7 +108,7 @@ function makeCabelasReq(ammoType) {
 }
 
 function makeCabelasCalibre(ammotype, subtype) {
-  return axios.get(`http://www.cableas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
+  return axios.get(`http://www.cabelas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
     .then(r => {
       const $ = cheerio.load(r.data)
 
@@ -124,9 +123,8 @@ function makeCabelasCalibre(ammotype, subtype) {
           result.push($(f).text().trim());
         });
         items.push(result);
-      })
-
-      return { data: { data: { items, titles } } };
+      });
+      return { items, titles };
     })
     .then(classify);
 }
@@ -134,7 +132,6 @@ function makeCabelasCalibre(ammotype, subtype) {
 function cabelas(type) {
   if (type === 'rimfire') {
     return makeCabelasReq("936")
-      .then(helpers.classifyRimfire);
 
   } else if (type === 'shotgun') {
     return Promise.all([
@@ -145,7 +142,6 @@ function cabelas(type) {
       makeCabelasReq('926'),
     ])
       .then(helpers.combineResults)
-      .then(helpers.classifyShotgun);
 
   } else if (type === 'centerfire') {
     return Promise.all([
@@ -168,8 +164,7 @@ function cabelas(type) {
       makeCabelasCalibre('933', '20552'), // 7mm rem mag
       makeCabelasCalibre('933', '20557'), // 7mm wm
     ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyCenterfire);
+      .then(helpers.combineResults);
 
   } else {
     throw new Error(`unknown type received: ${type}`);

@@ -1,9 +1,9 @@
 const classifier = require('ammobin-classifier');
 const axios = require('axios');
-const wrapAPIKey = require('./wrap-api-key')
+const wrapAPIKey = require('./wrap-api-key');
 
 module.exports = {
-  combineResults: results => results.reduce((final, r) => final.concat(r), []),
+  combineResults: results => results.reduce((final, r) => r ? final.concat(r) : final, []),
   classifyRimfire: (items) => {
     return items.map(i => {
       i.calibre = classifier.classifyRimfire(i.calibre || i.name || '').toUpperCase()
