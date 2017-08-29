@@ -83,7 +83,7 @@ function classify(d) {
       }
 
       if (prop === 'link') {
-        value = 'http://www.ca' + value;
+        value = 'http://www.cabelas.ca' + value;
       } else if (prop === 'price') {
         value = parseFloat(value.replace('$', ''), 10);
       } else if (prop === 'count') {
@@ -109,7 +109,7 @@ function makeCabelasReq(ammoType) {
 }
 
 function makeCabelasCalibre(ammotype, subtype) {
-  return axios.get(`http://www.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
+  return axios.get(`http://www.cableas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
     .then(r => {
       const $ = cheerio.load(r.data)
 
