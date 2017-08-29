@@ -30,6 +30,7 @@ const reliablegun = require('./reliablegun');
 const tenda = require('./tenda');
 const canadaammo = require('./canadaammo');
 const frontierfirearms = require('./frontierfirearms');
+const tradex = require('./tradex');
 const helpers = require('./helpers');
 const PROXY_URL = 'https://images.ammobin.ca';
 
@@ -144,6 +145,9 @@ function makeSearch(source, type) {
     case 'frontierfirearms.ca':
       return frontierfirearms(type);
 
+    case 'tradeexcanada.com':
+      return tradex(type);
+
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
   }
@@ -208,7 +212,8 @@ const SOURCES = [
   'tigerarms.ca',
   'magdump.ca',
   'rangeviewsports.ca',
-  'frontierfirearms.ca'
+  'frontierfirearms.ca',
+  'tradeexcanada.com',
 ];
 
 
