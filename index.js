@@ -36,6 +36,8 @@ const tenda = require('./tenda');
 const canadaammo = require('./canadaammo');
 const frontierfirearms = require('./frontierfirearms');
 const tradex = require('./tradex');
+const bvoutdoors = require('./bvoutdoors');
+
 const helpers = require('./helpers');
 
 const PROXY_URL = 'https://images.ammobin.ca';
@@ -153,6 +155,9 @@ function makeSearch(source, type) {
     case 'tradeexcanada.com':
       return tradex(type);
 
+    case 'bvoutdoors.com':
+      return bvoutdoors(type);
+
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
   }
@@ -219,6 +224,7 @@ const SOURCES = [
   'rangeviewsports.ca',
   'frontierfirearms.ca',
   'tradeexcanada.com',
+  'bvoutdoors.com',
 ];
 
 

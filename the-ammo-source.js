@@ -64,7 +64,7 @@ module.exports = function (type) {
         '1_108_624', // 17 WSM
         '1_108_113', // 22LR, 22 Short, 22 WMR,
       ]
-        .map(getStuff)
+        .map(t => getStuff(t, 1))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyRimfire);
@@ -78,7 +78,7 @@ module.exports = function (type) {
         '1_108_136', // 28
         '1_108_134', // .410
       ]
-        .map(getStuff)
+        .map(t => getStuff(t, 1))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun);
@@ -178,7 +178,7 @@ module.exports = function (type) {
         '1_108_118', // 9mm Luger / 9x19 / 9mm NATO
         '1_108_138', // 9mm Makarov
       ]
-        .map(getStuff)
+        .map(t => getStuff(t, 1))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);

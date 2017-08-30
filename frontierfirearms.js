@@ -27,9 +27,6 @@ function work(type) {
 
 }
 
-// todo: need to pull item counts out from each page
-// todo: should pull list calibres... instead of hardcoded list
-
 function magdump(type) {
   switch (type) {
     case 'rimfire':
