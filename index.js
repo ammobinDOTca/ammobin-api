@@ -187,7 +187,7 @@ function getItems(source, type) {
               console.warn(`WARN: no results for ${source} ${type}`, new Date())
             }
 
-            client.set(key, JSON.stringify(items), (err) => {
+            client.set(key, JSON.stringify(items), 'EX', 172800 /*seconds => 48hrs*/, (err) => {
               if (err) {
                 return reject(err);
               }
