@@ -15,7 +15,7 @@ function work(page = 0) {
         const tha = $(row);
 
 
-        result.link = tha.find('.views-field-title a').prop('href');
+        result.link = 'https://www.tradeexcanada.com' + tha.find('.views-field-title a').prop('href');
         result.img = tha.find('img').prop('src');
         result.name = tha.find('.views-field-body').text();
         const priceTxt = tha.find('.uc-price').text();
