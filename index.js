@@ -205,8 +205,8 @@ function getItems(source, type) {
 }
 
 const SOURCES = [
-  'canadiantire.ca',
-  'sail.ca',
+  // 'canadiantire.ca',
+  // 'sail.ca',
   'alflahertys.com',
   'firearmsoutletcanada.com',
   'bullseyelondon.com',
@@ -215,9 +215,9 @@ const SOURCES = [
   'gotenda.com',
   'canadaammo.com',
   'wolverinesupplies.com',
-  'jobrookoutdoors.com',
+  // 'jobrookoutdoors.com',
   'theammosource.com',
-  'hirschprecision.com',
+  // 'hirschprecision.com',
   'gun-shop.ca',
   'tigerarms.ca',
   'magdump.ca',
