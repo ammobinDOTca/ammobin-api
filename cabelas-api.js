@@ -1,6 +1,8 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const throat = require('throat');
 const helpers = require('./helpers');
+
 
 const columns =
   [
@@ -144,25 +146,27 @@ function cabelas(type) {
       .then(helpers.combineResults)
 
   } else if (type === 'centerfire') {
+    const throttle = throat(5);
+
     return Promise.all([
       makeCabelasReq('916'),
-      makeCabelasCalibre('933', '19365'),// 204 ruger
-      makeCabelasCalibre('933', '20529'),// 22-250 rem
-      makeCabelasCalibre('933', '20476'), // 223 rem
-      makeCabelasCalibre('933', '20554'),//243 win
-      makeCabelasCalibre('933', '20543'), // 270 win
-      makeCabelasCalibre('933', '20556'), // 270 wsm
-      makeCabelasCalibre('933', '20641'), // 300 rem mag
-      makeCabelasCalibre('933', '20547'), // 30 30 win
-      makeCabelasCalibre('933', '19413'), // 303 brit
-      makeCabelasCalibre('933', '20486'), // 308 wim
-      makeCabelasCalibre('933', '20483'), // .30-06 Springfield
-      makeCabelasCalibre('933', '20516'), // 338 lapua
-      makeCabelasCalibre('933', '20491'), // 40/70
-      makeCabelasCalibre('933', '20494'), // 7.62x39
-      makeCabelasCalibre('933', '20561'), // 7mm-08
-      makeCabelasCalibre('933', '20552'), // 7mm rem mag
-      makeCabelasCalibre('933', '20557'), // 7mm wm
+      throttle(() => makeCabelasCalibre('933', '19365')),// 204 ruger
+      throttle(() => makeCabelasCalibre('933', '20529')),// 22-250 rem
+      throttle(() => makeCabelasCalibre('933', '20476')), // 223 rem
+      throttle(() => makeCabelasCalibre('933', '20554')),//243 win
+      throttle(() => makeCabelasCalibre('933', '20543')), // 270 win
+      throttle(() => makeCabelasCalibre('933', '20556')), // 270 wsm
+      throttle(() => makeCabelasCalibre('933', '20641')), // 300 rem mag
+      throttle(() => makeCabelasCalibre('933', '20547')), // 30 30 win
+      throttle(() => makeCabelasCalibre('933', '19413')), // 303 brit
+      throttle(() => makeCabelasCalibre('933', '20486')), // 308 wim
+      throttle(() => makeCabelasCalibre('933', '20483')), // .30-06 Springfield
+      throttle(() => makeCabelasCalibre('933', '20516')), // 338 lapua
+      throttle(() => makeCabelasCalibre('933', '20491')), // 40/70
+      throttle(() => makeCabelasCalibre('933', '20494')), // 7.62x39
+      throttle(() => makeCabelasCalibre('933', '20561')), // 7mm-08
+      throttle(() => makeCabelasCalibre('933', '20552')), // 7mm rem mag
+      throttle(() => makeCabelasCalibre('933', '20557')), // 7mm wm
     ])
       .then(helpers.combineResults);
 
