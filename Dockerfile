@@ -9,4 +9,5 @@ COPY . /build
 #VOLUME /build
 
 EXPOSE 8080
-CMD npm start
+USER node
+CMD ["node","index.js"]
