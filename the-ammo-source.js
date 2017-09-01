@@ -1,6 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('./helpers');
+const throat = require('throat');
 
 function getStuff(cPath, page = 1) {
   return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
@@ -52,6 +53,7 @@ function getStuff(cPath, page = 1) {
     });
 }
 
+const throttle = throat(5);
 
 module.exports = function (type) {
 
@@ -84,6 +86,7 @@ module.exports = function (type) {
         .then(helpers.classifyShotgun);
 
     case 'centerfire':
+
       return Promise.all([
         '1_108_119', // 10mm
         '1_108_481', // 17 Hornet
@@ -178,7 +181,7 @@ module.exports = function (type) {
         '1_108_118', // 9mm Luger / 9x19 / 9mm NATO
         '1_108_138', // 9mm Makarov
       ]
-        .map(t => getStuff(t, 1))
+        .map(t => throttle(() => getStuff(t, 1)))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);
