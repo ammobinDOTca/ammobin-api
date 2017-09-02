@@ -450,7 +450,7 @@ server.route({
       return reply(boom.badRequest('invalid type: ' + type));
     }
 
-    const throttle = throat(7);
+    const throttle = throat(1); // make it REALLY slow so we dont run out of memory
     return Promise.all(SOURCES.map(s => throttle(() => getItems(s, type))))
       .then(() => new Promise((resolve, reject) =>
         classifiedListsCache.drop(type, (e, r) => e ? reject(e) : resolve(r)))
@@ -495,7 +495,7 @@ server.register({
   options: {
     jobs: ['rimfire', 'shotgun', 'centerfire'].map((t, index) => ({
       name: 'load_' + t,
-      time: `0 ${index * 5} */${CACHE_REFRESH_HOURS} * * *`,
+      time: `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
       timezone: 'UTC',
       request: {
         method: 'GET',
