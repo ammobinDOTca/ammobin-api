@@ -53,7 +53,7 @@ function getStuff(cPath, page = 1) {
     });
 }
 
-const throttle = throat(5);
+const throttle = throat(1);
 
 module.exports = function (type) {
 
@@ -66,7 +66,7 @@ module.exports = function (type) {
         '1_108_624', // 17 WSM
         '1_108_113', // 22LR, 22 Short, 22 WMR,
       ]
-        .map(t => getStuff(t, 1))
+        .map(t => throttle(() => getStuff(t, 1)))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyRimfire);
@@ -80,7 +80,7 @@ module.exports = function (type) {
         '1_108_136', // 28
         '1_108_134', // .410
       ]
-        .map(t => getStuff(t, 1))
+        .map(t => throttle(() => getStuff(t, 1)))
       )
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun);
