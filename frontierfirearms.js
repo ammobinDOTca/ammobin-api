@@ -2,6 +2,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('./helpers');
+const throat = require('throat');
 
 function work(type) {
   return axios.get(`http://frontierfirearms.ca/ammunition-reloading/${type}.html`)
@@ -28,17 +29,20 @@ function work(type) {
 }
 
 function magdump(type) {
+  const throttle = throat(1);
+
   switch (type) {
     case 'rimfire':
       return work('rimfire-ammunition')
         .then(helpers.classifyRimfire);
 
     case 'centerfire':
+
       return Promise.all([
         'surplus-ammunition',
         'hand-gun-ammunition',
         'centerfire-ammunition',
-      ].map(work))
+      ].map(t => throttle(() => work(t))))
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);
 

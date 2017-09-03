@@ -134,6 +134,7 @@ function makeCabelasCalibre(ammotype, subtype) {
 function cabelas(type) {
   if (type === 'rimfire') {
     return makeCabelasReq("936")
+      .then(helpers.classifyRimfire);
 
   } else if (type === 'shotgun') {
     return Promise.all([
@@ -144,9 +145,10 @@ function cabelas(type) {
       makeCabelasReq('926'),
     ])
       .then(helpers.combineResults)
+      .then(helpers.classifyCenterfire);
 
   } else if (type === 'centerfire') {
-    const throttle = throat(5);
+    const throttle = throat(1);
 
     return Promise.all([
       makeCabelasReq('916'),
@@ -168,7 +170,8 @@ function cabelas(type) {
       throttle(() => makeCabelasCalibre('933', '20552')), // 7mm rem mag
       throttle(() => makeCabelasCalibre('933', '20557')), // 7mm wm
     ])
-      .then(helpers.combineResults);
+      .then(helpers.combineResults)
+      .then(helpers.classifyCenterfire); // need to convert their calibres to ours
 
   } else {
     throw new Error(`unknown type received: ${type}`);
