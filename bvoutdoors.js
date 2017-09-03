@@ -2,6 +2,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('./helpers');
+const throat = require('throat');
 
 function work(type, page = 1) {
   console.log(`loading bvoutdoors ${type} ${page}`)
@@ -31,8 +32,9 @@ function work(type, page = 1) {
       }
     })
 }
-
 function magdump(type) {
+  const throttle = throat(1);
+
   switch (type) {
     case 'rimfire':
       return work('Ammunition-Rimfire-2')
@@ -43,7 +45,7 @@ function magdump(type) {
         'Ammunition-Military-Surplus-318',
         'Ammunition-Rifle-1',
         'Ammunition-Handgun-108'
-      ].map(t => work(t, 1)))
+      ].map(t => throttle(() => work(t, 1))))
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);
 
@@ -52,7 +54,7 @@ function magdump(type) {
         'Ammunition-Shotshells-3',
         'Ammunition-Slugs-258',
         'Ammunition-Buckshot-257'
-      ].map(t => work(t, 1)))
+      ].map(t => throttle(() => work(t, 1))))
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun);
     default:

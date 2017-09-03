@@ -1,8 +1,7 @@
-// https://gun-shop.ca/product-category/ammunition/bulk-ammo/?orderby=price&count=100
-
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('./helpers');
+const throat = require('throat');
 
 function fn(type, page = 1) {
   return axios.get(`http://www.tigerarms.ca/product-category/ammunition/${type}/page/${page}/`)
@@ -38,16 +37,23 @@ function fn(type, page = 1) {
 }
 
 module.exports = function (type) {
+  const throttle = throat(1);
   switch (type) {
     case 'rimfire':
       return fn('rifle-ammo')
         .then(i => helpers.classifyBullets(i, type));
+
     case 'centerfire':
-      return Promise.all([fn('handgun-ammo'), fn('rifle-ammo')])
-        .then(results => results.reduce((final, r) => final.concat(r), []))
+      return Promise.all([
+        throttle(() => fn('handgun-ammo')),
+        throttle(() => fn('rifle-ammo'))
+      ])
+        .then(helpers.combineResults)
         .then(i => helpers.classifyBullets(i, type));
+
     case 'shotgun':
-      return fn('shotgun-ammo').then(helpers.classifyShotgun);
+      return fn('shotgun-ammo')
+        .then(helpers.classifyShotgun);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }

@@ -1,4 +1,5 @@
 const helpers = require('./helpers');
+const throat = require('throat');
 
 function makeTendaRequest(ammotype, page = 1) {
   return helpers.makeWrapApiReq('tenda', ammotype, page)
@@ -18,34 +19,38 @@ function makeTendaRequest(ammotype, page = 1) {
 }
 
 function tenda(type) {
-  if (type === 'rimfire') {
-    return Promise.all([
-      makeTendaRequest('rimfire-ammo'),
-      makeTendaRequest('bulk-ammo'),
-    ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyRimfire);
+  const throttle = throat(1);
+  switch (type) {
+    case 'rimfire':
+      return Promise.all([
+        'rimfire-ammo',
+        'bulk-ammo',
+      ].map(t => throttle(() => makeTendaRequest(t))))
+        .then(helpers.combineResults)
+        .then(helpers.classifyRimfire);
 
-  } else if (type === 'centerfire') {
-    return Promise.all([
-      makeTendaRequest('rifle-ammo'),
-      makeTendaRequest('handgun-ammo'),
-      makeTendaRequest('bulk-ammo'),
-    ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyCenterfire);
+    case 'centerfire':
+      return Promise.all([
+        'rifle-ammo',
+        'handgun-ammo',
+        'bulk-ammo',
+      ].map(t => throttle(() => makeTendaRequest(t))))
+        .then(helpers.combineResults)
+        .then(helpers.classifyCenterfire);
 
-  } else if (type === 'shotgun') {
-    return Promise.all([
-      makeTendaRequest('shotgun-ammo'),
-      makeTendaRequest('bulk-ammo'),
+    case 'shotgun':
+      return Promise.all([
+        'shotgun-ammo',
+        'bulk-ammo',
+      ].map(t => throttle(() => makeTendaRequest(t))))
+        .then(helpers.combineResults)
+        .then(helpers.classifyShotgun);
 
-    ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyShotgun);
-  } else {
-    throw new Error(`unknown type: ${type}`);
+    default:
+      throw new Error(`unknown type: ${type}`);
+
   }
+
 }
 
 module.exports = tenda;
