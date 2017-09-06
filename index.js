@@ -527,4 +527,11 @@ server.on('response', function (request) {
 
 });
 
+server.on('request-error', (request, err) => {
+  console.error(`Error response (500) sent for request:  ${request.id} ${request.method.toUpperCase()} ${request.url.path} because: ${err.message ? err.message : err}`);
 
+  setTimeout(() => {
+    console.error('CRASHING SERVER DUE TO 500');
+    process.exit(1);
+  }, 1000);
+});
