@@ -379,7 +379,7 @@ server.route({
       .then(helpers.combineResults)
       .then(results => {
         const encoded = encodeURIComponent(request.query.url)
-        const record = results.find(r => r && r.link.indexOf(encoded) >= 0); // !!({} && -1) === true
+        const record = results.find(r => r && r.link && r.link.indexOf(encoded) >= 0); // !!({} && -1) === true
 
         if (!record) {
           console.warn('WARN: unable to find matching record for ' + request.query.url);
