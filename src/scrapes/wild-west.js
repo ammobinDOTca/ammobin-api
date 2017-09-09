@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function fn(type) {
   return axios.get(`https://gun-shop.ca/product-category/ammunition/${type}/?orderby=price-desc`)

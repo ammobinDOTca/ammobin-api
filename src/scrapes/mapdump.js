@@ -1,7 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function work(type) {
   return axios.get(`https://magdump.ca/collections/${type}`)

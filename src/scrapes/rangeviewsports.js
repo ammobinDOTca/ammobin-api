@@ -1,7 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function fn(page) {
   return axios.get(`https://www.rangeviewsports.ca/collections/ammo?page=${page}&sort_by=best-selling`)

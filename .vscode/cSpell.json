@@ -8,10 +8,12 @@
     "words": [
         "Cabelas",
         "Centerfire",
+        "RSMQ",
         "Tenda",
         "alflahertys",
         "ammobin",
         "ammotype",
+        "autostart",
         "bullseyelondon",
         "canadaammo",
         "canadiantire",
@@ -20,6 +22,7 @@
         "magdump",
         "mapdump",
         "mget",
+        "qname",
         "rangeviewsports",
         "reliablegun",
         "rimfire"

@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function makeFaocReq(ammotype) {
   return helpers.makeWrapApiReq('faoc', ammotype)

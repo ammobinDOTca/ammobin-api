@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const throat = require('throat');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 
 const columns =

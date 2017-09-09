@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function makeBullsReq(ammotype) {
   return helpers.makeWrapApiReq('bullseye', ammotype)

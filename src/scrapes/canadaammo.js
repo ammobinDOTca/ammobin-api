@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function makeCanadaAmmoRequest(ammotype) {
   return helpers.makeWrapApiReq('canadaammo', ammotype)

@@ -1,6 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 const throat = require('throat');
 
 function fn(type, page = 1) {

@@ -1,5 +1,5 @@
 const axios = require('axios');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 /**
  * makeWolverine api req
