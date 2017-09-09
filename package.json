@@ -1,14 +1,15 @@
 {
   "name": "ammo-scrape-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "ammobin.ca api",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "supervisor  index.js",
-    "test": "eslint ./*.js"
+    "start": "node ./src/api/index.js",
+    "dev": "supervisor  -w src ./src/api/index.js",
+    "dev-worker": "supervisor  -w src ./src/worker/index.js",
+    "test": "eslint ./src/**/*.js"
   },
-  "author": "",
+  "author": "Simon Ramsay",
   "license": "ISC",
   "dependencies": {
     "ammobin-classifier": "0.0.16",
@@ -22,6 +23,7 @@
     "jsonp": "^0.2.1",
     "moment": "^2.18.1",
     "redis": "^2.7.1",
+    "rsmq-worker": "^0.5.2",
     "throat": "^4.1.0"
   },
   "devDependencies": {

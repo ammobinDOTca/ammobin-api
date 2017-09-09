@@ -1,5 +1,5 @@
 
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function makeJoBrook(ammotype) {
   return helpers.makeWrapApiReq('jobrook', ammotype)

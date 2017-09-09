@@ -1,5 +1,5 @@
 const axios = require('axios');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function work(page) {
 

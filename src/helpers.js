@@ -1,8 +1,14 @@
 const classifier = require('ammobin-classifier');
 const axios = require('axios');
-const wrapAPIKey = require('./wrap-api-key');
+const moment = require('moment');
+const { DATE_FORMAT } = require('./constants');
+const wrapAPIKey = require('./scrapes/wrap-api-key');
 
 module.exports = {
+  getKey: (source, type) => {
+    return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}`;
+  },
+
   combineResults: results => results.reduce((final, r) => r ? final.concat(r) : final, []),
   classifyRimfire: (items) => {
     return items.map(i => {

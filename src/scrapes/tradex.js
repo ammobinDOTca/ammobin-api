@@ -1,7 +1,7 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 // 0 based list
 function work(page = 0) {
   console.log(`loading page ${page} for tradex`);

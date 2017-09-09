@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 const throat = require('throat');
 
 function makeTendaRequest(ammotype, page = 1) {

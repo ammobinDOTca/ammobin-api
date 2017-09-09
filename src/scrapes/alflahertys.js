@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const helpers = require('../helpers');
 
 function makeAlReq(ammotype, page = 1) {
   return helpers.makeWrapApiReq('alflahertys', ammotype, page)
