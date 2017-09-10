@@ -8,7 +8,7 @@ function work(page = 0) {
 
   return axios.get(`https://www.tradeexcanada.com/produits/78?page=${page}`)
     .then(r => {
-      const $ = cheerio.load(r.data)
+      let $ = cheerio.load(r.data)
       const items = [];
       $('.views-view-grid .col-1, .views-view-grid .col-2, .views-view-grid .col-3, .views-view-grid .col-4').each((index, row) => {
         const result = {};
@@ -33,6 +33,7 @@ function work(page = 0) {
       })
 
       if ($('.pager-last.last').length) {
+        $ = null; // dont hold onto page
         return work(page + 1)
           .then(res => items.concat(res))
       } else {

@@ -8,7 +8,7 @@ function work(type, page = 1) {
   console.log(`loading bvoutdoors ${type} ${page}`)
   return axios.get(`https://www.bvoutdoors.com/${type}/?page=${page}&matchesperpage=80`)
     .then(r => {
-      const $ = cheerio.load(r.data)
+      let $ = cheerio.load(r.data)
       const items = [];
       $('.product-list-item').each((index, row) => {
         const result = {};
@@ -24,7 +24,9 @@ function work(type, page = 1) {
 
         items.push(result);
       })
+
       if ($('.button-small.next').length) {
+        $ = null; // dont hold onto page for recursion
         return work(type, page + 1)
           .then(results => items.concat(results));
       } else {

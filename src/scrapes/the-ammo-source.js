@@ -6,7 +6,7 @@ const throat = require('throat');
 function getStuff(cPath, page = 1) {
   return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
     .then(r => {
-      const $ = cheerio.load(r.data)
+      let $ = cheerio.load(r.data)
       const items = [];
       $('.productListing-odd , .productListing-even').each((index, row) => {
         const result = {};
@@ -44,6 +44,7 @@ function getStuff(cPath, page = 1) {
       const itemCounts = $('#productsListingTopNumber').text().split(' ').map(s => parseInt(s, 10)).filter(n => !isNaN(n));
 
       if (itemCounts[1] < itemCounts[2]) {
+        $ = null; // dont hold onto page
         console.log(`loaded ammo source ${itemCounts[0]} - ${itemCounts[1]} out of ${itemCounts[2]}`)
         return getStuff(cPath, page + 1)
           .then(res => items.concat(res))
