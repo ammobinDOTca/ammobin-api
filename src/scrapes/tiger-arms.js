@@ -6,7 +6,7 @@ const throat = require('throat');
 function fn(type, page = 1) {
   return axios.get(`http://www.tigerarms.ca/product-category/ammunition/${type}/page/${page}/`)
     .then(r => {
-      const $ = cheerio.load(r.data)
+      let $ = cheerio.load(r.data)
       const items = [];
       $('.product-inner').each((index, row) => {
         const result = {};
@@ -26,6 +26,7 @@ function fn(type, page = 1) {
 
       if ($('.fa-angle-right').length) {
         // load next page
+        $ = null; // dont hold onto current page
         console.log('loading tiger arms page', page + 1)
         return fn(type, page + 1)
           .then(ff => ff.concat(items));
