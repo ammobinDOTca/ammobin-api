@@ -12,7 +12,7 @@
   "author": "Simon Ramsay",
   "license": "ISC",
   "dependencies": {
-    "ammobin-classifier": "0.0.16",
+    "ammobin-classifier": "0.0.18",
     "axios": "^0.16.1",
     "boom": "^5.1.0",
     "catbox-redis": "^3.0.2",
