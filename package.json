@@ -14,7 +14,7 @@
   "dependencies": {
     "ammobin-classifier": "0.0.18",
     "axios": "^0.16.1",
-    "boom": "^5.1.0",
+    "boom": "^6.0.0",
     "catbox-redis": "^3.0.2",
     "cheerio": "^1.0.0-rc.2",
     "hapi": "^16.1.1",
