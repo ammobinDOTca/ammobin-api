@@ -21,6 +21,7 @@ const SOURCES = [
   'frontierfirearms.ca',
   'tradeexcanada.com',
   'bvoutdoors.com',
+  'nasgunsandammo.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
