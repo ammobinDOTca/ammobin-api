@@ -48,7 +48,7 @@ function magdump(type) {
 
     case 'centerfire':
       return Promise.all([
-        'centerfire',
+        'centrefire', // look at these fancy fellows...
         'surplus-ammo'
       ].map(t => throttle(() => work(t, 1))))
         .then(helpers.combineResults)
