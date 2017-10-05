@@ -2,7 +2,7 @@ const Influx = require('influx');
 
 const influxClicksDb = new Influx.InfluxDB({
   host: 'influx',
-  database: 'clicks',
+  database: 'clicks', // doh, should have been something more generic
   schema: [
     {
       measurement: 'click',
@@ -15,6 +15,20 @@ const influxClicksDb = new Influx.InfluxDB({
       },
       tags: [
         'userAgent',
+        'vendor',
+        'province',
+        'brand',
+        'calibre',
+      ]
+    },
+    {
+      measurement: 'item',
+      fields: {
+        name: Influx.FieldType.STRING,
+        price: Influx.FieldType.FLOAT,
+        unitCost: Influx.FieldType.FLOAT,
+      },
+      tags: [
         'vendor',
         'province',
         'brand',
@@ -55,6 +69,27 @@ module.exports = {
               price: item.price || 0,
               unitCost: item.unitCost || 0,
               count: item.count || 0,
+              name: item.name,
+            }
+          }
+        ])
+      )
+  },
+  logItem(item) {
+    return prom
+      .then(() =>
+        influxClicksDb.writePoints([
+          {
+            measurement: 'item',
+            tags: {
+              vendor: item.vendor,
+              province: item.province,
+              brand: item.brand,
+              calibre: item.calibre
+            },
+            fields: {
+              price: item.price || 0,
+              unitCost: item.unitCost || null,
               name: item.name,
             }
           }

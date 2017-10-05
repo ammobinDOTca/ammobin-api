@@ -13,10 +13,9 @@ to /etc/hosts
 
 2. ```docker-compose run -d```
 3. ```npm run dev```
+4. ```npm run dev-worker```
 
 ### todo
-- track prices in proper db
-- enable worker queue for pulling data
 
 ### docker hub
 https://hub.docker.com/r/ammobindotca/ammobin-api/
