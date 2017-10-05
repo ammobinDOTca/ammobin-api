@@ -3,7 +3,7 @@ const RSMQWorker = require("rsmq-worker");
 const classifier = require('ammobin-classifier');
 const CONSTANTS = require('../constants');
 const makeSearch = require('../scrapes');
-
+const influx = require('../api/influx');
 const getKey = require('../helpers').getKey;
 const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME,
   {
@@ -92,7 +92,9 @@ worker.on("message", function (msg, next, id) {
       }
 
       const key = getKey(source, type);
-      return new Promise((resolve, reject) => client.set(key, JSON.stringify(items), 'EX', 172800 /*seconds => 48hrs*/, (err) => err ? reject(err) : resolve(items)));
+
+      return new Promise((resolve, reject) => client.set(key, JSON.stringify(items), 'EX', 172800 /*seconds => 48hrs*/, (err) => err ? reject(err) : resolve(items)))
+        .then(() => Promise.all(items.map(item => influx.logItem(item))))
     })
     .then(() => next())
     .catch(e => {
