@@ -76,7 +76,7 @@ worker.on("message", function (msg, next, id) {
   console.log("Message id : " + id);
   const { source, type } = JSON.parse(msg);
   console.log('making scrape for ', source, type, new Date());
-
+  const searchStart = new Date();
   return makeSearch(source, type)
     .then(classifyBrand)
     .then(i => proxyImages(i))
@@ -94,10 +94,14 @@ worker.on("message", function (msg, next, id) {
       const key = getKey(source, type);
 
       return new Promise((resolve, reject) => client.set(key, JSON.stringify(items), 'EX', 172800 /*seconds => 48hrs*/, (err) => err ? reject(err) : resolve(items)))
-        .then(() => Promise.all(items.map(item => influx.logItem(item))))
+        .then(() => Promise.all([
+          ...items.map(item => influx.logItem(item)),
+          influx.logScrapeResult(type, source, items.length, new Date() - searchStart)
+        ]))
     })
     .then(() => next())
     .catch(e => {
+      influx.logScrapeFail(type, source, new Date() - searchStart)
       console.error(`ERROR: failed to load ${source} ${type} => ${e && e.message ? e.message : e}`);
       next(e);
     });
