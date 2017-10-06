@@ -34,6 +34,18 @@ const influxClicksDb = new Influx.InfluxDB({
         'brand',
         'calibre',
       ]
+    },
+    {
+      measurement: 'scrape',
+      fields: {
+        results: Influx.FieldType.INTEGER,
+        time: Influx.FieldType.INTEGER,
+        failed: Influx.FieldType.BOOLEAN,
+      },
+      tags: [
+        'vendor',
+        'type',
+      ]
     }
   ]
 });
@@ -91,6 +103,44 @@ module.exports = {
               price: item.price || 0,
               unitCost: item.unitCost || null,
               name: item.name,
+            }
+          }
+        ])
+      )
+  },
+  logScrapeResult(type, vendor, results, time) {
+    return prom
+      .then(() =>
+        influxClicksDb.writePoints([
+          {
+            measurement: 'scrape',
+            tags: {
+              vendor,
+              type
+            },
+            fields: {
+              results,
+              time,
+              failed: false
+            }
+          }
+        ])
+      )
+  },
+  logScrapeFail(type, vendor, time) {
+    return prom
+      .then(() =>
+        influxClicksDb.writePoints([
+          {
+            measurement: 'scrape',
+            tags: {
+              vendor,
+              type
+            },
+            fields: {
+              results: null,
+              time,
+              failed: true
             }
           }
         ])
