@@ -169,6 +169,19 @@ server.route({
 });
 
 server.route({
+  method: 'POST',
+  path: '/track-view',
+  handler: function (request, reply) {
+
+    // record user agent + calibre + brand that user opened up
+    const userAgent = request.headers['user-agent'] || 'unknown';
+    const body = request.payload;
+    return influx.logView(userAgent, body.brand, body.calibre)
+      .then(() => reply().code(201));
+  }
+})
+
+server.route({
   method: 'GET',
   path: '/track-outbound-click',
   handler: function (request, reply) {

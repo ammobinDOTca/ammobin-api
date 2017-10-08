@@ -101,7 +101,9 @@ worker.on("message", function (msg, next, id) {
     })
     .then(() => next())
     .catch(e => {
-      influx.logScrapeFail(type, source, new Date() - searchStart)
+      try { influx.logScrapeFail(type, source, new Date() - searchStart, e && e.message ? e.message : JSON.stringify(e)) } catch (ee) {
+        console.error('ERROR:', ee)
+      }
       console.error(`ERROR: failed to load ${source} ${type} => ${e && e.message ? e.message : e}`);
       next(e);
     });
