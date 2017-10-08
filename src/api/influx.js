@@ -22,6 +22,15 @@ const influxClicksDb = new Influx.InfluxDB({
       ]
     },
     {
+      measurement: 'view',
+      fields: { v: Influx.FieldType.BOOLEAN },
+      tags: [
+        'userAgent',
+        'brand',
+        'calibre',
+      ]
+    },
+    {
       measurement: 'item',
       fields: {
         name: Influx.FieldType.STRING,
@@ -40,7 +49,17 @@ const influxClicksDb = new Influx.InfluxDB({
       fields: {
         results: Influx.FieldType.INTEGER,
         time: Influx.FieldType.INTEGER,
-        failed: Influx.FieldType.BOOLEAN,
+      },
+      tags: [
+        'vendor',
+        'type',
+      ]
+    },
+    {
+      measurement: 'scrape-failure',
+      fields: {
+        time: Influx.FieldType.INTEGER,
+        error: Influx.FieldType.STRING
       },
       tags: [
         'vendor',
@@ -87,6 +106,22 @@ module.exports = {
         ])
       )
   },
+  logView(userAgent, brand, calibre) {
+    return prom
+      .then(() =>
+        influxClicksDb.writePoints([
+          {
+            measurement: 'view',
+            tags: {
+              userAgent,
+              brand,
+              calibre
+            },
+            fields: { v: true }
+          }
+        ])
+      )
+  },
   logItem(item) {
     return prom
       .then(() =>
@@ -120,27 +155,25 @@ module.exports = {
             },
             fields: {
               results,
-              time,
-              failed: false
+              time
             }
           }
         ])
       )
   },
-  logScrapeFail(type, vendor, time) {
+  logScrapeFail(type, vendor, time, error) {
     return prom
       .then(() =>
         influxClicksDb.writePoints([
           {
-            measurement: 'scrape',
+            measurement: 'scrape-failure',
             tags: {
               vendor,
               type
             },
             fields: {
-              results: null,
               time,
-              failed: true
+              error
             }
           }
         ])
