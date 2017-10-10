@@ -22,6 +22,7 @@ const SOURCES = [
   'tradeexcanada.com',
   'bvoutdoors.com',
   'nasgunsandammo.com',
+  'dantesports.com'
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
