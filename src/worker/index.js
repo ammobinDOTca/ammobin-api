@@ -9,7 +9,7 @@ const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME,
   {
     host: 'redis',
     autostart: true,
-    timeout: 120000, /*2 mins*/
+    timeout: 180000, /*3 mins*/
     defaultDelay: 10,
     maxReceiveCount: 1
   });
