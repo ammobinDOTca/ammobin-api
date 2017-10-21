@@ -55,7 +55,7 @@ module.exports = {
             "property"
         ],
         "dot-notation": [
-            "error",
+            "off",
             {
                 "allowKeywords": true
             }
