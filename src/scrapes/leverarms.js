@@ -38,7 +38,7 @@ function work(type, page = 1) {
       }
     })
 }
-function magdump(type) {
+function leverarms(type) {
   const throttle = throat(1);
 
   switch (type) {
@@ -62,4 +62,4 @@ function magdump(type) {
   }
 }
 
-module.exports = magdump;
+module.exports = leverarms;
