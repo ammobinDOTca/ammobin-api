@@ -25,6 +25,7 @@ const tradex = require('./tradex');
 const bvoutdoors = require('./bvoutdoors');
 const nas = require('./nas');
 const dante = require('./dante');
+const leverarms = require('./leverarms');
 
 function makeSearch(source, type) {
   switch (source) {
@@ -93,6 +94,9 @@ function makeSearch(source, type) {
 
     case 'dantesports.com':
       return dante(type);
+
+    case 'leverarms.com':
+      return leverarms(type);
 
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);

@@ -1,4 +1,4 @@
-const dante = require('../scrapes/dante')
+const test = require('../scrapes/leverarms')
 
-dante('centerfire').then(res => console.log(res))
+test('centerfire').then(res => console.log(res))
 
