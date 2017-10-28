@@ -1,0 +1,61 @@
+const axios = require('axios');
+const cheerio = require('cheerio');
+const helpers = require('../helpers');
+const throat = require('throat');
+
+function fn(type, page = 1) {
+  return axios.get(`http://www.westcoasthunting.ca/product-category/ammunition/${type}/page/${page}/`)
+    .then(r => {
+      let $ = cheerio.load(r.data)
+      const items = [];
+      $('.product').each((index, row) => {
+        const result = {};
+        const tha = $(row);
+        if (tha.find('.outofstock').length) {
+          return;
+        }
+
+        result.link = tha.find('a').prop('href');
+        result.img = tha.find('.attachment-shop_catalog').prop('src');
+        result.name = tha.find('.product-info h3').text();
+        result.price = parseFloat(tha.find('.amount').text().replace('$', ''));
+        result.vendor = 'Tiger Arms';
+        result.province = 'BC'
+        items.push(result);
+      })
+
+      if ($('.fa-angle-right').length) {
+        // load next page
+        $ = null; // dont hold onto current page
+        console.log('loading westcoasthunting page', page + 1)
+        return fn(type, page + 1)
+          .then(ff => ff.concat(items));
+      } else {
+        return items;
+      }
+    })
+
+}
+
+module.exports = function (type) {
+  const throttle = throat(1);
+  switch (type) {
+    case 'rimfire':
+      return fn('rimfire-others')
+        .then(i => helpers.classifyBullets(i, type));
+
+    case 'centerfire':
+      return Promise.all([
+        throttle(() => fn('handgun-ammo')),
+        throttle(() => fn('rifle-ammo'))
+      ])
+        .then(helpers.combineResults)
+        .then(i => helpers.classifyBullets(i, type));
+
+    case 'shotgun':
+      return fn('shotgun-ammo')
+        .then(helpers.classifyShotgun);
+    default:
+      return Promise.reject(new Error('unknown type: ' + type));
+  }
+}
