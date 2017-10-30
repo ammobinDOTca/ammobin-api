@@ -98,8 +98,10 @@ function makeSearch(source, type) {
 
     case 'leverarms.com':
       return leverarms(type);
-    case 'theshootingcentre.com':
-       return theShootingCenter(type);
+
+    case 'store.theshootingcentre.com':
+      return theShootingCenter(type);
+
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
   }
