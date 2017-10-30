@@ -24,6 +24,7 @@ const SOURCES = [
   'nasgunsandammo.com',
   'dantesports.com',
   'leverarms.com',
+  'theshootingcentre.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
