@@ -5,7 +5,7 @@ function makeSailReq(ammotype, page = 1) {
     .then(d => {
 
       console.log(`sail:  loaded ${ammotype} page${d.page} of ${d.lastPage}`);
-      if (!isNaN(d.lastPage) && d.page < d.lastPage) {
+      if (!isNaN(d.lastPage) && d.page < d.lastPage && d.items && d.items.length > 0) {
         return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
           .then(() => makeSailReq(ammotype, page + 1))
           .then(dd => d.items.concat(dd));
@@ -26,11 +26,7 @@ function sail(type) {
       .then(helpers.classifyCenterfire);
 
   } else if (type === 'shotgun') {
-    return Promise.all([
-      makeSailReq('shells-steel'),// multi page
-      makeSailReq('shells-lead')// multi page
-    ])
-      .then(helpers.combineResults)
+    return makeSailReq('shotguns')
       .then(helpers.classifyShotgun);
   } else {
     throw new Error(`Unknown type: ${type}`);
