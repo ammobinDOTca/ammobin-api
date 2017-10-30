@@ -26,6 +26,7 @@ const bvoutdoors = require('./bvoutdoors');
 const nas = require('./nas');
 const dante = require('./dante');
 const leverarms = require('./leverarms');
+const theShootingCenter = require('./the-shooting-center');
 
 function makeSearch(source, type) {
   switch (source) {
@@ -97,7 +98,8 @@ function makeSearch(source, type) {
 
     case 'leverarms.com':
       return leverarms(type);
-
+    case 'theshootingcentre.com':
+       return theShootingCenter(type);
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
   }
