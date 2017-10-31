@@ -25,6 +25,7 @@ const SOURCES = [
   'dantesports.com',
   'leverarms.com',
   'store.theshootingcentre.com',
+  'westernmetal.ca',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
