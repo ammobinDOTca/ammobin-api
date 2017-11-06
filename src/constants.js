@@ -26,6 +26,7 @@ const SOURCES = [
   'leverarms.com',
   'store.theshootingcentre.com',
   'westernmetal.ca',
+  'alsimmonsgunshop.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
