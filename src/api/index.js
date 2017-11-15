@@ -1,4 +1,4 @@
-'use strict';
+
 
 const Hapi = require('hapi');
 const redis = require('redis');
@@ -7,6 +7,7 @@ const moment = require('moment');
 const boom = require('boom');
 const url = require('url');
 const RedisSMQ = require('rsmq');
+const Hoek = require('hoek');
 const helpers = require('../helpers');
 
 const { SOURCES, DATE_FORMAT, CACHE_REFRESH_HOURS, QUEUE_NAME } = require('../constants');
@@ -44,13 +45,10 @@ const server = new Hapi.Server({
       host: 'redis',
       partition: 'cache'
     }
-  ]
-});
-
-server.connection({
+  ],
+  routes: { cors: true },
   host: '0.0.0.0',
   port: 8080,
-  routes: { cors: true }
 });
 
 const classifiedListsCache = server.cache({
@@ -315,45 +313,16 @@ server.route({
   }
 });
 
-server.register({
-  register: hapiCron,
 
-  options: {
-    jobs: ['rimfire', 'shotgun', 'centerfire'].map((t, index) => ({
-      name: 'load_' + t,
-      time: `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
-      timezone: 'UTC',
-      request: {
-        method: 'GET',
-        url: `/refresh-cache?type=${t}&secret-refresh-key=${secretRefreshKey}`
-      },
-      callback: () => {
-        console.info(new Date(), `refresh ${t} has run!`);
-      }
-    }))
-  }
-}, (err) => {
-
-  if (err) {
-    return console.error(err);
-  }
-
-  server.start((e) => {
-    if (e) {
-      throw e;
-    }
-    console.log(classifiedListsCache.isReady())
-
-    console.info(`Server started at ${server.info.uri}`);
-  });
-});
-
-server.on('response', function (request) {
+server.events.on('response', function (request) {
   console.log(`${request.info.remoteAddress}: ${request.method.toUpperCase()} ${request.url.path} --> ${request.response.statusCode} ${new Date().getTime() - request.info.received}ms`)
 
 });
 
-server.on('request-error', (request, err) => {
+server.events.on('request', (request, err) => {
+  if (request.channel !== 'error') {
+    return
+  }
   console.error(`Error response (500) sent for request:  ${request.id} ${request.method.toUpperCase()} ${request.url.path} because: ${err.message ? err.message : err}`);
 
   setTimeout(() => {
@@ -361,3 +330,38 @@ server.on('request-error', (request, err) => {
     process.exit(1);
   }, 1000);
 });
+
+async function doWork() {
+  try {
+    await server.register({
+      plugin: hapiCron,
+
+      options: {
+        jobs: ['rimfire', 'shotgun', 'centerfire'].map((t, index) => ({
+          name: 'load_' + t,
+          time: `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
+          timezone: 'UTC',
+          request: {
+            method: 'GET',
+            url: `/refresh-cache?type=${t}&secret-refresh-key=${secretRefreshKey}`
+          },
+          onComplete: () => {
+            console.info(new Date(), `refresh ${t} has run!`);
+          }
+        }))
+      }
+    });
+
+
+    await server.start();
+    console.log(classifiedListsCache.isReady())
+
+    console.info(`Server started at ${server.info.uri}`);
+  } catch (e) {
+    console.error('failed to start', e)
+    process.exit(1)
+  }
+}
+
+doWork()
+
