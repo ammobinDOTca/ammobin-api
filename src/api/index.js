@@ -7,7 +7,6 @@ const moment = require('moment');
 const boom = require('boom');
 const url = require('url');
 const RedisSMQ = require('rsmq');
-const Hoek = require('hoek');
 const helpers = require('../helpers');
 
 const { SOURCES, DATE_FORMAT, CACHE_REFRESH_HOURS, QUEUE_NAME } = require('../constants');
