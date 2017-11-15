@@ -260,28 +260,33 @@ server.route({
   }
 })
 
+function queueUpCacheRefresh(type) {
+  return Promise.all(SOURCES.map(source =>
+    new Promise((resolve, reject) => rsmq.sendMessage({ qname: QUEUE_NAME, message: JSON.stringify({ source, type }) },
+      (err, res) => err ? reject(err) : resolve(res)))
+  ))
+}
+
+const TYPES = ['rimfire', 'centerfire', 'shotgun'];
+
 server.route({
   method: 'GET',
   path: '/refresh-cache',
-  handler: function (req, reply) {
+  handler: async function (req, reply) {
 
     const type = req.query.type;
     console.log('secret-refresh-key', req.query['secret-refresh-key'], secretRefreshKey)
 
     if (req.query['secret-refresh-key'] !== secretRefreshKey) {
       return reply(boom.badRequest('fuck off. you dont have my super secret code...'))
-    } else if (['rimfire', 'centerfire', 'shotgun'].indexOf(type) === -1) {
+    } else if (TYPES.indexOf(type) === -1) {
       return reply(boom.badRequest('invalid type: ' + type));
     }
 
-    return Promise.all(SOURCES.map(source =>
-      new Promise((resolve, reject) => rsmq.sendMessage({ qname: QUEUE_NAME, message: JSON.stringify({ source, type }) },
-        (err, res) => err ? reject(err) : resolve(res)))
-    ))
-      .then(() => new Promise((resolve, reject) =>
-        bestPricesCache.drop(type, (e, r) => e ? reject(e) : resolve(r)))
-      )
-      .then(() => reply({ message: 'ok' }));
+    await queueUpCacheRefresh(type)
+    await new Promise((resolve, reject) => bestPricesCache.drop(type, (e, r) => e ? reject(e) : resolve(r)))
+
+    reply({ message: 'ok' })
   }
 })
 
@@ -292,7 +297,7 @@ server.route({
   handler: function (request, reply) {
 
     const type = request.params.type;
-    if (['rimfire', 'centerfire', 'shotgun'].indexOf(type) === -1) {
+    if (TYPES.indexOf(type) === -1) {
       console.log('unknown type', type)
       return reply(boom.badRequest('invalid type: ' + type));
     }
@@ -336,7 +341,7 @@ async function doWork() {
       plugin: hapiCron,
 
       options: {
-        jobs: ['rimfire', 'shotgun', 'centerfire'].map((t, index) => ({
+        jobs: TYPES.map((t, index) => ({
           name: 'load_' + t,
           time: `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
           timezone: 'UTC',
@@ -356,6 +361,9 @@ async function doWork() {
     console.log(classifiedListsCache.isReady())
 
     console.info(`Server started at ${server.info.uri}`);
+
+    // TYPES.forEach(type => queueUpCacheRefresh(type))
+
   } catch (e) {
     console.error('failed to start', e)
     process.exit(1)
