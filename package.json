@@ -15,7 +15,7 @@
     "ammobin-classifier": "0.0.20",
     "axios": "^0.17.0",
     "boom": "^7.0.0",
-    "catbox-redis": "^3.0.2",
+    "catbox-redis": "^4.0.0",
     "cheerio": "^1.0.0-rc.2",
     "hapi": "^17.0.0",
     "hapi-cron": "^1.0.0",
