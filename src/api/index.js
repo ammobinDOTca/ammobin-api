@@ -264,7 +264,7 @@ server.route({
     }
 
     await queueUpCacheRefresh(type)
-    await new Promise((resolve, reject) => bestPricesCache.drop(type, (e, r) => e ? reject(e) : resolve(r)))
+    await bestPricesCache.drop(type)
 
     return { message: 'ok' }
   }
