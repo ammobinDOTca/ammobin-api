@@ -30,6 +30,7 @@ const theShootingCenter = require('./the-shooting-center');
 const westernMetal = require('./western-metal');
 const alsimmons = require('./al-simmons')
 const vancouvergunstore = require('./vacovergunstore')
+const barton = require('./barton')
 
 function makeSearch(source, type) {
   switch (source) {
@@ -113,6 +114,9 @@ function makeSearch(source, type) {
 
     case 'vancouvergunstore.ca':
       return vancouvergunstore(type);
+
+    case 'bartonsbigcountry.ca':
+      return barton(type);
 
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);

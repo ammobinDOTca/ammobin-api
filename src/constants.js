@@ -27,7 +27,8 @@ const SOURCES = [
   'store.theshootingcentre.com',
   'westernmetal.ca',
   'alsimmonsgunshop.com',
-  'vancouvergunstore.ca'
+  'vancouvergunstore.ca',
+  'bartonsbigcountry.ca',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
