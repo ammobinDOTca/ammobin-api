@@ -1,4 +1,4 @@
-const test = require('../scrapes/vacovergunstore')
+const test = require('../scrapes/barton')
 
-test('centerfire').catch(e => console.error('ERROR', e))
+test('centerfire').then(f => console.log(f)).catch(e => console.error('ERROR', e))
 
