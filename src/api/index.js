@@ -278,7 +278,6 @@ server.route({
 
     const type = request.params.type;
     if (TYPES.indexOf(type) === -1) {
-      console.log('unknown type', type)
       throw boom.badRequest('invalid type: ' + type);
     }
 
@@ -296,18 +295,10 @@ server.route({
 server.events.on('response', function (request) {
   console.log(`${request.info.remoteAddress}: ${request.method.toUpperCase()} ${request.url.path} --> ${request.response.statusCode} ${new Date().getTime() - request.info.received}ms`)
 
-});
-
-server.events.on('request', (request, err) => {
-  if (request.channel !== 'error') {
-    return
+  if (request.response.statusCode >= 500) {
+    console.error('response', `Error response (500) sent for request:  ${request.id} ${request.method.toUpperCase()} ${request.url.path} because:  ${request.response._error.message}`);
   }
-  console.error(`Error response (500) sent for request:  ${request.id} ${request.method.toUpperCase()} ${request.url.path} because: ${err.message ? err.message : err}`);
 
-  setTimeout(() => {
-    console.error('CRASHING SERVER DUE TO 500');
-    process.exit(1);
-  }, 1000);
 });
 
 async function doWork() {
