@@ -1,4 +1,4 @@
-const test = require('../scrapes/shooting-edge')
+const test = require('../scrapes/lanz')
 
-test('centerfire').then(f => console.log(f.length)).catch(e => console.error('ERROR', e))
+test('rimfire').then(f => console.log(f)).catch(e => console.error('ERROR', e.message))
 

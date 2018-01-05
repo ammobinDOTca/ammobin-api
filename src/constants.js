@@ -29,7 +29,8 @@ const SOURCES = [
   'alsimmonsgunshop.com',
   'vancouvergunstore.ca',
   'bartonsbigcountry.ca',
-  'theshootingedge.com'
+  'theshootingedge.com',
+  'lanzshootingsupplies.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
