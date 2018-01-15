@@ -1,3 +1,5 @@
+import { duration } from 'moment';
+
 const axios = require('axios');
 const version = require('../../package.json').version;
 const axiosVersion = require('../../node_modules/axios/package.json').version;
@@ -33,6 +35,7 @@ const vancouvergunstore = require('./vacovergunstore')
 const barton = require('./barton')
 const shootingEdge = require('./shooting-edge')
 const lanz = require('./lanz')
+const durham = require('./durhamoutdoors')
 
 function makeSearch(source, type) {
   switch (source) {
@@ -125,6 +128,9 @@ function makeSearch(source, type) {
 
     case 'lanzshootingsupplies.com':
       return lanz(type)
+
+    case 'durhamoutdoors.ca':
+      return durham(type)
 
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);

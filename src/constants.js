@@ -31,6 +31,7 @@ const SOURCES = [
   'bartonsbigcountry.ca',
   'theshootingedge.com',
   'lanzshootingsupplies.com',
+  'durhamoutdoors.ca',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
