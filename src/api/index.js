@@ -189,22 +189,28 @@ server.route({
     }
     const date = moment.utc().format(DATE_FORMAT);
 
-    const results = await new Promise((resolve, reject) =>
-      client.mget([
-        'rimfire',
-        'shotgun',
-        'centerfire'
-      ].map(type => `${date}_${host}_${type}`), (err, res) => err ? reject(err) : resolve(res.map(JSON.parse))))
-      .then(helpers.combineResults)
+    try {
+      const results = await new Promise((resolve, reject) =>
+        client.mget([
+          'rimfire',
+          'shotgun',
+          'centerfire'
+        ].map(type => `${date}_${host}_${type}`), (err, res) => err ? reject(err) : resolve(res.map(JSON.parse))))
+        .then(helpers.combineResults)
 
-    const encoded = encodeURIComponent(request.query.url)
-    const record = results.find(r => r && r.link && r.link.indexOf(encoded) >= 0); // !!({} && -1) === true
+      const encoded = encodeURIComponent(request.query.url)
+      const record = results.find(r => r && r.link && r.link.indexOf(encoded) >= 0); // !!({} && -1) === true
 
-    if (!record) {
-      console.warn('WARN: unable to find matching record for ' + request.query.url);
+      if (!record) {
+        console.warn('WARN: unable to find matching record for ' + request.query.url);
+      }
+
+
+      await influx.logClick(request.query.url, request.headers['user-agent'], record ? record : {});
+    } catch (e) {
+      console.error("ERROR: failed to track click", e)
     }
 
-    await influx.logClick(request.query.url, request.headers['user-agent'], record ? record : {});
     return h
       .redirect(request.query.url);
   }
