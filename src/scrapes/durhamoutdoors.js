@@ -15,15 +15,15 @@ function work(page = 1) {
         const result = {};
         const tha = $(row);
 
-        if (tha.prop('class').indexOf('outofstock') >= 0) {
+        if (tha.find('sale').text().toLowerCase() === 'sold out') {
           return;
         }
 
         // todo: all of this does not work yet...
-        result.link = tha.find('.woocommerce-LoopProduct-link').prop('href');
-        result.img = tha.find('.wp-post-image').prop('src');
-        result.name = tha.find('.woocommerce-loop-product__title').text();
-        const priceTxt = tha.find('.woocommerce-Price-amount').text();
+        result.link = 'https://durhamoutdoors.ca' + tha.find('a').prop('href');
+        result.img = 'https://' + tha.find('a img').prop('src');
+        result.name = tha.find('.title').text();
+        const priceTxt = tha.find('.price').text();
         result.price = parseFloat(priceTxt.replace('$', ''));
         result.vendor = 'Durham Outdoors';
         result.province = 'ON'

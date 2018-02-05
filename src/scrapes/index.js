@@ -1,5 +1,3 @@
-import { duration } from 'moment';
-
 const axios = require('axios');
 const version = require('../../package.json').version;
 const axiosVersion = require('../../node_modules/axios/package.json').version;
