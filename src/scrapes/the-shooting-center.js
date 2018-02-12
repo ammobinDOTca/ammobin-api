@@ -5,7 +5,7 @@ const helpers = require('../helpers');
 
 function work(page = 1) {
   console.log(`loading theShootingCenter ${page}`)
-  return axios.get(`https://store.theshootingcentre.com/collections/ammo?page=${page}`)
+  return axios.get(`https://store.theshootingcentre.com/collections/ammunition?page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
