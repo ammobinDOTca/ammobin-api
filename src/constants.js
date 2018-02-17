@@ -33,6 +33,7 @@ const SOURCES = [
   'lanzshootingsupplies.com',
   'durhamoutdoors.ca',
   'solelyoutdoors.com',
+  'northprosports.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
