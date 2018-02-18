@@ -1,13 +1,14 @@
 const helpers = require('../helpers');
 
-function makeSailReq(ammotype, page = 1) {
+async function makeSailReq(ammotype, page = 1) {
+  await helpers.delayScrape('https://www.sail.ca')
+
   return helpers.makeWrapApiReq('sail', ammotype, page)
     .then(d => {
 
       console.log(`sail:  loaded ${ammotype} page${d.page} of ${d.lastPage}`);
       if (!isNaN(d.lastPage) && d.page < d.lastPage && d.items && d.items.length > 0) {
-        return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-          .then(() => makeSailReq(ammotype, page + 1))
+        return makeSailReq(ammotype, page + 1)
           .then(dd => d.items.concat(dd));
       } else {
         return d.items;

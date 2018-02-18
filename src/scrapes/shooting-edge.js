@@ -1,9 +1,12 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('../helpers');
+const SITE = 'https://theshootingedge.com'
 
-function fn(section, type, page = 1) {
-  return axios.get(`https://theshootingedge.com/collections/ammunition-1?page=${page}`)
+async function fn(section, type, page = 1) {
+  await helpers.delayScrape(SITE)
+
+  return axios.get(`${SITE}/collections/ammunition-1?page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
@@ -14,7 +17,7 @@ function fn(section, type, page = 1) {
           return;
         }
 
-        result.link = 'https://theshootingedge.com' + tha.prop('href');
+        result.link = SITE + tha.prop('href');
         result.img = 'https:' + tha.find('.product-card__image').prop('src');
 
         result.name = tha.find('.product-card__name').text();

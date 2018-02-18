@@ -3,6 +3,45 @@ const axios = require('axios');
 const moment = require('moment');
 const { DATE_FORMAT } = require('./constants');
 const wrapAPIKey = require('./scrapes/wrap-api-key');
+const delay = require('delay')
+
+// in memory cache of site to delay so as to not spam robots.txt
+const _siteToDelayMap = {};
+
+/**
+ * get the crawl delay from robots.txt
+ * @param {string} site base url
+ * @returns {Promise<number>}
+ */
+const getCrawlDelayMS = async (site) => {
+  if (_siteToDelayMap[site] >= 0) {
+    return _siteToDelayMap[site]
+  }
+
+  let delay = 1000; // default to 1s between requests
+  try {
+    const robots = await axios.get(site + '/robots.txt').then(d => d.data)
+
+    const f = robots
+      .split('\n')
+      .map(l => {
+        return l.split(': ')
+      })
+      .find(l => l[0].toLowerCase() === 'crawl-delay')
+
+    if (f) {
+      delay = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
+    } else {
+      console.debug('no Crawl-delay found for ' + site)
+    }
+  } catch (e) {
+    console.error('ERROR ' + site, e && e.message ? e.message : e)
+  }
+
+  _siteToDelayMap[site] = delay;
+
+  return delay
+}
 
 module.exports = {
   getKey: (source, type) => {
@@ -63,5 +102,6 @@ module.exports = {
 
         return d.data.data;
       });
-  }
+  },
+  delayScrape: async (site) => delay(await getCrawlDelayMS(site)),
 };

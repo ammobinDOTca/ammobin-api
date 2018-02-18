@@ -3,10 +3,14 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
+const SITE = 'https://alsimmonsgunshop.com';
 
-function work(type, page = 1) {
+async function work(type, page = 1) {
+
+  await helpers.delayScrape(SITE)
   console.log(`loading al simmons ${type} ${page}`)
-  return axios.get(`https://alsimmonsgunshop.com/product-category/ammunition/${type}/page/${page}/?instock_products=in`)
+
+  return axios.get(`${SITE}/product-category/ammunition/${type}/page/${page}/?instock_products=in`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];

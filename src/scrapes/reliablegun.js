@@ -1,12 +1,13 @@
 const helpers = require('../helpers');
 
-function makeReliableRequest(ammotype, page = 1) {
+async function makeReliableRequest(ammotype, page = 1) {
+  await helpers.delayScrape('https://www.reliablegun.com')
+
   return helpers.makeWrapApiReq('reliablegun', ammotype, page)
     .then(d => {
       console.log(`reliablegun:  loaded ${ammotype} page${d.page} of ${d.lastPage}`);
       if (!isNaN(d.lastPage) && d.page < d.lastPage) {
-        return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-          .then(() => makeReliableRequest(ammotype, page + 1))
+        return makeReliableRequest(ammotype, page + 1)
           .then(dd => d.items.concat(dd));
       } else {
         return d.items;

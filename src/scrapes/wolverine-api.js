@@ -1,4 +1,5 @@
 const axios = require('axios');
+const throat = require('throat')
 const helpers = require('../helpers');
 
 /**
@@ -64,13 +65,15 @@ function makeWolverine(type) {
           calibre,
           brand,
           link: 'https://www.wolverinesupplies.com/ProductDetail/' +
-          `${i.ItemNumber}_${i.Title.replace(rep, '-').split(' ').join('-')}`
+            `${i.ItemNumber}_${i.Title.replace(rep, '-').split(' ').join('-')}`
         }
       });
     })
 }
 
 function wolverinesupplies(type) {
+  const throttle = throat(1);
+
   switch (type) {
     case 'rimfire':
       return makeWolverine('rimfire')
@@ -78,9 +81,9 @@ function wolverinesupplies(type) {
 
     case 'centerfire':
       return Promise.all([
-        makeWolverine('rifle'),
-        makeWolverine('pistol')
-      ])
+        'rifle',
+        'pistol'
+      ].map(t => throttle(() => makeWolverine(t))))
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);
 

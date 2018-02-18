@@ -3,7 +3,9 @@ const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function fn(type, page = 1) {
+async function fn(type, page = 1) {
+  await helpers.delayScrape('http://www.tigerarms.ca')
+
   return axios.get(`http://www.tigerarms.ca/product-category/ammunition/${type}/page/${page}/`)
     .then(r => {
       let $ = cheerio.load(r.data)

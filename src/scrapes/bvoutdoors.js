@@ -4,7 +4,9 @@ const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function work(type, page = 1) {
+async function work(type, page = 1) {
+  await helpers.delayScrape('https://www.bvoutdoors.com')
+
   console.log(`loading bvoutdoors ${type} ${page}`)
   return axios.get(`https://www.bvoutdoors.com/${type}/?page=${page}&matchesperpage=80`)
     .then(r => {

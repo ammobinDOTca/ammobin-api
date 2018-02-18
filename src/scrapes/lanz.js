@@ -4,8 +4,10 @@ const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function work(type, page = 1) {
+async function work(type, page = 1) {
+  await helpers.delayScrape('http://www.lanzshootingsupplies.com')
   console.log(`loading  lanz ${type} ${page}`)
+
   return axios.get(`http://www.lanzshootingsupplies.com/shop/ammunition/${type}/page${page}.html?limit=50`)
     .then(r => {
       let $ = cheerio.load(r.data)
@@ -34,6 +36,7 @@ function work(type, page = 1) {
       }
     })
 }
+
 function lanz(type) {
   const throttle = throat(1);
 

@@ -4,8 +4,11 @@ const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function work(type, page = 1) {
+async function work(type, page = 1) {
+
+  await helpers.delayScrape('https://www.nasgunsandammo.com')
   console.log(`loading nasgunsandammo ${type} ${page}`)
+
   return axios.get(`https://www.nasgunsandammo.com/product-category/ammo/${type}/page/${page}/`)
     .then(r => {
       let $ = cheerio.load(r.data)
