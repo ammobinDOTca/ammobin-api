@@ -3,7 +3,10 @@ const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function fn(section, type, page = 1) {
+async function fn(section, type, page = 1) {
+
+  await helpers.delayScrape('https://www.westernmetal.ca')
+
   return axios.get(`https://www.westernmetal.ca/shooting-category/${section}?field_product_types_tid[]=${type}&sort_order=DESC&page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)

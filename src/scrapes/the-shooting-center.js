@@ -2,17 +2,20 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('../helpers');
+const SITE = 'https://store.theshootingcentre.com'
 
-function work(page = 1) {
+async function work(page = 1) {
+  await helpers.delayScrape(SITE)
+
   console.log(`loading theShootingCenter ${page}`)
-  return axios.get(`https://store.theshootingcentre.com/collections/ammunition?page=${page}`)
+  return axios.get(`${SITE}/collections/ammunition?page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
       $('.grid-uniform .large--one-quarter.medium--one-third.small--one-half').each((index, row) => {
         const result = {};
         const tha = $(row);
-        result.link = 'https://store.theshootingcentre.com' + tha.find('.product-grid-item').prop('href');
+        result.link = SITE + tha.find('.product-grid-item').prop('href');
         result.img = tha.find('img').prop('src');
         if (result.img && result.img.indexOf('no-image') >= 0) {
           result.img = null;

@@ -2,9 +2,12 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('../helpers');
 const throat = require('throat');
+const SITE = 'https://www.theammosource.com'
 
-function getStuff(cPath, page = 1) {
-  return axios.get(`https://www.theammosource.com/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
+async function getStuff(cPath, page = 1) {
+  await helpers.delayScrape(SITE)
+
+  return axios.get(`${SITE}/store/index.php?main_page=index&cPath=${cPath}&page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
@@ -24,7 +27,7 @@ function getStuff(cPath, page = 1) {
 
         result.link = tha.find('.listing a').prop('href');
         const src = tha.find('.listingProductImage').prop('src');
-        result.img = src ? ('https://www.theammosource.com/' + src) : null;
+        result.img = src ? (SITE + '/' + src) : null;
         result.name = tha.find('.itemTitle').text();
 
         tha.find('.productListing-data').each((index, subrow) => {

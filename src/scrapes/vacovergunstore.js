@@ -3,12 +3,15 @@ const cheerio = require('cheerio');
 const throat = require('throat');
 
 const helpers = require('../helpers');
+const SITE = 'https://vancouvergunstore.ca';
 // 0 based list
-function work(type, page = 1) {
+async function work(type, page = 1) {
+
+  await helpers.delayScrape(SITE)
   console.log(`loading ${type} page ${page} for vancouver gun store`);
 
 
-  return axios.get(`https://vancouvergunstore.ca/collections/ammunition/${type}?page=${page}`)
+  return axios.get(`${SITE}/collections/ammunition/${type}?page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
@@ -17,7 +20,7 @@ function work(type, page = 1) {
         const tha = $(row);
 
 
-        result.link = 'https://vancouvergunstore.ca' + tha.find('.prod-image a').prop('href');
+        result.link = SITE + tha.find('.prod-image a').prop('href');
         result.img = 'https:' + tha.find('.prod-image img').prop('src');
         result.name = tha.find('.product-info-inner h3').text();
         const salePrice = tha.find('.price .onsale').text()

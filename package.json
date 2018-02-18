@@ -17,6 +17,7 @@
     "boom": "^7.0.0",
     "catbox-redis": "^4.0.0",
     "cheerio": "^1.0.0-rc.2",
+    "delay": "^2.0.0",
     "hapi": "^17.0.0",
     "hapi-cron": "^1.0.0",
     "influx": "^5.0.7",

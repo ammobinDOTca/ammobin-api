@@ -3,8 +3,11 @@ const cheerio = require('cheerio');
 const throat = require('throat');
 const helpers = require('../helpers');
 
-function work(type, page = 1) {
+async function work(type, page = 1) {
+
+  await helpers.delayScrape('https://www.solelyoutdoors.com')
   console.log(`loading solely outdoors ${page}`)
+
   return axios.get(`https://www.solelyoutdoors.com/ammunition/${type}/page${page}.html`)
     .then(r => {
       let $ = cheerio.load(r.data)

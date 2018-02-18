@@ -2,11 +2,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const helpers = require('../helpers');
+const SITE = 'https://www.tradeexcanada.com'
 // 0 based list
-function work(page = 0) {
+async function work(page = 0) {
+  await helpers.delayScrape(SITE)
   console.log(`loading page ${page} for tradex`);
 
-  return axios.get(`https://www.tradeexcanada.com/produits/78?page=${page}`)
+  return axios.get(`${SITE}/produits/78?page=${page}`)
     .then(r => {
       let $ = cheerio.load(r.data)
       const items = [];
@@ -15,7 +17,7 @@ function work(page = 0) {
         const tha = $(row);
 
 
-        result.link = 'https://www.tradeexcanada.com' + tha.find('.views-field-title a').prop('href');
+        result.link = SITE + tha.find('.views-field-title a').prop('href');
         result.img = tha.find('img').prop('src');
         result.name = tha.find('.views-field-body').text();
         const priceTxt = tha.find('.uc-price').text();

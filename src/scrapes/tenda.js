@@ -1,7 +1,10 @@
 const helpers = require('../helpers');
 const throat = require('throat');
 
-function makeTendaRequest(ammotype, page = 1) {
+async function makeTendaRequest(ammotype, page = 1) {
+
+  await helpers.delayScrape('https://www.gotenda.com')
+
   return helpers.makeWrapApiReq('tenda', ammotype, page)
     .then(d => {
       if (!d.items) {
@@ -9,8 +12,7 @@ function makeTendaRequest(ammotype, page = 1) {
       }
       console.log(`tenda: loaded ${ammotype} page${d.page} of ${d.lastPage}`);
       if (!isNaN(d.lastPage) && d.page < d.lastPage) {
-        return new Promise((resolve) => setTimeout(() => resolve(), 1500 + Math.round(100 * Math.random())))
-          .then(() => makeTendaRequest(ammotype, page + 1))
+        return makeTendaRequest(ammotype, page + 1)
           .then(dd => d.items.concat(dd));
       } else {
         return d.items;
