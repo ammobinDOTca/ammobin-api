@@ -28,7 +28,8 @@ async function work(type, page = 1) {
         items.push(result);
       })
 
-      if ($('.next.enabled').length) {
+      // having redirect problem, disabled pulling other pages for now
+      if (1 > 2 && $('.next.enabled').length) {
         $ = null; // dont hold onto page for recursion
         return work(type, page + 1)
           .then(results => items.concat(results));
