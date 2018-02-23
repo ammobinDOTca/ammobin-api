@@ -65,7 +65,7 @@ const classifiedListsCache = server.cache({
       .reduce((final, r) => r
         ? final.concat(r)
         : final,
-      [])
+        [])
       .filter(r => r && (r.price > 0) && r.calibre && r.calibre !== 'UNKNOWN')
       .sort(function (a, b) {
         if (a.price > b.price) {
@@ -287,13 +287,41 @@ server.route({
       throw boom.badRequest('invalid type: ' + type);
     }
 
-    const res = await classifiedListsCache.get(type)
+    let page = 1
+    if (request.query.page) {
+      page = parseInt(request.query.page, 10)
+    }
+    if (isNaN(page) || page < 1) {
+      throw boom.badRequest('invalid page: ' + page);
+    }
+
+    let pageSize = 25
+    if (request.query.pageSize) {
+      pageSize = parseInt(request.query.pageSize, 10)
+    }
+    if (isNaN(pageSize) || pageSize < 1 || page > 100) {
+      throw boom.badRequest('invalid pageSize: ' + pageSize);
+    }
+
+    let calibre = ''
+    if (request.query.calibre) {
+      calibre = request.query.calibre.toUpperCase()
+    }
+
+    let res = await classifiedListsCache.get(type)
 
     if (res.length === 0) {
       console.warn(`WARN: no cached results for ${type}. dropping the cat box`);
       classifiedListsCache.drop(type);
     }
-    return res;
+    res = res.filter(r => calibre === '' || r.calibre === calibre)
+
+    return {
+      page,
+      pages: Math.ceil(res.length / pageSize),
+      items: res
+        .slice((page - 1) * pageSize, page * pageSize)
+    }
   }
 });
 
