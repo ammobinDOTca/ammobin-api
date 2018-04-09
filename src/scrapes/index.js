@@ -36,6 +36,7 @@ const lanz = require('./lanz')
 const durham = require('./durhamoutdoors')
 const soley = require('./soley-outdoors')
 const northpro = require('./northpro')
+const wanstall = require('./wanstalls')
 
 function makeSearch(source, type) {
   switch (source) {
@@ -137,6 +138,9 @@ function makeSearch(source, type) {
 
     case 'northprosports.com':
       return northpro(type)
+
+    case 'wanstallsonline.com':
+      return wanstall(type)
 
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`);
