@@ -34,6 +34,7 @@ const SOURCES = [
   'durhamoutdoors.ca',
   'solelyoutdoors.com',
   'northprosports.com',
+  'wanstallsonline.com',
 ];
 
 const PROXY_URL = 'https://images.ammobin.ca';
