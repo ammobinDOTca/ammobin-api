@@ -28,7 +28,7 @@
     "throat": "^4.1.0"
   },
   "devDependencies": {
-    "eslint": "4.17.0",
+    "eslint": "4.18.0",
     "supervisor": "^0.12.0"
   }
 }
