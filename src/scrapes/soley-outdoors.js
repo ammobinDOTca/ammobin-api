@@ -51,8 +51,8 @@ function solelyoutdoors(type) {
     case 'centerfire':
       return Promise.all([
         'centerfire-ammo',
-        'handgun-ammo',
-        'rifle-ammo'
+        // 'handgun-ammo',
+        // 'rifle-ammo'
       ]
         .map(t => throttle(() => work(t))))
         .then(helpers.combineResults)
