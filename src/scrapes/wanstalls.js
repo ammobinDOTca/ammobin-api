@@ -23,7 +23,9 @@ async function getStuff(type, page = 1) {
         result.name = tha.find('.product-name').text();
 
 
-        result.price = tha.find('.price').text().replace('$', '');
+        const salePrice = parseFloat(tha.find('.special-price .price').text().replace('$', ''));
+        const regPrice = parseFloat(tha.find('.price-box .price').text().replace('$', ''));
+        result.price = isFinite(salePrice) && salePrice > 0 ? salePrice : regPrice;
 
         result.vendor = 'Wanstalls';
         result.province = 'BC'
@@ -32,7 +34,6 @@ async function getStuff(type, page = 1) {
 
       const pages = $('.pager .amount').first().text().split(' ').map(i => parseInt(i, 10)).filter(i => isFinite(i))
 
-      // page size is 12, hope that doesnt line up
       if (items.length && pages.length === 2 && pages[0] < pages[1]) {
         $ = null; // dont hold onto page
         console.log(`loading wanstalls page ${page} for type ${type}`)
