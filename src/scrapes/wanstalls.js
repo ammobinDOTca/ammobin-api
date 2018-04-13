@@ -30,8 +30,10 @@ async function getStuff(type, page = 1) {
         items.push(result);
       });
 
+      const pages = $('.pager .amount').first().text().split(' ').map(i => parseInt(i, 10)).filter(i => isFinite(i))
+
       // page size is 12, hope that doesnt line up
-      if (items.length === 12) {
+      if (items.length && pages.length === 2 && pages[0] < pages[1]) {
         $ = null; // dont hold onto page
         console.log(`loading wanstalls page ${page} for type ${type}`)
         return getStuff(type, page + 1)
