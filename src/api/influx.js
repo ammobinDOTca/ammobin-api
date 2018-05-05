@@ -80,6 +80,12 @@ const prom = influxClicksDb.getDatabaseNames()
     throw e;
   });
 
+// ping server every minute to make sure that it stays connected...
+setInterval(async () => {
+  await prom;
+
+  await influxClicksDb.ping(100)
+}, 1000 * 60);
 
 module.exports = {
   logClick(url, userAgent, item) {
