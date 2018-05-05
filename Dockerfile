@@ -7,4 +7,5 @@ COPY . /build
 
 EXPOSE 8080
 USER node
+VOLUME [ "/build/logs" ]
 CMD ["node","src/api/index.js"]

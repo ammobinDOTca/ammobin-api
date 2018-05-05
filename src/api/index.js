@@ -8,6 +8,7 @@ const boom = require('boom');
 const url = require('url');
 const RedisSMQ = require('rsmq');
 const helpers = require('../helpers');
+const fs = require('fs')
 
 const { SOURCES, DATE_FORMAT, CACHE_REFRESH_HOURS, QUEUE_NAME } = require('../constants');
 const influx = require('./influx');
@@ -158,6 +159,38 @@ server.route({
   path: '/',
   handler: () => 'hi'
 });
+
+server.route({
+  method: 'GET',
+  path: '/ping',
+  handler: () => 'pong'
+});
+
+server.route({
+  method: 'POST',
+  path: '/submit-address',
+  handler: async function (request, h) {
+
+    const body = request.payload;
+
+    if (!body || ['name', 'address', 'city', 'province', 'postal'].some(k => !body[k] || body[k].length > 1000)) {
+      throw boom.badRequest('missing required field...')
+    }
+
+    const info = {
+      name: body.name.replace(/[^\w\s]/gi, ''),
+      address: body.address.replace(/[^\w\s]/gi, ''),
+      city: body.city.replace(/[^\w\s]/gi, ''),
+      province: body.province.replace(/[^\w\s]/gi, ''),
+      postal: body.postal.replace(/[^\w\s]/gi, ''),
+      note: (body.note || '').replace(/[^\w\s]/gi, '')
+    }
+
+    await new Promise((resolve, reject) => fs.appendFile('logs/submitted-addresses.csv', `${info.name},${info.address},${info.city},${info.city},${info.province},${info.postal},${info.note}\n`, err => err ? reject(err) : resolve()))
+
+    return h.response('success');
+  }
+})
 
 server.route({
   method: 'POST',
