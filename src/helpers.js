@@ -96,8 +96,7 @@ module.exports = {
     })
       .then(d => {
         if (!d.data.data) {
-          console.warn(`failed to load list of items for ${target} ${ammotype}`, d.data);
-          return {};
+          throw new Error(`failed to load list of items for ${target} ${ammotype}`)
         }
 
         return d.data.data;

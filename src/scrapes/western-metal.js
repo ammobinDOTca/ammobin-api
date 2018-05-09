@@ -28,8 +28,6 @@ async function fn(section, type, page = 1) {
         items.push(result);
       })
 
-      console.log(items)
-
       if ($('.next').length > 0 && items.length > 0) {
         // load next page
         $ = null; // dont hold onto current page

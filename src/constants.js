@@ -8,7 +8,7 @@ const SOURCES = [
   'bullseyelondon.com',
   'reliablegun.com',
   'cabelas.ca',
-  'gotenda.com',
+  // 'gotenda.com', // disabled 2018-05-08
   'canadaammo.com',
   'wolverinesupplies.com',
   'jobrookoutdoors.com',
