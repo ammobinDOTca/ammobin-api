@@ -68,24 +68,34 @@ const influxClicksDb = new Influx.InfluxDB({
     }
   ]
 });
+let prom
+function createInfluxClient() {
+  prom = influxClicksDb.getDatabaseNames()
+    .then(names => {
+      if (!names.includes('clicks')) {
+        return influxClicksDb.createDatabase('clicks');
+      }
+    })
+    .catch(e => {
+      console.error('FAILED to connect to influx', e);
+      throw e;
+    });
+}
 
-const prom = influxClicksDb.getDatabaseNames()
-  .then(names => {
-    if (!names.includes('clicks')) {
-      return influxClicksDb.createDatabase('clicks');
-    }
-  })
-  .catch(e => {
-    console.error('FAILED to connect to influx', e);
-    throw e;
-  });
+createInfluxClient();
 
-// ping server every minute to make sure that it stays connected...
+// ping server 20s to make sure that it stays connected...
 setInterval(async () => {
+
   await prom;
 
-  await influxClicksDb.ping(100)
-}, 1000 * 60);
+  const connections = await influxClicksDb.ping(100)
+  if (!connections.some(c => c.online)) {
+    console.error('influx client ping failed. recreating client')
+    createInfluxClient();
+  }
+
+}, 1000 * 20);
 
 module.exports = {
   logClick(url, userAgent, item) {
