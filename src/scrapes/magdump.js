@@ -34,8 +34,8 @@ function magdump(type) {
   switch (type) {
     case 'rimfire':
       return Promise.all([
-        '22-lr',
-        '17-hmr'
+        'in-stock-22lr',
+        // '17-hmr'
       ].map(work))
         .then(helpers.combineResults)
         .then(helpers.classifyRimfire);
@@ -43,17 +43,20 @@ function magdump(type) {
     case 'centerfire':
       return Promise.all([
         '7-62x39mm',
-        '223-remington',
-        '9x19mm',
-        '308-winchester',
-        '6-5-creedmoor',
-        '9-3x62mm'
+        'in-stock-223-rem-5-56-nato',
+        '9x19mm-1',
+        // '308-winchester',
+        // '6-5-creedmoor',
+        '9-3x62mm',
+        '45-acp'
       ].map(work))
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire);
 
     case 'shotgun':
-      return Promise.resolve([]);
+      return Promise.resolve(['shotgun'].map(work))
+        .then(helpers.combineResults)
+        .then(helpers.classifyShotgun);
     default:
       return Promise.reject(new Error('unknown type: ' + type));
   }
