@@ -45,12 +45,12 @@ function solelyoutdoors(type) {
 
   switch (type) {
     case 'rimfire':
-      return work('rimfire-ammo', 1)
+      return work('rimfire', 1)
         .then(helpers.classifyRimfire);
 
     case 'centerfire':
       return Promise.all([
-        'centerfire-ammo',
+        'centerfire',
         // 'handgun-ammo',
         // 'rifle-ammo'
       ]
@@ -59,7 +59,7 @@ function solelyoutdoors(type) {
         .then(helpers.classifyCenterfire);
 
     case 'shotgun':
-      return work('shotgun-ammo', 1).then(helpers.classifyShotgun);
+      return work('shotgun', 1).then(helpers.classifyShotgun);
 
     default:
       return Promise.reject(new Error('unknown type: ' + type));
