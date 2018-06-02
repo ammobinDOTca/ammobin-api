@@ -1,6 +1,6 @@
 
-const test = require('../scrapes/magdump')
+const test = require('../scrapes/cabelas-api')
 
 
-test('centerfire').then(f => console.log(f)).catch(e => console.error('ERROR', e.message))
+test('rimfire').then(f => console.log(f)).catch(e => console.error('ERROR', e))
 

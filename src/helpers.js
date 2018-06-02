@@ -96,7 +96,8 @@ module.exports = {
     })
       .then(d => {
         if (!d.data.data) {
-          throw new Error(`failed to load list of items for ${target} ${ammotype}`)
+          console.log(d.data)
+          throw new Error(`failed to load list of items for ${target} ${ammotype}: ${d.data.messages}`)
         }
 
         return d.data.data;
