@@ -1,75 +1,78 @@
 const Influx = require('influx');
 
-const influxClicksDb = new Influx.InfluxDB({
-  host: 'influx',
-  database: 'clicks', // doh, should have been something more generic
-  schema: [
-    {
-      measurement: 'click',
-      fields: {
-        url: Influx.FieldType.STRING,
-        cost: Influx.FieldType.FLOAT,
-        unitCost: Influx.FieldType.FLOAT,
-        count: Influx.FieldType.INTEGER,
-        name: Influx.FieldType.STRING,
-      },
-      tags: [
-        'userAgent',
-        'vendor',
-        'province',
-        'brand',
-        'calibre',
-      ]
-    },
-    {
-      measurement: 'view',
-      fields: { v: Influx.FieldType.BOOLEAN },
-      tags: [
-        'userAgent',
-        'brand',
-        'calibre',
-      ]
-    },
-    {
-      measurement: 'item',
-      fields: {
-        name: Influx.FieldType.STRING,
-        price: Influx.FieldType.FLOAT,
-        unitCost: Influx.FieldType.FLOAT,
-      },
-      tags: [
-        'vendor',
-        'province',
-        'brand',
-        'calibre',
-      ]
-    },
-    {
-      measurement: 'scrape',
-      fields: {
-        results: Influx.FieldType.INTEGER,
-        time: Influx.FieldType.INTEGER,
-      },
-      tags: [
-        'vendor',
-        'type',
-      ]
-    },
-    {
-      measurement: 'scrape-failure',
-      fields: {
-        time: Influx.FieldType.INTEGER,
-        error: Influx.FieldType.STRING
-      },
-      tags: [
-        'vendor',
-        'type',
-      ]
-    }
-  ]
-});
+let influxClicksDb;
 let prom
 function createInfluxClient() {
+
+  influxClicksDb = new Influx.InfluxDB({
+    host: 'influx',
+    database: 'clicks', // doh, should have been something more generic
+    schema: [
+      {
+        measurement: 'click',
+        fields: {
+          url: Influx.FieldType.STRING,
+          cost: Influx.FieldType.FLOAT,
+          unitCost: Influx.FieldType.FLOAT,
+          count: Influx.FieldType.INTEGER,
+          name: Influx.FieldType.STRING,
+        },
+        tags: [
+          'userAgent',
+          'vendor',
+          'province',
+          'brand',
+          'calibre',
+        ]
+      },
+      {
+        measurement: 'view',
+        fields: { v: Influx.FieldType.BOOLEAN },
+        tags: [
+          'userAgent',
+          'brand',
+          'calibre',
+        ]
+      },
+      {
+        measurement: 'item',
+        fields: {
+          name: Influx.FieldType.STRING,
+          price: Influx.FieldType.FLOAT,
+          unitCost: Influx.FieldType.FLOAT,
+        },
+        tags: [
+          'vendor',
+          'province',
+          'brand',
+          'calibre',
+        ]
+      },
+      {
+        measurement: 'scrape',
+        fields: {
+          results: Influx.FieldType.INTEGER,
+          time: Influx.FieldType.INTEGER,
+        },
+        tags: [
+          'vendor',
+          'type',
+        ]
+      },
+      {
+        measurement: 'scrape-failure',
+        fields: {
+          time: Influx.FieldType.INTEGER,
+          error: Influx.FieldType.STRING
+        },
+        tags: [
+          'vendor',
+          'type',
+        ]
+      }
+    ]
+  })
+
   prom = influxClicksDb.getDatabaseNames()
     .then(names => {
       if (!names.includes('clicks')) {
