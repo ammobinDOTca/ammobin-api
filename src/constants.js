@@ -7,7 +7,7 @@ const SOURCES = [
   'firearmsoutletcanada.com',
   'bullseyelondon.com',
   'reliablegun.com',
-  'cabelas.ca', // blocked 2018-06-02
+//  'cabelas.ca', // blocked 2018-06-02
   // 'gotenda.com', // disabled 2018-05-08
   'canadaammo.com',
   'wolverinesupplies.com',
