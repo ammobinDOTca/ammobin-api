@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 async function makeTendaRequest(ammotype, page = 1) {
 
   await helpers.delayScrape(`https://www.gotenda.com`)
-	const f = await axios.get(`https://render-tron.appspot.com/render/https://gotenda.com/product-category/ammunition/${ammotype}/page/${page}/?number=48`)
+	const f = await axios.get(`http://rendertron:3000/render/https://gotenda.com/product-category/ammunition/${ammotype}/page/${page}/?number=48`)
   
 	let $ = cheerio.load(f.data)
   const items = [];
