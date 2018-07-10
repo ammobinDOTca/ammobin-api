@@ -1,10 +1,8 @@
 const Influx = require('influx');
 
-let influxClicksDb;
-let prom
-function createInfluxClient() {
+async function createInfluxClient() {
 
-  influxClicksDb = new Influx.InfluxDB({
+  const influxClicksDb = new Influx.InfluxDB({
     host: 'influx',
     database: 'clicks', // doh, should have been something more generic
     schema: [
@@ -73,37 +71,18 @@ function createInfluxClient() {
     ]
   })
 
-  prom = influxClicksDb.getDatabaseNames()
-    .then(names => {
-      if (!names.includes('clicks')) {
-        return influxClicksDb.createDatabase('clicks');
-      }
-    })
-    .catch(e => {
-      console.error('FAILED to connect to influx', e);
-      throw e;
-    });
-}
-
-createInfluxClient();
-
-// ping server 20s to make sure that it stays connected...
-setInterval(async () => {
-
-  await prom;
-
-  const connections = await influxClicksDb.ping(100)
-  if (!connections.some(c => c.online)) {
-    console.error('influx client ping failed. recreating client')
-    createInfluxClient();
+  const names = await influxClicksDb.getDatabaseNames()
+  if (!names.includes('clicks')) {
+    await influxClicksDb.createDatabase('clicks');
   }
 
-}, 1000 * 20);
+  return influxClicksDb;
+}
 
 module.exports = {
   logClick(url, userAgent, item) {
-    return prom
-      .then(() =>
+    return createInfluxClient()
+      .then(influxClicksDb =>
         influxClicksDb.writePoints([
           {
             measurement: 'clicks',
@@ -126,8 +105,8 @@ module.exports = {
       )
   },
   logView(userAgent, brand, calibre) {
-    return prom
-      .then(() =>
+    return createInfluxClient()
+      .then(influxClicksDb =>
         influxClicksDb.writePoints([
           {
             measurement: 'view',
@@ -142,8 +121,8 @@ module.exports = {
       )
   },
   logItem(item) {
-    return prom
-      .then(() =>
+    return createInfluxClient()
+      .then(influxClicksDb =>
         influxClicksDb.writePoints([
           {
             measurement: 'item',
@@ -163,8 +142,8 @@ module.exports = {
       )
   },
   logScrapeResult(type, vendor, results, time) {
-    return prom
-      .then(() =>
+    return createInfluxClient()
+      .then(influxClicksDb =>
         influxClicksDb.writePoints([
           {
             measurement: 'scrape',
@@ -181,8 +160,8 @@ module.exports = {
       )
   },
   logScrapeFail(type, vendor, time, error) {
-    return prom
-      .then(() =>
+    return createInfluxClient()
+      .then(influxClicksDb =>
         influxClicksDb.writePoints([
           {
             measurement: 'scrape-failure',
@@ -198,6 +177,4 @@ module.exports = {
         ])
       )
   },
-  // tmp. remove once redis no longer sole db
-  influxClicksDb
 }
