@@ -1,5 +1,5 @@
 const Influx = require('influx');
-
+const dontUseInflux = process.env.DONT_USE_INFLUX === 'true';
 async function createInfluxClient() {
 
   const influxClicksDb = new Influx.InfluxDB({
@@ -81,6 +81,9 @@ async function createInfluxClient() {
 
 module.exports = {
   logClick(url, userAgent, item) {
+    if (dontUseInflux) {
+        return Promise.resolve();
+    }
     return createInfluxClient()
       .then(influxClicksDb =>
         influxClicksDb.writePoints([
@@ -105,6 +108,9 @@ module.exports = {
       )
   },
   logView(userAgent, brand, calibre) {
+    if (dontUseInflux) {
+        return Promise.resolve();
+    }
     return createInfluxClient()
       .then(influxClicksDb =>
         influxClicksDb.writePoints([
@@ -121,6 +127,9 @@ module.exports = {
       )
   },
   logItem(item) {
+    if (dontUseInflux) {
+        return Promise.resolve();
+    }
     return createInfluxClient()
       .then(influxClicksDb =>
         influxClicksDb.writePoints([
@@ -142,6 +151,9 @@ module.exports = {
       )
   },
   logScrapeResult(type, vendor, results, time) {
+    if (dontUseInflux) {
+        return Promise.resolve();
+    }
     return createInfluxClient()
       .then(influxClicksDb =>
         influxClicksDb.writePoints([
@@ -160,6 +172,9 @@ module.exports = {
       )
   },
   logScrapeFail(type, vendor, time, error) {
+    if (dontUseInflux) {
+        return Promise.resolve();
+    }
     return createInfluxClient()
       .then(influxClicksDb =>
         influxClicksDb.writePoints([
