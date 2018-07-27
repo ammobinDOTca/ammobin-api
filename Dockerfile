@@ -8,6 +8,6 @@ COPY . /build
 
 EXPOSE 8080
 USER node
-HEALTHCHECK --interval=30s --timeout=1s CMD wget localhost:8080/ping -q || exit 1
+HEALTHCHECK --interval=30s --timeout=1s CMD wget localhost:8080/ping -q -O/dev/null || exit 1
 VOLUME [ "/build/logs" ]
 CMD ["node","src/api/index.js"]
