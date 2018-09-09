@@ -84,7 +84,7 @@ function classify(d) {
       }
 
       if (prop === 'link') {
-        value = 'http://www.cabelas.ca' + value;
+        value = 'https://www.cabelas.ca' + value;
       } else if (prop === 'price') {
         value = parseFloat(value.replace('$', ''), 10);
       } else if (prop === 'count') {
@@ -104,13 +104,11 @@ function classify(d) {
     .filter(r => !isNaN(r.price) && r.price > 0);
 }
 
-function makeCabelasReq(ammoType) {
-  return helpers.makeWrapApiReq('cabelas', ammoType)
-    .then(classify);
-}
+async function makeCabelasCalibre(ammotype, subtype) {
+  await helpers.delayScrape('https://www.cabelas.ca')
 
-function makeCabelasCalibre(ammotype, subtype) {
-  return axios.get(`http://www.cabelas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
+
+  return axios.get(`https://www.cabelas.ca/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
     .then(r => {
       const $ = cheerio.load(r.data)
 
@@ -131,25 +129,30 @@ function makeCabelasCalibre(ammotype, subtype) {
     .then(classify);
 }
 
+function makeCabelasReq(ammoType) {
+  return makeCabelasCalibre(ammoType,null)
+//    .then(classify);
+}
+
 function cabelas(type) {
+  const throttle = throat(1);
+  // TODO: need to fix classifier for rimfire+shotgun
   if (type === 'rimfire') {
     return makeCabelasReq("936")
       .then(helpers.classifyRimfire);
 
   } else if (type === 'shotgun') {
     return Promise.all([
-      makeCabelasReq('928'),
-      makeCabelasReq('922'),
-      makeCabelasReq('923'),
-      makeCabelasReq('924'),
-      makeCabelasReq('926'),
+      throttle(() => makeCabelasReq('928')),
+      throttle(() => makeCabelasReq('922')),
+      throttle(() => makeCabelasReq('923')),
+      throttle(() => makeCabelasReq('924')),
+      throttle(() => makeCabelasReq('926')),
     ])
       .then(helpers.combineResults)
       .then(helpers.classifyCenterfire);
 
   } else if (type === 'centerfire') {
-    const throttle = throat(1);
-
     return Promise.all([
       makeCabelasReq('916'),
       throttle(() => makeCabelasCalibre('933', '19365')),// 204 ruger
