@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 RUN apk --no-cache add wget
 WORKDIR /build
 COPY package.json /build

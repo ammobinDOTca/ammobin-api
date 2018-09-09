@@ -2,7 +2,7 @@ const axios = require('axios');
 const version = require('../../package.json').version;
 const axiosVersion = require('../../node_modules/axios/package.json').version;
 axios.defaults.headers.common['User-Agent'] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}`; // be a
-axios.defaults.headers.common['Referer'] = `ammobin.ca`; 
+axios.defaults.headers.common['Referer'] = `ammobin.ca`;
 
 const cabelas = require('./cabelas-api');
 const canadiantire = require('./canadian-tire');

@@ -10,7 +10,7 @@
     "test": "eslint ./src/**/*.js"
   },
   "author": "Simon Ramsay",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "ammobin-classifier": "0.0.26",
     "axios": "^0.18.0",
@@ -18,17 +18,17 @@
     "catbox-redis": "^4.0.0",
     "cheerio": "^1.0.0-rc.2",
     "delay": "^3.0.0",
-    "hapi": "^17.0.0",
-    "hapi-cron": "^1.0.0",
+    "hapi": "^17.5.4",
+    "hapi-cron": "^1.0.4",
     "influx": "^5.0.7",
     "jsonp": "^0.2.1",
-    "moment": "^2.18.1",
+    "moment": "^2.22.2",
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
     "throat": "^4.1.0"
   },
   "devDependencies": {
-    "eslint": "5.0.0",
+    "eslint": "^5.5.0",
     "supervisor": "^0.12.0"
   }
 }

@@ -6,3 +6,4 @@ influx-data
 redis-data
 package-lock.json
 logs/*
+*~
