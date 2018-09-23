@@ -16,7 +16,7 @@ const influx = require('./influx');
 const rsmq = new RedisSMQ({ host: 'redis' });
 const client = redis.createClient({ host: 'redis' });
 
-const secretRefreshKey = Math.random().toString(); // required to only allow us to refresh the cache on our terms
+const secretRefreshKey = Math.round(Math.random() * 10000000000).toString(); // required to only allow us to refresh the cache on our terms
 console.log('secretRefreshKey', secretRefreshKey)
 
 rsmq.listQueues(function (err, queues) {
