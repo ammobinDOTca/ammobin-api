@@ -1,4 +1,4 @@
-# ammobin-api [ ![Codeship Status for ammobinDOTca/ammobin-api](https://app.codeship.com/projects/11229ef0-d3e6-0135-b59a-12b6e6b26eee/status?branch=master)](https://app.codeship.com/projects/262911) [![Greenkeeper badge](https://badges.greenkeeper.io/ammobinDOTca/ammobin-api.svg)](https://greenkeeper.io/)
+# ammobin-api [ ![Codeship Status for ammobinDOTca/ammobin-api](https://app.codeship.com/projects/11229ef0-d3e6-0135-b59a-12b6e6b26eee/status?branch=master)](https://app.codeship.com/projects/262911) [![Greenkeeper badge](https://badges.greenkeeper.io/ammobinDOTca/ammobin-api.svg)](https://greenkeeper.io/) [![docker pulls](https://img.shields.io/docker/pulls/ammobindotca/ammobin-api.svg)](https://hub.docker.com/r/ammobindotca/ammobin-api 'DockerHub')
 
 ### how to run
 ```docker run ammobindotca/ammobin-api -p 8080:8080```
