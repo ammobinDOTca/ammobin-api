@@ -416,11 +416,10 @@ server.route({
 server.events.on("response", function(request) {
   logger.info({
     type: "api-req",
-    request,
-    string: `${request.info.remoteAddress}: ${request.method.toUpperCase()} ${
-      request.url.path
-    } --> ${request.response.statusCode} ${new Date().getTime() -
-      request.info.received}ms`,
+    remoteAddress: request.info.remoteAddress,
+    method: request.method.toUpperCase(),
+    path: request.url.path,
+    statusCode: request.response.statusCode,
     timeMs: new Date().getTime() - request.info.received
   });
   if (request.response.statusCode >= 500) {
