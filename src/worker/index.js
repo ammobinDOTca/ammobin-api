@@ -1,22 +1,20 @@
-
 const RSMQWorker = require("rsmq-worker");
-const classifier = require('ammobin-classifier');
-const CONSTANTS = require('../constants');
-const makeSearch = require('../scrapes');
-const influx = require('../api/influx');
-const getKey = require('../helpers').getKey;
-const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME,
-  {
-    host: 'redis',
-    autostart: true,
-    timeout: 180000, /*3 mins*/
-    defaultDelay: 10,
-    maxReceiveCount: 1
-  });
+const classifier = require("ammobin-classifier");
+const CONSTANTS = require("../constants");
+const makeSearch = require("../scrapes");
+const influx = require("../api/influx");
+const getKey = require("../helpers").getKey;
+const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME, {
+  host: "redis",
+  autostart: true,
+  timeout: 180000 /*3 mins*/,
+  defaultDelay: 10,
+  maxReceiveCount: 1
+});
+const logger = require("../logger").workerLogger;
 
-
-const redis = require('redis');
-const client = redis.createClient({ host: 'redis' });
+const redis = require("redis");
+const client = redis.createClient({ host: "redis" });
 
 function proxyImages(items) {
   return items.map(i => {
@@ -24,12 +22,12 @@ function proxyImages(items) {
       return i;
     }
 
-    if (i.img.indexOf('//') === 0) {
-      i.img = 'http://' + i.img;
+    if (i.img.indexOf("//") === 0) {
+      i.img = "http://" + i.img;
     }
-    i.img = CONSTANTS.PROXY_URL + '/x160/' + i.img;
+    i.img = CONSTANTS.PROXY_URL + "/x160/" + i.img;
     return i;
-  })
+  });
 }
 
 function addSrcRefToLinks(items) {
@@ -38,26 +36,28 @@ function addSrcRefToLinks(items) {
       return i;
     }
 
-    if (i.link.indexOf('?') === -1) {
-      i.link += '?'
+    if (i.link.indexOf("?") === -1) {
+      i.link += "?";
     } else {
-      i.link += '&'
+      i.link += "&";
     }
-    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(i.link + 'utm_source=ammobin.ca')}`;
+    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(
+      i.link + "utm_source=ammobin.ca"
+    )}`;
     return i;
   });
 }
 
 function classifyBrand(items) {
   return items.map(i => {
-    i.brand = classifier.classifyBrand(i.brand || i.name || '')
+    i.brand = classifier.classifyBrand(i.brand || i.name || "");
     return i;
   });
 }
 
 function getCounts(items) {
   return items.map(i => {
-    i.count = isNaN(i.count) ? classifier.getItemCount(i.name) || '' : i.count;
+    i.count = isNaN(i.count) ? classifier.getItemCount(i.name) || "" : i.count;
     if (i.count > 1) {
       i.unitCost = i.price / i.count;
       if (i.unitCost < 0.01) {
@@ -70,13 +70,11 @@ function getCounts(items) {
   });
 }
 
-
-worker.on("message", function (msg, next, id) {
-  // process your message
-  console.log("Message id : " + id);
+worker.on("message", function(msg, next /* , id*/) {
   const { source, type } = JSON.parse(msg);
-  console.log('making scrape for ', source, type, new Date());
+
   const searchStart = new Date();
+  logger.info({ type: "started-scrape", source, ammoType: type });
   return makeSearch(source, type)
     .then(classifyBrand)
     .then(i => proxyImages(i))
@@ -84,38 +82,69 @@ worker.on("message", function (msg, next, id) {
     .then(getCounts)
     .then(items => items.filter(i => i.price))
     .then(items => {
-
-      if (items.length) {
-        console.log(`found ${items.length} ${source} ${type}`);
-      } else {
-        console.warn(`WARN: no results for ${source} ${type}`, new Date())
-      }
+      logger.info({
+        type: "finished-scrape",
+        source,
+        ammoType: type,
+        items: items.length,
+        duration: new Date() - searchStart
+      });
 
       const key = getKey(source, type);
 
-      return new Promise((resolve, reject) => client.set(key, JSON.stringify(items), 'EX', 172800 /*seconds => 48hrs*/, (err) => err ? reject(err) : resolve(items)))
-        .then(() => Promise.all([
+      return new Promise((resolve, reject) =>
+        client.set(
+          key,
+          JSON.stringify(items),
+          "EX",
+          172800 /*seconds => 48hrs*/,
+          err => (err ? reject(err) : resolve(items))
+        )
+      ).then(() =>
+        Promise.all([
           ...items.map(item => influx.logItem(item)),
-          influx.logScrapeResult(type, source, items.length, new Date() - searchStart)
-        ]))
+          influx.logScrapeResult(
+            type,
+            source,
+            items.length,
+            new Date() - searchStart
+          )
+        ])
+      );
     })
     .then(() => next())
     .catch(e => {
-      try { influx.logScrapeFail(type, source, new Date() - searchStart, e && e.message ? e.message : JSON.stringify(e)) } catch (ee) {
-        console.error('ERROR:', ee)
+      try {
+        influx.logScrapeFail(
+          type,
+          source,
+          new Date() - searchStart,
+          e && e.message ? e.message : JSON.stringify(e)
+        );
+      } catch (ee) {
+        console.error("ERROR:", ee);
       }
-      console.error(`ERROR: failed to load ${source} ${type} => ${e && e.message ? e.message : e}`);
+      logger.error({
+        type: "failed-scrape",
+        source,
+        ammoType: type,
+        message: e.message
+      });
       next(e);
     });
 });
 
 // optional error listeners
-worker.on('error', function (err, msg) {
-  console.error("ERROR", err && err.message ? err.message : err, msg.id);
+worker.on("error", function(err, msg) {
+  logger.error({
+    type: "scrape-error",
+    message: err && err.message ? err.message : err,
+    msg
+  });
 });
 
-worker.on('timeout', function (msg) {
-  console.log("TIMEOUT", msg.id, msg.rc);
+worker.on("timeout", function(msg) {
+  logger.warn({ type: "TIMEOUT-worker", msg });
 });
 
-console.log('started')
+logger.info({ type: "started-worker" });

@@ -7,7 +7,8 @@
     "start": "node ./src/api/index.js",
     "dev": "supervisor  -w src ./src/api/index.js",
     "dev-worker": "supervisor  -w src ./src/worker/index.js",
-    "test": "eslint ./src/**/*.js"
+    "test": "eslint ./src/**/*.js",
+    "format": "pretty-quick"
   },
   "author": "Simon Ramsay",
   "license": "MIT",
@@ -18,6 +19,7 @@
     "catbox-redis": "^4.0.0",
     "cheerio": "^1.0.0-rc.2",
     "delay": "^4.0.1",
+    "fluent-logger": "^3.2.0",
     "hapi": "^17.5.4",
     "hapi-cron": "^1.0.4",
     "influx": "^5.0.7",
@@ -25,10 +27,19 @@
     "moment": "^2.22.2",
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
-    "throat": "^4.1.0"
+    "throat": "^4.1.0",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "eslint": "^5.5.0",
+    "husky": "^1.1.2",
+    "prettier": "^1.14.3",
+    "pretty-quick": "^1.8.0",
     "supervisor": "^0.12.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
