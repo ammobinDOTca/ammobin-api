@@ -218,16 +218,17 @@ server.route({
 server.route({
   method: "POST",
   path: "/track-view",
-  handler: async function(request, h) {
+  handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers["user-agent"] || "unknown";
-    const body = JSON.parse(request.payload);
-    await influx.logView(userAgent, body.brand, body.calibre);
+    const body = request.payload;
+    //await influx.logView(userAgent, body.brand, body.calibre);
     logger.info({
       type: "track-view",
       userAgent,
       brand: body.brand,
-      calibre: body.calibre
+      calibre: body.calibre,
+      body
     });
     return h.response("success");
   }
