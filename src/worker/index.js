@@ -2,7 +2,6 @@ const RSMQWorker = require("rsmq-worker");
 const classifier = require("ammobin-classifier");
 const CONSTANTS = require("../constants");
 const makeSearch = require("../scrapes");
-const influx = require("../api/influx");
 const getKey = require("../helpers").getKey;
 const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME, {
   host: "redis",
@@ -75,68 +74,58 @@ worker.on("message", function(msg, next /* , id*/) {
 
   const searchStart = new Date();
   logger.info({ type: "started-scrape", source, ammoType: type });
-  return makeSearch(source, type)
-    .then(classifyBrand)
-    .then(i => proxyImages(i))
-    .then(i => addSrcRefToLinks(i))
-    .then(getCounts)
-    .then(items => items.filter(i => i.price))
-    .then(items => {
-      logger.info({
-        type: "finished-scrape",
-        source,
-        ammoType: type,
-        items: items.length,
-        duration: new Date() - searchStart
-      });
-
-      const key = getKey(source, type);
-
-      return new Promise((resolve, reject) =>
-        client.set(
-          key,
-          JSON.stringify(items),
-          "EX",
-          172800 /*seconds => 48hrs*/,
-          err => (err ? reject(err) : resolve(items))
-        )
-      ).then(() =>
-        Promise.all([
-          ...items.map(item => influx.logItem(item)),
-          influx.logScrapeResult(
-            type,
-            source,
-            items.length,
-            new Date() - searchStart
-          )
-        ])
-      );
-    })
-    .then(() => next())
-    .catch(e => {
-      try {
-        influx.logScrapeFail(
-          type,
+  try {
+    return makeSearch(source, type)
+      .then(classifyBrand)
+      .then(i => proxyImages(i))
+      .then(i => addSrcRefToLinks(i))
+      .then(getCounts)
+      .then(items => items.filter(i => i.price))
+      .then(items => {
+        logger.info({
+          type: "finished-scrape",
           source,
-          new Date() - searchStart,
-          e && e.message ? e.message : JSON.stringify(e)
+          ammoType: type,
+          items: items.length,
+          duration: new Date() - searchStart
+        });
+
+        const key = getKey(source, type);
+
+        return new Promise((resolve, reject) =>
+          client.set(
+            key,
+            JSON.stringify(items),
+            "EX",
+            172800 /*seconds => 48hrs*/,
+            err => (err ? reject(err) : resolve(items))
+          )
         );
-      } catch (ee) {
-        console.error("ERROR:", ee);
-      }
-      logger.error({
-        type: "failed-scrape",
-        source,
-        ammoType: type,
-        message: e.message
+      })
+      .then(() => next())
+      .catch(e => {
+        logger.info({
+          type: "failed-scrape",
+          source,
+          ammoType: type,
+          message: e.message
+        });
+        next(e);
       });
-      next(e);
+  } catch (e) {
+    logger.info({
+      type: "failed-scrape",
+      source,
+      ammoType: type,
+      message: e.message
     });
+    return next(e);
+  }
 });
 
 // optional error listeners
 worker.on("error", function(err, msg) {
-  logger.error({
+  logger.info({
     type: "scrape-error",
     message: err && err.message ? err.message : err,
     msg
@@ -144,7 +133,7 @@ worker.on("error", function(err, msg) {
 });
 
 worker.on("timeout", function(msg) {
-  logger.warn({ type: "TIMEOUT-worker", msg });
+  logger.info({ type: "TIMEOUT-worker", msg });
 });
 
 logger.info({ type: "started-worker" });
