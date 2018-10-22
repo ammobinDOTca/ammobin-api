@@ -221,14 +221,14 @@ server.route({
   handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers["user-agent"] || "unknown";
-    const body = request.payload;
+    const body = JSON.parse(request.payload);
     //await influx.logView(userAgent, body.brand, body.calibre);
     logger.info({
       type: "track-view",
       userAgent,
       brand: body.brand,
-      calibre: body.calibre,
-      body
+      calibre: body.calibre
+      //body
     });
     return h.response("success");
   }
