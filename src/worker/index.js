@@ -108,7 +108,7 @@ worker.on("message", function(msg, next /* , id*/) {
           type: "failed-scrape",
           source,
           ammoType: type,
-          message: e.message
+          msg: e.message
         });
         next(e);
       });
@@ -117,7 +117,7 @@ worker.on("message", function(msg, next /* , id*/) {
       type: "failed-scrape",
       source,
       ammoType: type,
-      message: e.message
+      msg: e.message
     });
     return next(e);
   }
