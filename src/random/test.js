@@ -1,4 +1,4 @@
-const test = require("../scrapes/magdump");
+const test = require("../scrapes/bvoutdoors");
 
 test("centerfire")
   .then(f => console.log(f))
