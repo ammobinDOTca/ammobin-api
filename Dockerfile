@@ -1,7 +1,7 @@
 FROM node:10-alpine
 RUN apk --no-cache add wget
 WORKDIR /build
-COPY package.json /build
+COPY package*.json /build/
 RUN npm install --production
 COPY . /build
 #VOLUME /build
