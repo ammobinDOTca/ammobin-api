@@ -1,5 +1,5 @@
 {
-  "name": "ammo-scrape-api",
+  "name": "ammobin-api",
   "version": "1.0.0",
   "description": "ammobin.ca api",
   "main": "index.js",
