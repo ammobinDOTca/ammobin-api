@@ -13,7 +13,7 @@
   "author": "Simon Ramsay",
   "license": "MIT",
   "dependencies": {
-    "ammobin-classifier": "0.0.26",
+    "ammobin-classifier": "0.0.28",
     "axios": "^0.18.0",
     "boom": "^7.0.0",
     "catbox-redis": "^4.0.0",
