@@ -340,7 +340,7 @@ function queueUpCacheRefresh(type) {
   );
 }
 
-const TYPES = ["rimfire", "centerfire", "shotgun"];
+const TYPES = ["centerfire", "rimfire", "shotgun"];
 
 server.route({
   method: "GET",
