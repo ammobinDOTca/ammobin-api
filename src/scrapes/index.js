@@ -1,34 +1,36 @@
-const axios = require('axios');
-const version = require('../../package.json').version;
-const axiosVersion = require('../../node_modules/axios/package.json').version;
-axios.defaults.headers.common['User-Agent'] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}`; // be a
-axios.defaults.headers.common['Referer'] = `ammobin.ca`;
+const axios = require('axios')
+const version = require('../../package.json').version
+const axiosVersion = require('../../node_modules/axios/package.json').version
+axios.defaults.headers.common[
+  'User-Agent'
+] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}` // be a
+axios.defaults.headers.common['Referer'] = `ammobin.ca`
 
-const cabelas = require('./cabelas-api');
-const canadiantire = require('./canadian-tire');
-const wolverinesupplies = require('./wolverine-api');
-const theAmmoSource = require('./the-ammo-source');
-const hirsch = require('./hirschprecision');
-const wildWest = require('./wild-west');
-const tigerArms = require('./tiger-arms');
-const magdump = require('./magdump');
-const rangeviewsports = require('./rangeviewsports');
-const jobrook = require('./jo-brook');
-const faoc = require('./faoc');
-const alflahertys = require('./alflahertys');
-const bullseyelondon = require('./bullseyelondon');
-const sail = require('./sail');
-const reliablegun = require('./reliablegun');
-const tenda = require('./tenda');
-const canadaammo = require('./canadaammo');
-const frontierfirearms = require('./frontierfirearms');
-const tradex = require('./tradex');
-const bvoutdoors = require('./bvoutdoors');
-const nas = require('./nas');
-const dante = require('./dante');
-const leverarms = require('./leverarms');
-const theShootingCenter = require('./the-shooting-center');
-const westernMetal = require('./western-metal');
+const cabelas = require('./cabelas-api')
+const canadiantire = require('./canadian-tire')
+const wolverinesupplies = require('./wolverine-api')
+const theAmmoSource = require('./the-ammo-source')
+const hirsch = require('./hirschprecision')
+const wildWest = require('./wild-west')
+const tigerArms = require('./tiger-arms')
+const magdump = require('./magdump')
+const rangeviewsports = require('./rangeviewsports')
+const jobrook = require('./jo-brook')
+const faoc = require('./faoc')
+const alflahertys = require('./alflahertys')
+const bullseyelondon = require('./bullseyelondon')
+const sail = require('./sail')
+const reliablegun = require('./reliablegun')
+const tenda = require('./tenda')
+const canadaammo = require('./canadaammo')
+const frontierfirearms = require('./frontierfirearms')
+const tradex = require('./tradex')
+const bvoutdoors = require('./bvoutdoors')
+const nas = require('./nas')
+const dante = require('./dante')
+const leverarms = require('./leverarms')
+const theShootingCenter = require('./the-shooting-center')
+const westernMetal = require('./western-metal')
 const alsimmons = require('./al-simmons')
 const vancouvergunstore = require('./vacovergunstore')
 const barton = require('./barton')
@@ -38,95 +40,96 @@ const durham = require('./durhamoutdoors')
 const soley = require('./soley-outdoors')
 const northpro = require('./northpro')
 const wanstall = require('./wanstalls')
+const gothic = require('./gothic-line-armoury')
 
 function makeSearch(source, type) {
   switch (source) {
     case 'cabelas.ca':
-      return cabelas(type);
+      return cabelas(type)
 
     case 'firearmsoutletcanada.com':
-      return faoc(type);
+      return faoc(type)
 
     case 'alflahertys.com':
-      return alflahertys(type);
+      return alflahertys(type)
 
     case 'bullseyelondon.com':
-      return bullseyelondon(type);
+      return bullseyelondon(type)
 
     case 'sail.ca':
-      return sail(type);
+      return sail(type)
 
     case 'reliablegun.com':
-      return reliablegun(type);
+      return reliablegun(type)
 
     case 'canadiantire.ca':
-      return canadiantire(type);
+      return canadiantire(type)
 
     case 'gotenda.com':
-      return tenda(type);
+      return tenda(type)
 
     case 'canadaammo.com':
-      return canadaammo(type);
+      return canadaammo(type)
 
     case 'jobrookoutdoors.com':
-      return jobrook(type);
+      return jobrook(type)
 
     case 'theammosource.com':
-      return theAmmoSource(type);
+      return theAmmoSource(type)
 
     case 'hirschprecision.com':
-      return hirsch(type);
+      return hirsch(type)
 
     case 'gun-shop.ca':
-      return wildWest(type);
+      return wildWest(type)
 
     case 'tigerarms.ca':
-      return tigerArms(type);
+      return tigerArms(type)
 
     case 'magdump.ca':
-      return magdump(type);
+      return magdump(type)
 
     case 'rangeviewsports.ca':
-      return rangeviewsports(type);
+      return rangeviewsports(type)
 
     case 'wolverinesupplies.com':
-      return wolverinesupplies(type);
+      return wolverinesupplies(type)
 
     case 'frontierfirearms.ca':
-      return frontierfirearms(type);
+      return frontierfirearms(type)
 
     case 'tradeexcanada.com':
-      return tradex(type);
+      return tradex(type)
 
     case 'bvoutdoors.com':
-      return bvoutdoors(type);
+      return bvoutdoors(type)
 
     case 'nasgunsandammo.com':
-      return nas(type);
+      return nas(type)
 
     case 'dantesports.com':
-      return dante(type);
+      return dante(type)
 
     case 'leverarms.com':
-      return leverarms(type);
+      return leverarms(type)
 
     case 'store.theshootingcentre.com':
-      return theShootingCenter(type);
+      return theShootingCenter(type)
 
     case 'westernmetal.ca':
-      return westernMetal(type);
+      return westernMetal(type)
 
     case 'alsimmonsgunshop.com':
-      return alsimmons(type);
+      return alsimmons(type)
 
     case 'vancouvergunstore.ca':
-      return vancouvergunstore(type);
+      return vancouvergunstore(type)
 
     case 'bartonsbigcountry.ca':
-      return barton(type);
+      return barton(type)
 
     case 'theshootingedge.com':
-      return shootingEdge(type);
+      return shootingEdge(type)
 
     case 'lanzshootingsupplies.com':
       return lanz(type)
@@ -143,9 +146,12 @@ function makeSearch(source, type) {
     case 'wanstallsonline.com':
       return wanstall(type)
 
+    case 'gothiclinearmoury.ca':
+      return gothic(type)
+
     default:
-      throw new Error(`unknown source: ${source} + type: ${type}`);
+      throw new Error(`unknown source: ${source} + type: ${type}`)
   }
 }
 
-module.exports = makeSearch;
+module.exports = makeSearch

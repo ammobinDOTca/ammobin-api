@@ -1,4 +1,4 @@
-const QUEUE_NAME = 'SCRAPE_QUEUE';
+const QUEUE_NAME = 'SCRAPE_QUEUE'
 
 const SOURCES = [
   'canadiantire.ca',
@@ -35,10 +35,17 @@ const SOURCES = [
   'solelyoutdoors.com',
   'northprosports.com',
   'wanstallsonline.com',
-];
+  'gothiclinearmoury.ca',
+]
 
-const PROXY_URL = 'https://images.ammobin.ca';
-const DATE_FORMAT = 'YYYY-MM-DD';
-const CACHE_REFRESH_HOURS = 4;
+const PROXY_URL = 'https://images.ammobin.ca'
+const DATE_FORMAT = 'YYYY-MM-DD'
+const CACHE_REFRESH_HOURS = 4
 
-module.exports = { QUEUE_NAME, SOURCES, PROXY_URL, DATE_FORMAT, CACHE_REFRESH_HOURS };
+module.exports = {
+  QUEUE_NAME,
+  SOURCES,
+  PROXY_URL,
+  DATE_FORMAT,
+  CACHE_REFRESH_HOURS,
+}

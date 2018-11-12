@@ -1,5 +1,5 @@
-const test = require("../scrapes/bvoutdoors");
+const test = require('../scrapes/gothic-line-armoury')
 
-test("centerfire")
+test('centerfire')
   .then(f => console.log(f))
-  .catch(e => console.error("ERROR", e));
+  .catch(e => console.error('ERROR', e))
