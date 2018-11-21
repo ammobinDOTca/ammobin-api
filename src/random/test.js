@@ -1,4 +1,4 @@
-const test = require('../scrapes/gothic-line-armoury')
+const test = require('../scrapes/wanstalls')
 
 test('centerfire')
   .then(f => console.log(f))
