@@ -7,7 +7,8 @@ const url = require('url')
 const RedisSMQ = require('rsmq')
 const helpers = require('../helpers')
 const fs = require('fs')
-
+const { ApolloServer } = require('apollo-server-hapi')
+const { typeDefs, resolvers } = require('./graphql')
 const {
   SOURCES,
   DATE_FORMAT,
@@ -42,7 +43,6 @@ rsmq.listQueues(function(err, queues) {
     })
   }
 })
-
 const server = new Hapi.Server({
   cache: [
     {
@@ -364,53 +364,51 @@ server.route({
     return { message: 'ok' }
   },
 })
+TYPES.forEach(type =>
+  // Add the route
+  server.route({
+    method: 'GET',
+    path: `/${type}`,
+    handler: async function(request) {
+      let page = 1
+      if (request.query.page) {
+        page = parseInt(request.query.page, 10)
+      }
+      if (isNaN(page) || page < 1) {
+        throw boom.badRequest('invalid page: ' + page)
+      }
 
-// Add the route
-server.route({
-  method: 'GET',
-  path: '/{type}',
-  handler: async function(request) {
-    const type = request.params.type
-    if (TYPES.indexOf(type) === -1) {
-      throw boom.badRequest('invalid type: ' + type)
-    }
+      let pageSize = 25
+      if (request.query.pageSize) {
+        pageSize = parseInt(request.query.pageSize, 10)
+      }
+      if (isNaN(pageSize) || pageSize < 1 || page > 100) {
+        throw boom.badRequest('invalid pageSize: ' + pageSize)
+      }
 
-    let page = 1
-    if (request.query.page) {
-      page = parseInt(request.query.page, 10)
-    }
-    if (isNaN(page) || page < 1) {
-      throw boom.badRequest('invalid page: ' + page)
-    }
+      let calibre = ''
+      if (request.query.calibre) {
+        calibre = request.query.calibre.toUpperCase()
+      }
 
-    let pageSize = 25
-    if (request.query.pageSize) {
-      pageSize = parseInt(request.query.pageSize, 10)
-    }
-    if (isNaN(pageSize) || pageSize < 1 || page > 100) {
-      throw boom.badRequest('invalid pageSize: ' + pageSize)
-    }
+      let res = await classifiedListsCache.get(type)
 
-    let calibre = ''
-    if (request.query.calibre) {
-      calibre = request.query.calibre.toUpperCase()
-    }
+      if (res.length === 0) {
+        console.warn(
+          `WARN: no cached results for ${type}. dropping the cat box`
+        )
+        classifiedListsCache.drop(type)
+      }
+      res = res.filter(r => calibre === '' || r.calibre === calibre)
 
-    let res = await classifiedListsCache.get(type)
-
-    if (res.length === 0) {
-      console.warn(`WARN: no cached results for ${type}. dropping the cat box`)
-      classifiedListsCache.drop(type)
-    }
-    res = res.filter(r => calibre === '' || r.calibre === calibre)
-
-    return {
-      page,
-      pages: Math.ceil(res.length / pageSize),
-      items: res.slice((page - 1) * pageSize, page * pageSize),
-    }
-  },
-})
+      return {
+        page,
+        pages: Math.ceil(res.length / pageSize),
+        items: res.slice((page - 1) * pageSize, page * pageSize),
+      }
+    },
+  })
+)
 
 server.events.on('response', function(request) {
   logger.info({
@@ -436,6 +434,12 @@ server.events.on('response', function(request) {
 
 async function doWork() {
   try {
+    const apolloServer = new ApolloServer({ typeDefs, resolvers })
+    await apolloServer.applyMiddleware({
+      app: server,
+    })
+
+    await apolloServer.installSubscriptionHandlers(server.listener)
     // todo: figure out way to only run this on one node when running in swarm mode
     await server.register({
       plugin: hapiCron,
@@ -460,9 +464,17 @@ async function doWork() {
     })
 
     await server.start()
+    console.log(classifiedListsCache.isReady())
+
+    console.info(`Server started at ${server.info.uri}`)
+
+    // TYPES.forEach(type => queueUpCacheRefresh(type))
+
+    await server.start()
     logger.info({ type: 'server-started', uri: server.info.uri })
   } catch (e) {
-    logger.error({ type: 'failed-to-stat-server', error: e.toString() })
+    console.error(e)
+    logger.error({ type: 'failed-to-start-server', error: e.toString() })
     process.exit(1)
   }
 }
