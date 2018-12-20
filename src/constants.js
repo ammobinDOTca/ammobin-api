@@ -38,7 +38,7 @@ const SOURCES = [
   'gothiclinearmoury.ca',
 ]
 
-const PROXY_URL = 'https://images.ammobin.ca'
+const PROXY_URL = 'https://ammobin.ca/images' // 'https://images.ammobin.ca'
 const DATE_FORMAT = 'YYYY-MM-DD'
 const CACHE_REFRESH_HOURS = 4
 
