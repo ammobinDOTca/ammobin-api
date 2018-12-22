@@ -336,6 +336,19 @@ function queueUpCacheRefresh(type) {
 const TYPES = ['centerfire', 'rimfire', 'shotgun']
 
 server.route({
+  method: 'POST',
+  path: '/content-security-report-uri',
+  handler: function(req, h) {
+    const body = JSON.parse(req.payload)
+    logger.info({
+      type: 'content-security-report',
+      body,
+    })
+    return h.success('thanks for reporting')
+  },
+})
+
+server.route({
   method: 'GET',
   path: '/refresh-cache',
   handler: async function(req) {
