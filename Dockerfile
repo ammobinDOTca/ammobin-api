@@ -3,8 +3,9 @@ RUN apk --no-cache add wget
 WORKDIR /build
 COPY package*.json /build/
 RUN npm install
-RUN npm run build
+
 COPY . /build
+RUN npm run build
 #VOLUME /build
 
 EXPOSE 8080
