@@ -136,7 +136,7 @@ export function cabelas(type: Type): Promise<ScrapeResponse> {
       throttle(() => makeCabelasCalibre('933', '19365')), // 204 ruger
       throttle(() => makeCabelasCalibre('933', '20529')), // 22-250 rem
       throttle(() => makeCabelasCalibre('933', '20476')), // 223 rem
-      throttle(() => makeCabelasCalibre('933', '20554')), //243 win
+      throttle(() => makeCabelasCalibre('933', '20554')), // 243 win
       throttle(() => makeCabelasCalibre('933', '20543')), // 270 win
       throttle(() => makeCabelasCalibre('933', '20556')), // 270 wsm
       throttle(() => makeCabelasCalibre('933', '20641')), // 300 rem mag

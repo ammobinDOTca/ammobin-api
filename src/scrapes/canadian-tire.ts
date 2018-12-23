@@ -23,8 +23,8 @@ function work(page: string) {
       const t = res.data.replace('callback(', '')
 
       const f = t.slice(0, t.length - 2)
-      const items = JSON.parse(f).results.map(f => {
-        const item = f.field
+      const items = JSON.parse(f).results.map(ff => {
+        const item = ff.field
         return {
           name: item['prod-name'],
           link: 'http://www.canadiantire.ca' + item['pdp-url'],
@@ -38,7 +38,7 @@ function work(page: string) {
         .get('http://www.canadiantire.ca/ESB/PriceAvailability', {
           params: {
             _: new Date().getTime(),
-            Product: items.map(f => f[`_id`]).join(','),
+            Product: items.map(ff => ff[`_id`]).join(','),
             Store: '0600',
             Banner: 'CTR',
             isKiosk: 'FALSE',
@@ -56,7 +56,7 @@ function work(page: string) {
           const list = Object.keys(r.data).map(k => r.data[k])
 
           return items.map(i => {
-            i.price = (list.find(r => r.Product === i[`_id`]) || {}).Price
+            i.price = (list.find(rr => rr.Product === i[`_id`]) || {}).Price
             return i
           })
         })

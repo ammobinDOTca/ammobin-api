@@ -16,7 +16,7 @@ async function getStuff(cPath, page = 1) {
         const result: any = {}
         const tha = $(row)
 
-        //wish there was a better way to do this, but the html is not making it easy
+        // wish there was a better way to do this, but the html is not making it easy
         let soldOut = false
         tha.find('.productListing-data img').each((i, subrow) => {
           soldOut = soldOut || $(subrow).prop('alt') === 'Sold Out'
@@ -31,7 +31,7 @@ async function getStuff(cPath, page = 1) {
         result.img = src ? SITE + '/' + src : null
         result.name = tha.find('.itemTitle').text()
 
-        tha.find('.productListing-data').each((index, subrow) => {
+        tha.find('.productListing-data').each((_, subrow) => {
           const ff = $(subrow)
           if (!ff.contents().text()) {
             return

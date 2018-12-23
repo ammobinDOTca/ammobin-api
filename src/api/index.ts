@@ -28,11 +28,11 @@ rsmq.listQueues(function(err, queues) {
     throw err
   }
   if (queues.indexOf(QUEUE_NAME) === -1) {
-    rsmq.createQueue({ qname: QUEUE_NAME }, function(err, resp) {
-      if (err) {
+    rsmq.createQueue({ qname: QUEUE_NAME }, function(err2, resp) {
+      if (err2) {
         logger.error({
           type: 'failed-to-create-rsmq-queues',
-          error: err.toString(),
+          error: err2.toString(),
         })
         throw err
       }
@@ -127,12 +127,12 @@ const bestPricesCache = server.cache({
   generateFunc: async function() {
     const keys = SOURCES.map(s => helpers.getKey(s, 'centerfire'))
     const res: any = await new Promise((resolve, reject) =>
-      client.mget(keys, (err, res) => (err ? reject(err) : resolve(res)))
+      client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
     )
     const results: any = res.map(r => (r ? JSON.parse(r) : null))
     const result = results
-      .reduce((final, result) => {
-        return result && result.length ? final.concat(result) : final
+      .reduce((final, result2) => {
+        return result2 && result2.length ? final.concat(result2) : final
       }, [])
       .reduce((response, item) => {
         if (
@@ -221,7 +221,7 @@ server.route({
       userAgent,
       brand: body.brand,
       calibre: body.calibre,
-      //body
+      // body
     })
     return h.response('success')
   },
@@ -470,10 +470,6 @@ async function doWork() {
     })
 
     await server.start()
-    console.log(classifiedListsCache.isReady())
-
-    console.info(`Server started at ${server.info.uri}`)
-
     // TYPES.forEach(type => queueUpCacheRefresh(type))
 
     await server.start()
