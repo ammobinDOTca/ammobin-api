@@ -1,4 +1,4 @@
-import { GQL } from './graphql-types'
+/// <reference path="graphql-types.ts" />
 
 export const enum Type {
   rimfire = 'rimfire',
@@ -6,6 +6,7 @@ export const enum Type {
   shotgun = 'shotgun',
 }
 
+declare type shit = GQL.IAmmoListing // todo: extend
 export declare type ScrapeItem = {
   link: string
   img: string

@@ -1,7 +1,7 @@
 // tslint:disable
 // graphql typescript definitions
 
-export declare namespace GQL {
+declare namespace GQL {
   interface IGraphQLResponseRoot {
     data?: IQuery
     errors?: Array<IGraphQLResponseError>
@@ -115,3 +115,5 @@ export declare namespace GQL {
     unitCost: number | null
   }
 }
+
+// tslint:enable
