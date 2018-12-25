@@ -1,0 +1,73 @@
+# Comments in GraphQL are defined with the hash (#) symbol.
+enum AmmoType {
+  centerfire
+  rimfire
+  shotgun
+}
+enum Province {
+  AB
+  BC
+  MB
+  NB
+  NS
+  NT
+  NU
+  ON
+  PE
+  QC
+  SK
+  YT
+}
+type AmmoListing {
+  img: String
+  price: Float
+  name: String
+  link: String
+  vendor: String
+  province: String
+  calibre: String
+  brand: String
+  count: Float
+  unitCost: Float
+}
+type AmmoGroup {
+  name: String
+  brand: String
+  calibre: String
+  type: AmmoType
+  vendors: [AmmoListing]
+}
+type AmmoListings {
+  page: Int
+  pages: Int
+  pageSize: Int
+  items: [AmmoGroup]
+}
+type Vendor {
+  name: String
+  provinces: [Province]
+  location: String
+  logo: String
+  link: String
+}
+type BestPrice {
+  unitCost: Float
+  calibre: String
+  type: AmmoType
+}
+# The "Query" type is the root of all GraphQL queries.
+# (A "Mutation" type will be covered later on.)
+type Query {
+  vendors(province: Province): [Vendor]
+  bestPrices(type: AmmoType, calibre: String): [BestPrice]
+  ammoListings(
+    page: Int
+    pageSize: Int
+    type: AmmoType
+    calibre: String
+    province: String
+    vendor: String
+    sortOrder: String
+    sortField: String
+  ): AmmoListings
+}

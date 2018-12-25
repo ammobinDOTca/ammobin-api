@@ -3,7 +3,7 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { Type, ScrapeResponse } from '../types'
+import { Type, ScrapeResponse, ScrapeItem } from '../types'
 
 const SITE = 'https://alsimmonsgunshop.com'
 

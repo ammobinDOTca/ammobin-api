@@ -25,9 +25,9 @@ async function makeAlReq(ammotype: string, page = 1) {
  * @returns Promise<any[]>
  */
 export function alflahertys(type: Type): Promise<ScrapeResponse> {
-  if (type === 'rimfire') {
+  if (type === Type.rimfire) {
     return makeAlReq('Rimfire-Ammo').then(helpers.classifyRimfire)
-  } else if (type === 'centerfire') {
+  } else if (type === Type.centerfire) {
     return Promise.all([
       makeAlReq('Rifle-Ammunition'), // multi page
       makeAlReq('Bulk-Rifle'),
@@ -35,7 +35,7 @@ export function alflahertys(type: Type): Promise<ScrapeResponse> {
     ])
       .then(helpers.combineResults)
       .then(helpers.classifyCenterfire)
-  } else if (type === 'shotgun') {
+  } else if (type === Type.shotgun) {
     return makeAlReq('Shotgun-Ammo') // multi page
       .then(helpers.classifyShotgun)
   } else {

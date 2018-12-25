@@ -1,3 +1,5 @@
+import { GQL } from './graphql-types'
+
 export const enum Type {
   rimfire = 'rimfire',
   centerfire = 'centerfire',

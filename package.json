@@ -11,8 +11,10 @@
     "format": "pretty-quick",
     "build": "tsc",
     "dev": "ts-node-dev ./src/api/index.ts",
-    "dev:worker": "ts-node-dev ./src/worker/index.ts"
+    "dev:worker": "ts-node-dev ./src/worker/index.ts",
+    "generate-types": "gql2ts graphql.gql >> src/graphql-types.ts"
   },
+  "types": "dist/index.d.ts",
   "author": "Simon Ramsay",
   "license": "MIT",
   "dependencies": {
@@ -37,6 +39,7 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "gql2ts": "^1.10.1",
     "husky": "^1.2.0",
     "nodemon": "^1.18.9",
     "prettier": "^1.15.2",
@@ -47,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && npm run generate-types"
     }
   }
 }
