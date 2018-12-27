@@ -40,7 +40,7 @@ function addSrcRefToLinks(items) {
     } else {
       i.link += '&'
     }
-    i.link = `https://api.ammobin.ca/track-outbound-click?url=${encodeURIComponent(
+    i.link = `https://ammobin.ca/api/track-outbound-click?url=${encodeURIComponent(
       i.link + 'utm_source=ammobin.ca'
     )}`
     return i
