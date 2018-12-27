@@ -50,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run generate-types && pretty-quick --staged"
+      "pre-commit": "npm run generate-types && pretty-quick"
     }
   }
 }
