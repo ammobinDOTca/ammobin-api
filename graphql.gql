@@ -44,11 +44,12 @@ type AmmoListings {
   items: [AmmoGroup]
 }
 type Vendor {
-  name: String
-  provinces: [Province]
-  location: String
-  logo: String
-  link: String
+  name: String!
+  provinces: [Province!]!
+  location: String!
+  logo: String!
+  link: String!
+  background: Boolean
 }
 type BestPrice {
   unitCost: Float

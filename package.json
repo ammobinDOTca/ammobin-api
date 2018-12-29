@@ -12,7 +12,7 @@
     "build": "tsc",
     "dev": "ts-node-dev ./src/api/index.ts",
     "dev:worker": "ts-node-dev ./src/worker/index.ts",
-    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts"
+    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh"
   },
   "types": "dist/index.d.ts",
   "author": "Simon Ramsay",
@@ -50,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run generate-types && pretty-quick"
+      "pre-commit": "npm run generate-types  && pretty-quick"
     }
   }
 }
