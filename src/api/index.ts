@@ -330,6 +330,11 @@ const TYPES = ['centerfire', 'rimfire', 'shotgun']
 
 server.route({
   method: 'POST',
+  config: {
+    payload: {
+      override: 'application/json',
+    },
+  },
   path: '/content-security-report-uri',
   handler: function(req, h) {
     const body = JSON.parse(req.payload)
