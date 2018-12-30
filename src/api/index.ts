@@ -422,6 +422,10 @@ TYPES.forEach(type =>
 )
 
 server.events.on('response', function(request) {
+  if (request.url.path === '/ping') {
+    return // dont log ping requests
+  }
+
   logger.info({
     type: 'api-req',
     remoteAddress: request.info.remoteAddress,

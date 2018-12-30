@@ -1,9 +1,10 @@
-# Comments in GraphQL are defined with the hash (#) symbol.
+# types of ammo.
 enum AmmoType {
   centerfire
   rimfire
   shotgun
 }
+# rprovinces  (and territories)of canada
 enum Province {
   AB
   BC
@@ -18,30 +19,35 @@ enum Province {
   SK
   YT
 }
+# colunm sort order
+enum SortOrder {
+  ASC
+  DES
+}
 type AmmoListing {
-  img: String
-  price: Float
-  name: String
-  link: String
-  vendor: String
-  province: String
-  calibre: String
-  brand: String
+  img: String!
+  price: Float!
+  name: String!
+  link: String!
+  vendor: String!
+  provinces: [Province!]!
+  calibre: String!
+  brand: String!
   count: Float
   unitCost: Float
 }
 type AmmoGroup {
-  name: String
-  brand: String
-  calibre: String
-  type: AmmoType
-  vendors: [AmmoListing]
+  name: String!
+  brand: String!
+  calibre: String!
+  type: AmmoType!
+  vendors: [AmmoListing!]!
 }
 type AmmoListings {
-  page: Int
-  pages: Int
-  pageSize: Int
-  items: [AmmoGroup]
+  page: Int!
+  pages: Int!
+  pageSize: Int!
+  items: [AmmoGroup!]!
 }
 type Vendor {
   name: String!
@@ -52,9 +58,9 @@ type Vendor {
   background: Boolean
 }
 type BestPrice {
-  unitCost: Float
-  calibre: String
-  type: AmmoType
+  unitCost: Float!
+  calibre: String!
+  type: AmmoType!
 }
 # The "Query" type is the root of all GraphQL queries.
 # (A "Mutation" type will be covered later on.)
@@ -66,9 +72,9 @@ type Query {
     pageSize: Int
     type: AmmoType
     calibre: String
-    province: String
+    province: Province
     vendor: String
-    sortOrder: String
+    sortOrder: SortOrder
     sortField: String
   ): AmmoListings
 }

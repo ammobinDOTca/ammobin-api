@@ -40,9 +40,9 @@ export interface IAmmoListingsOnQueryArguments {
   pageSize?: number | null
   type?: AmmoType | null
   calibre?: string | null
-  province?: string | null
+  province?: Province | null
   vendor?: string | null
-  sortOrder?: string | null
+  sortOrder?: SortOrder | null
   sortField?: string | null
 }
 
@@ -79,38 +79,43 @@ export const enum AmmoType {
 
 export interface IBestPrice {
   __typename: string | null
-  unitCost: number | null
-  calibre: string | null
-  type: AmmoType | null
+  unitCost: number
+  calibre: string
+  type: AmmoType
+}
+
+export const enum SortOrder {
+  ASC = 'ASC',
+  DES = 'DES',
 }
 
 export interface IAmmoListings {
   __typename: string | null
-  page: number | null
-  pages: number | null
-  pageSize: number | null
-  items: Array<IAmmoGroup | null> | null
+  page: number
+  pages: number
+  pageSize: number
+  items: Array<IAmmoGroup>
 }
 
 export interface IAmmoGroup {
   __typename: string | null
-  name: string | null
-  brand: string | null
-  calibre: string | null
-  type: AmmoType | null
-  vendors: Array<IAmmoListing | null> | null
+  name: string
+  brand: string
+  calibre: string
+  type: AmmoType
+  vendors: Array<IAmmoListing>
 }
 
 export interface IAmmoListing {
   __typename: string | null
-  img: string | null
-  price: number | null
-  name: string | null
-  link: string | null
-  vendor: string | null
-  province: string | null
-  calibre: string | null
-  brand: string | null
+  img: string
+  price: number
+  name: string
+  link: string
+  vendor: string
+  provinces: Array<Province>
+  calibre: string
+  brand: string
   count: number | null
   unitCost: number | null
 }
