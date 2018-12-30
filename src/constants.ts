@@ -303,6 +303,6 @@ export const VENDORS = [
   },
 ]
 
-export const PROXY_URL = 'https://images.ammobin.ca'
+export const PROXY_URL = 'https://ammobin.ca/images'
 export const DATE_FORMAT = 'YYYY-MM-DD'
 export const CACHE_REFRESH_HOURS = 4
