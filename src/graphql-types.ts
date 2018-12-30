@@ -1,123 +1,126 @@
 // tslint:disable
 // graphql typescript definitions
 
-export interface IGraphQLResponseRoot {
-  data?: IQuery
-  errors?: Array<IGraphQLResponseError>
-}
 
-export interface IGraphQLResponseError {
-  /** Required for all errors */
-  message: string
-  locations?: Array<IGraphQLResponseErrorLocation>
-  /** 7.2.2 says 'GraphQL servers may provide additional entries to error' */
-  [propName: string]: any
-}
+  export interface IGraphQLResponseRoot {
+    data?: IQuery;
+    errors?: Array<IGraphQLResponseError>;
+  }
 
-export interface IGraphQLResponseErrorLocation {
-  line: number
-  column: number
-}
+  export interface IGraphQLResponseError {
+    /** Required for all errors */
+    message: string;
+    locations?: Array<IGraphQLResponseErrorLocation>;
+    /** 7.2.2 says 'GraphQL servers may provide additional entries to error' */
+    [propName: string]: any;
+  }
 
-export interface IQuery {
-  __typename: string | null
-  vendors: Array<IVendor | null> | null
-  bestPrices: Array<IBestPrice | null> | null
-  ammoListings: IAmmoListings | null
-}
+  export interface IGraphQLResponseErrorLocation {
+    line: number;
+    column: number;
+  }
 
-export interface IVendorsOnQueryArguments {
-  province?: Province | null
-}
+  export interface IQuery {
+		__typename: string | null
+    vendors: Array<IVendor | null> | null;
+    bestPrices: Array<IBestPrice | null> | null;
+    ammoListings: IAmmoListings | null;
+  }
 
-export interface IBestPricesOnQueryArguments {
-  type?: AmmoType | null
-  calibre?: string | null
-}
+  export interface IVendorsOnQueryArguments {
+    province?: Province | null;
+  }
 
-export interface IAmmoListingsOnQueryArguments {
-  page?: number | null
-  pageSize?: number | null
-  type?: AmmoType | null
-  calibre?: string | null
-  province?: Province | null
-  vendor?: string | null
-  sortOrder?: SortOrder | null
-  sortField?: string | null
-}
+  export interface IBestPricesOnQueryArguments {
+    type?: AmmoType | null;
+    calibre?: string | null;
+  }
 
-export const enum Province {
-  AB = 'AB',
-  BC = 'BC',
-  MB = 'MB',
-  NB = 'NB',
-  NS = 'NS',
-  NT = 'NT',
-  NU = 'NU',
-  ON = 'ON',
-  PE = 'PE',
-  QC = 'QC',
-  SK = 'SK',
-  YT = 'YT',
-}
+  export interface IAmmoListingsOnQueryArguments {
+    page?: number | null;
+    pageSize?: number | null;
+    ammoType?: AmmoType | null;
+    calibre?: string | null;
+    province?: Province | null;
+    vendor?: string | null;
+    sortOrder?: SortOrder | null;
+    sortField?: string | null;
+  }
 
-export interface IVendor {
-  __typename: string | null
-  name: string
-  provinces: Array<Province>
-  location: string
-  logo: string
-  link: string
-  background: boolean | null
-}
+  export const enum Province {
+    AB = 'AB',
+    BC = 'BC',
+    MB = 'MB',
+    NB = 'NB',
+    NS = 'NS',
+    NT = 'NT',
+    NU = 'NU',
+    ON = 'ON',
+    PE = 'PE',
+    QC = 'QC',
+    SK = 'SK',
+    YT = 'YT'
+  }
 
-export const enum AmmoType {
-  centerfire = 'centerfire',
-  rimfire = 'rimfire',
-  shotgun = 'shotgun',
-}
+  export interface IVendor {
+		__typename: string | null
+    name: string;
+    provinces: Array<Province>;
+    location: string;
+    logo: string;
+    link: string;
+    background: boolean | null;
+  }
 
-export interface IBestPrice {
-  __typename: string | null
-  unitCost: number
-  calibre: string
-  type: AmmoType
-}
+  export const enum AmmoType {
+    centerfire = 'centerfire',
+    rimfire = 'rimfire',
+    shotgun = 'shotgun'
+  }
 
-export const enum SortOrder {
-  ASC = 'ASC',
-  DES = 'DES',
-}
+  export interface IBestPrice {
+		__typename: string | null
+    unitCost: number;
+    calibre: string;
+    type: AmmoType | null;
+  }
 
-export interface IAmmoListings {
-  __typename: string | null
-  page: number
-  pages: number
-  pageSize: number
-  items: Array<IAmmoGroup>
-}
+  export const enum SortOrder {
+    ASC = 'ASC',
+    DES = 'DES'
+  }
 
-export interface IAmmoGroup {
-  __typename: string | null
-  name: string
-  brand: string
-  calibre: string
-  type: AmmoType
-  vendors: Array<IAmmoListing>
-}
+  export interface IAmmoListings {
+		__typename: string | null
+    page: number;
+    pages: number;
+    pageSize: number;
+    items: Array<IAmmoGroup>;
+  }
 
-export interface IAmmoListing {
-  __typename: string | null
-  img: string
-  price: number
-  name: string
-  link: string
-  vendor: string
-  provinces: Array<Province>
-  calibre: string
-  brand: string
-  count: number | null
-  unitCost: number | null
-}
+  export interface IAmmoGroup {
+		__typename: string | null
+    name: string;
+    brand: string;
+    calibre: string;
+    ammoType: AmmoType | null;
+    vendors: Array<IAmmoListing>;
+  }
+
+  export interface IAmmoListing {
+		__typename: string | null
+    img: string | null;
+    price: number;
+    name: string;
+    link: string;
+    vendor: string;
+    provinces: Array<Province>;
+    calibre: string;
+    brand: string;
+    count: number | null;
+    unitCost: number | null;
+  }
+
 
 // tslint:enable
+

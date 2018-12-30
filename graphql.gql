@@ -4,7 +4,7 @@ enum AmmoType {
   rimfire
   shotgun
 }
-# rprovinces  (and territories)of canada
+# provinces  (and territories) of canada
 enum Province {
   AB
   BC
@@ -25,7 +25,7 @@ enum SortOrder {
   DES
 }
 type AmmoListing {
-  img: String!
+  img: String
   price: Float!
   name: String!
   link: String!
@@ -40,7 +40,7 @@ type AmmoGroup {
   name: String!
   brand: String!
   calibre: String!
-  type: AmmoType!
+  ammoType: AmmoType #!
   vendors: [AmmoListing!]!
 }
 type AmmoListings {
@@ -60,7 +60,7 @@ type Vendor {
 type BestPrice {
   unitCost: Float!
   calibre: String!
-  type: AmmoType!
+  type: AmmoType #!
 }
 # The "Query" type is the root of all GraphQL queries.
 # (A "Mutation" type will be covered later on.)
@@ -70,7 +70,7 @@ type Query {
   ammoListings(
     page: Int
     pageSize: Int
-    type: AmmoType
+    ammoType: AmmoType
     calibre: String
     province: Province
     vendor: String
