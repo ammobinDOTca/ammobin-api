@@ -4,7 +4,6 @@ npm-debug.log
 .env
 influx-data
 redis-data
-package-lock.json
 logs/*
 *~
 dist

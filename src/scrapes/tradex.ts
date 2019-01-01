@@ -58,4 +58,3 @@ export function tradex(type) {
   }
 }
 
-module.exports = tradex
