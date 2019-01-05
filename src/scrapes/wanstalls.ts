@@ -50,7 +50,7 @@ export function wanstalls(type) {
       return getStuff('rimfire').then(helpers.classifyRimfire)
 
     case 'shotgun':
-      return getStuff('shotgun').then(helpers.classifyShotgun)
+      return getStuff('shot-gun').then(helpers.classifyShotgun)
 
     case 'centerfire':
       return Promise.all(
