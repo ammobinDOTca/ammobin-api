@@ -1,10 +1,10 @@
 // import { bvoutdoors } from '../scrapes/bvoutdoors'
-import { gothicLineArmoury } from '../scrapes/gothic-line-armoury'
+import { leverarms } from '../scrapes/leverarms'
 import * as helpers from '../helpers'
 import { Type } from '../types'
 
 const test = async () => {
-  const f = await gothicLineArmoury(Type.centerfire)
+  const f = await leverarms(Type.centerfire)
   console.log(f)
 }
 

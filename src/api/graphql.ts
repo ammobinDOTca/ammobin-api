@@ -2,6 +2,8 @@ const { gql } = require('apollo-server')
 import { VENDORS } from '../constants'
 import axios from 'axios'
 import fs from 'fs'
+import { getScrapeResponses } from './shared'
+import { IAmmoListings, IAmmoListingsOnQueryArguments } from '../graphql-types'
 const schema = fs.readFileSync(process.cwd() + '/graphql.gql')
 
 /**
@@ -36,16 +38,23 @@ export const resolvers: any = {
           unitCost: data[calibre],
         }))
     },
-    ammoListings: async (parent, args) => {
-      const { type } = args
-      const res = await axios.get(
-        `https://api.ammobin.ca/${type || 'centerfire'}`,
-        {
-          params: args,
-        }
-      )
+    ammoListings: async (
+      parent,
+      args: IAmmoListingsOnQueryArguments
+    ): Promise<IAmmoListings> => {
+      let { page, pageSize } = args
 
-      return res.data
+      if (isNaN(page) || page < 1) {
+        throw 'invalid page: ' + page
+      }
+
+      if (isNaN(pageSize) || pageSize < 1 || page > 100) {
+        throw 'invalid pageSize: ' + pageSize
+      }
+
+      let res = await getScrapeResponses(args)
+
+      return res
     },
   },
 }
