@@ -57,4 +57,3 @@ export function tradex(type) {
       return Promise.reject(new Error('unknown type: ' + type))
   }
 }
-
