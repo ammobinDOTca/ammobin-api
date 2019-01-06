@@ -9,7 +9,8 @@ async function makeSailReq(ammotype, page = 1) {
       !isNaN(d.lastPage) &&
       d.page < d.lastPage &&
       d.items &&
-      d.items.length > 0
+      d.items.length > 0 &&
+      false // todo: FIX this
     ) {
       return makeSailReq(ammotype, page + 1).then(dd => d.items.concat(dd))
     } else {
