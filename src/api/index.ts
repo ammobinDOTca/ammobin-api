@@ -15,7 +15,7 @@ import {
   CACHE_REFRESH_HOURS,
   QUEUE_NAME,
 } from '../constants'
-
+import { AmmoType } from '../graphql-types'
 const rsmq = new RedisSMQ({ host: 'redis' })
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
@@ -338,7 +338,11 @@ function queueUpCacheRefresh(type) {
   )
 }
 
-const TYPES = ['centerfire', 'rimfire', 'shotgun']
+const TYPES: AmmoType[] = [
+  AmmoType.centerfire,
+  AmmoType.rimfire,
+  AmmoType.shotgun,
+]
 
 server.route({
   method: 'POST',
