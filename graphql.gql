@@ -41,6 +41,10 @@ type AmmoGroup {
   brand: String!
   calibre: String!
   ammoType: AmmoType #!
+  minPrice: Float!
+  maxPrice: Float!
+  minUnitCost: Float
+  maxUnitCost: Float
   vendors: [AmmoListing!]!
 }
 type AmmoListings {

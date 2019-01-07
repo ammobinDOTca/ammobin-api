@@ -103,6 +103,10 @@ export interface IAmmoGroup {
   brand: string
   calibre: string
   ammoType: AmmoType | null
+  minPrice: number
+  maxPrice: number
+  minUnitCost: number | null
+  maxUnitCost: number | null
   vendors: Array<IAmmoListing>
 }
 
