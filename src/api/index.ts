@@ -173,44 +173,6 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/submit-address',
-  handler: async function(request, h) {
-    const body = request.payload
-
-    if (
-      !body ||
-      ['name', 'address', 'city', 'province', 'postal'].some(
-        k => !body[k] || body[k].length > 1000
-      )
-    ) {
-      throw boom.badRequest('missing required field...')
-    }
-
-    const info = {
-      name: body.name.replace(/[^\w\s]/gi, ''),
-      address: body.address.replace(/[^\w\s]/gi, ''),
-      city: body.city.replace(/[^\w\s]/gi, ''),
-      province: body.province.replace(/[^\w\s]/gi, ''),
-      postal: body.postal.replace(/[^\w\s]/gi, ''),
-      note: (body.note || '').replace(/[^\w\s]/gi, ''),
-    }
-
-    await new Promise((resolve, reject) =>
-      fs.appendFile(
-        'logs/submitted-addresses.csv',
-        `${info.name},${info.address},${info.city},${info.city},${
-          info.province
-        },${info.postal},${info.note}\n`,
-        err => (err ? reject(err) : resolve())
-      )
-    )
-
-    return h.response('success')
-  },
-})
-
-server.route({
-  method: 'POST',
   path: '/track-view',
   handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
@@ -223,6 +185,59 @@ server.route({
       calibre: body.calibre,
       // body
     })
+    return h.response('success')
+  },
+})
+
+server.route({
+  method: 'POST',
+  path: '/track-click',
+  handler: async function(request, h) {
+    // record user agent + calibre + brand that user opened up
+    const userAgent = request.headers['user-agent'] || 'unknown'
+    const body = JSON.parse(request.payload)
+
+    if (!request.query.url) {
+      throw boom.badRequest('missing required param: url')
+    }
+
+    const targetUrl = url.parse(request.query.url)
+
+    const host = targetUrl.hostname
+      ? targetUrl.hostname.replace('www.', '')
+      : ''
+    if (SOURCES.indexOf(host) === -1) {
+      throw boom.badRequest('invalid target url')
+    }
+    const date = moment.utc().format(DATE_FORMAT)
+
+    try {
+      const results: any = await new Promise((resolve, reject) =>
+        client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
+          err ? reject(err) : resolve(res.map(JSON.parse))
+        )
+      ).then(helpers.combineResults)
+
+      const encoded = encodeURIComponent(request.query.url)
+      const record = results.find(
+        r => r && r.link && r.link.indexOf(encoded) >= 0
+      ) // !!({} && -1) === true
+
+      if (!record) {
+        console.warn(
+          'WARN: unable to find matching record for ' + request.query.url
+        )
+      }
+
+      logger.info({
+        type: 'track-outbound-click',
+        url: request.query.url,
+        userAgent,
+        record: {},
+      })
+    } catch (e) {
+      logger.error('ERROR: failed to track click: ' + e)
+    }
     return h.response('success')
   },
 })
@@ -247,11 +262,8 @@ server.route({
 
     try {
       const results: any = await new Promise((resolve, reject) =>
-        client.mget(
-          ['rimfire', 'shotgun', 'centerfire'].map(
-            type => `${date}_${host}_${type}`
-          ),
-          (err, res) => (err ? reject(err) : resolve(res.map(JSON.parse)))
+        client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
+          err ? reject(err) : resolve(res.map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
