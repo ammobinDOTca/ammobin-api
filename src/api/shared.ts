@@ -6,6 +6,7 @@ import {
   IAmmoListingsOnQueryArguments,
   IAmmoListings,
   AmmoType,
+  IAmmoListing,
 } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 
@@ -13,20 +14,20 @@ export async function getScrapeResponses(
   params: IAmmoListingsOnQueryArguments
 ): Promise<IAmmoListings> {
   let { ammoType, page, pageSize, calibre, province, vendor } = params
-  const keys = ammoType
+  const keys: string[] = ammoType
     ? SOURCES.map(s => helpers.getKey(s, ammoType))
     : [AmmoType.rimfire, AmmoType.centerfire, AmmoType.shotgun].reduce(
         (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
         []
       )
 
-  const results: any = await new Promise((resolve, reject) =>
+  const results: IAmmoListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
 
-  const result = results
+  const result: IAmmoListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
     .filter(r => r && r.price > 0 && r.calibre && r.calibre !== 'UNKNOWN')
     .sort(function(a, b) {
@@ -40,6 +41,15 @@ export async function getScrapeResponses(
     })
 
   const itemsGrouped = result.reduce((r, item) => {
+    // if provided, filter out items
+    if (
+      (calibre && item.calibre !== calibre) ||
+      (vendor && item.vendor !== vendor) ||
+      (province && !item.provinces.includes(province))
+    ) {
+      return r
+    }
+
     const key = item.calibre + '_' + item.brand
     if (!r[key]) {
       r[key] = {
@@ -74,16 +84,6 @@ export async function getScrapeResponses(
 
   let res = Object.keys(itemsGrouped).map(k => itemsGrouped[k])
 
-  if (!calibre && calibre.length > 0) {
-    res = res.filter(r => r.calibre === calibre)
-  }
-
-  if (!vendor && vendor.length > 0) {
-    // todo:
-  }
-  if (!province && province.length > 0) {
-    // todo:
-  }
   return {
     page,
     pageSize,
