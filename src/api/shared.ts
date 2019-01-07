@@ -14,6 +14,17 @@ export async function getScrapeResponses(
   params: IAmmoListingsOnQueryArguments
 ): Promise<IAmmoListings> {
   let { ammoType, page, pageSize, calibre, province, vendor } = params
+
+  if (isNaN(page) || page < 1) {
+    page = 1
+  }
+
+  if (isNaN(pageSize) || pageSize < 1) {
+    pageSize = 25
+  } else if (pageSize > 100) {
+    pageSize = 100
+  }
+
   const keys: string[] = ammoType
     ? SOURCES.map(s => helpers.getKey(s, ammoType))
     : [AmmoType.rimfire, AmmoType.centerfire, AmmoType.shotgun].reduce(
@@ -44,8 +55,10 @@ export async function getScrapeResponses(
     // if provided, filter out items
     if (
       (calibre && item.calibre !== calibre) ||
-      (vendor && item.vendor !== vendor) ||
-      (province && !item.provinces.includes(province))
+      (vendor &&
+        item.vendor !==
+          vendor) /* || // TODO: re-enable this. need to update scrapes to use provinces field
+      (province && !item.provinces.includes(province))*/
     ) {
       return r
     }

@@ -42,16 +42,6 @@ export const resolvers: any = {
       parent,
       args: IAmmoListingsOnQueryArguments
     ): Promise<IAmmoListings> => {
-      let { page, pageSize } = args
-
-      if (isNaN(page) || page < 1) {
-        throw 'invalid page: ' + page
-      }
-
-      if (isNaN(pageSize) || pageSize < 1 || page > 100) {
-        throw 'invalid pageSize: ' + pageSize
-      }
-
       let res = await getScrapeResponses(args)
 
       return res

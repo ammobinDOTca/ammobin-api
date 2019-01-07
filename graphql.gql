@@ -30,7 +30,7 @@ type AmmoListing {
   name: String!
   link: String!
   vendor: String!
-  provinces: [Province!]!
+  provinces: [Province] #[Province!]!
   calibre: String!
   brand: String!
   count: Float
