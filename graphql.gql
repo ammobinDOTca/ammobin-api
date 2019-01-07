@@ -10,6 +10,7 @@ enum Province {
   BC
   MB
   NB
+  NF
   NS
   NT
   NU

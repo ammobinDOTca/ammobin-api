@@ -51,6 +51,7 @@ export const enum Province {
   BC = 'BC',
   MB = 'MB',
   NB = 'NB',
+  NF = 'NF',
   NS = 'NS',
   NT = 'NT',
   NU = 'NU',
@@ -117,7 +118,7 @@ export interface IAmmoListing {
   name: string
   link: string
   vendor: string
-  provinces: Array<Province>
+  provinces: Array<Province | null> | null
   calibre: string
   brand: string
   count: number | null
