@@ -43,12 +43,12 @@ import { northpro } from './northpro'
 import { wanstalls } from './wanstalls'
 import { gothicLineArmoury } from './gothic-line-armoury'
 
-import { Type, ScrapeResponse } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
 export function makeSearch(
   source: string,
-  type: Type
-): Promise<ScrapeResponse> {
+  type: AmmoType
+): Promise<IAmmoListing[]> {
   switch (source) {
     case 'cabelas.ca':
       return cabelas(type)

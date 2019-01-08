@@ -2,8 +2,8 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat = require('throat')
-
-async function fn(type, page = 1) {
+import { AmmoType, IAmmoListing } from '../graphql-types'
+async function fn(type, page = 1): Promise<IAmmoListing[]> {
   await helpers.delayScrape('http://www.tigerarms.ca')
 
   return axios
@@ -45,7 +45,7 @@ async function fn(type, page = 1) {
     })
 }
 
-export function tigerArms(type) {
+export function tigerArms(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
   switch (type) {
     case 'rimfire':

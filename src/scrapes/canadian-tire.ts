@@ -1,8 +1,8 @@
 import axios from 'axios'
 import * as helpers from '../helpers'
-import { ScrapeResponse, Type } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
-function work(page: string) {
+function work(page: string): Promise<IAmmoListing[]> {
   // TODO: need to get all result pages  ("pagination": {"total": 6, )
 
   return axios
@@ -63,12 +63,12 @@ function work(page: string) {
     })
 }
 
-export function canadiantire(type: Type): Promise<ScrapeResponse> {
-  if (type === 'rimfire') {
+export function canadiantire(type: AmmoType): Promise<IAmmoListing[]> {
+  if (type === AmmoType.rimfire) {
     return work('Rimfire Ammunition').then(helpers.classifyRimfire)
-  } else if (type === 'centerfire') {
+  } else if (type === AmmoType.centerfire) {
     return work('Centerfire Ammunition').then(helpers.classifyCenterfire)
-  } else if (type === 'shotgun') {
+  } else if (type === AmmoType.shotgun) {
     return Promise.all([
       work('Lead Shotgun Shells'),
       work('Steel Shotgun Shells'),

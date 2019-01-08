@@ -1,7 +1,6 @@
 import { SOURCES } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
-import { ScrapeResponse } from '../types'
 import {
   IAmmoListingsOnQueryArguments,
   IAmmoListings,
@@ -55,10 +54,8 @@ export async function getScrapeResponses(
     // if provided, filter out items
     if (
       (calibre && item.calibre !== calibre) ||
-      (vendor &&
-        item.vendor !==
-          vendor) /* || // TODO: re-enable this. need to update scrapes to use provinces field
-      (province && !item.provinces.includes(province))*/
+      (vendor && item.vendor !== vendor) ||
+      (province && item.provinces && !item.provinces.includes(province))
     ) {
       return r
     }

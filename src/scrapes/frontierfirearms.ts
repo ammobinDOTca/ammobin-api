@@ -2,9 +2,8 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import helpers = require('../helpers')
 import throat = require('throat')
-import { Type, ScrapeResponse } from '../types'
-
-function work(type) {
+import { AmmoType, IAmmoListing } from '../graphql-types'
+function work(type: string): Promise<IAmmoListing[]> {
   return axios
     .get(`http://frontierfirearms.ca/ammunition-reloading/${type}.html`)
     .then(r => {
@@ -29,14 +28,14 @@ function work(type) {
     })
 }
 
-export function frontierfirearms(type: Type): Promise<ScrapeResponse> {
+export function frontierfirearms(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
 
   switch (type) {
-    case Type.rimfire:
+    case AmmoType.rimfire:
       return work('rimfire-ammunition').then(helpers.classifyRimfire)
 
-    case Type.centerfire:
+    case AmmoType.centerfire:
       return Promise.all(
         [
           'surplus-ammunition',
@@ -47,8 +46,8 @@ export function frontierfirearms(type: Type): Promise<ScrapeResponse> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
 
-    case Type.shotgun:
-      return Promise.resolve([]) // no items listed aug 29 2017
+    case AmmoType.shotgun:
+      return work('shotgun-shells').then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

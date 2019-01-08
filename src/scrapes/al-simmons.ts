@@ -3,11 +3,11 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { Type, ScrapeResponse, ScrapeItem } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
 const SITE = 'https://alsimmonsgunshop.com'
 
-async function work(type: string, page = 1) {
+async function work(type: string, page = 1): Promise<IAmmoListing[]> {
   await helpers.delayScrape(SITE)
   console.log(`loading al simmons ${type} ${page}`)
 
@@ -54,14 +54,14 @@ async function work(type: string, page = 1) {
     })
 }
 
-export function alSimmons(type: Type): Promise<ScrapeResponse> {
+export function alSimmons(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
 
   switch (type) {
-    case Type.rimfire:
+    case AmmoType.rimfire:
       return work('rimfire-ammunition').then(helpers.classifyRimfire)
 
-    case Type.centerfire:
+    case AmmoType.centerfire:
       return Promise.all(
         ['rifle-ammunition', 'handgun-ammunition'].map(t =>
           throttle(() => work(t, 1))
@@ -70,7 +70,7 @@ export function alSimmons(type: Type): Promise<ScrapeResponse> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
 
-    case Type.shotgun:
+    case AmmoType.shotgun:
       return Promise.resolve([])
 
     default:

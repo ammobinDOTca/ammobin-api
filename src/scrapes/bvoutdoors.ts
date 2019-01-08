@@ -8,9 +8,8 @@ import {
   combineResults,
 } from '../helpers'
 import throat = require('throat')
-import { Type, ScrapeResponse } from '../types'
-
-async function work(type, page = 1) {
+import { AmmoType, IAmmoListing } from '../graphql-types'
+async function work(type, page = 1): Promise<IAmmoListing[]> {
   await delayScrape('https://www.bvoutdoors.com')
 
   console.log(`loading bvoutdoors ${type} ${page}`)
@@ -42,7 +41,7 @@ async function work(type, page = 1) {
       }
     })
 }
-export function bvoutdoors(type: Type): Promise<ScrapeResponse> {
+export function bvoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
 
   switch (type) {

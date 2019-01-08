@@ -125,7 +125,7 @@ const bestPricesCache = server.cache({
   expiresIn: CACHE_REFRESH_HOURS * 2 * 60 * 1000, // make sure that this can stay around till after the next refresh cycle
   segment: 'bestPrices',
   generateFunc: async function() {
-    const keys = SOURCES.map(s => helpers.getKey(s, 'centerfire'))
+    const keys = SOURCES.map(s => helpers.getKey(s, AmmoType.centerfire))
     const res: any = await new Promise((resolve, reject) =>
       client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
     )
@@ -296,7 +296,7 @@ server.route({
   method: 'GET',
   path: '/dank',
   handler: async () => {
-    const keys = SOURCES.map(s => helpers.getKey(s, 'centerfire'))
+    const keys = SOURCES.map(s => helpers.getKey(s, AmmoType.centerfire))
     const results: any = await new Promise((resolve, reject) => {
       client.mget(keys, (err, res) =>
         err ? reject(err) : resolve(res.map(r => (r ? JSON.parse(r) : null)))

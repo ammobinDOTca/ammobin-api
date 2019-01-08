@@ -1,7 +1,7 @@
 import * as helpers from '../helpers'
-import { Type, ScrapeResponse } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
-async function makeAlReq(ammotype: string, page = 1) {
+async function makeAlReq(ammotype: string, page = 1): Promise<IAmmoListing[]> {
   await helpers.delayScrape('https://www.alflahertys.com')
 
   return helpers.makeWrapApiReq('alflahertys', ammotype, page).then(d => {
@@ -24,10 +24,10 @@ async function makeAlReq(ammotype: string, page = 1) {
  * @param {'rimfire'|'centerfire'|'shotgun'} type
  * @returns Promise<any[]>
  */
-export function alflahertys(type: Type): Promise<ScrapeResponse> {
-  if (type === Type.rimfire) {
+export function alflahertys(type: AmmoType): Promise<IAmmoListing[]> {
+  if (type === AmmoType.rimfire) {
     return makeAlReq('Rimfire-Ammo').then(helpers.classifyRimfire)
-  } else if (type === Type.centerfire) {
+  } else if (type === AmmoType.centerfire) {
     return Promise.all([
       makeAlReq('Rifle-Ammunition'), // multi page
       makeAlReq('Bulk-Rifle'),
@@ -35,7 +35,7 @@ export function alflahertys(type: Type): Promise<ScrapeResponse> {
     ])
       .then(helpers.combineResults)
       .then(helpers.classifyCenterfire)
-  } else if (type === Type.shotgun) {
+  } else if (type === AmmoType.shotgun) {
     return makeAlReq('Shotgun-Ammo') // multi page
       .then(helpers.classifyShotgun)
   } else {

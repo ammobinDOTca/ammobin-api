@@ -3,8 +3,9 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat = require('throat')
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
-async function fn(section, type, page = 1) {
+async function fn(section, type, page = 1): Promise<IAmmoListing[]> {
   await helpers.delayScrape('https://www.westernmetal.ca')
 
   return axios
@@ -51,13 +52,13 @@ async function fn(section, type, page = 1) {
     })
 }
 
-export function westernMetal(type) {
+export function westernMetal(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
   switch (type) {
-    case 'rimfire':
+    case AmmoType.rimfire:
       return Promise.resolve([])
 
-    case 'centerfire':
+    case AmmoType.centerfire:
       return Promise.all([
         throttle(() => fn('new-ammunition', 80)),
         throttle(() => fn('new-ammunition', 81)),
@@ -67,7 +68,7 @@ export function westernMetal(type) {
         .then(helpers.combineResults)
         .then(i => helpers.classifyBullets(i, type))
 
-    case 'shotgun':
+    case AmmoType.shotgun:
       return fn('new-ammunition', 538).then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))

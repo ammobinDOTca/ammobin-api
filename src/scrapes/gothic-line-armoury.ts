@@ -1,9 +1,8 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { Type, ScrapeResponse } from '../types'
-
-async function work(type = 'doesnt matter', page = 1) {
+import { AmmoType, IAmmoListing } from '../graphql-types'
+async function work(type = 'doesnt matter', page = 1): Promise<IAmmoListing[]> {
   const domain = 'https://gothiclinearmoury.ca'
   await helpers.delayScrape(domain)
   console.log(`loading ${domain}  ${type} ${page}`)
@@ -32,13 +31,13 @@ async function work(type = 'doesnt matter', page = 1) {
   })
 }
 
-export function gothicLineArmoury(type: Type): Promise<ScrapeResponse> {
+export function gothicLineArmoury(type: AmmoType): Promise<IAmmoListing[]> {
   switch (type) {
-    case Type.rimfire:
-    case Type.shotgun:
+    case AmmoType.rimfire:
+    case AmmoType.shotgun:
       return Promise.resolve([])
 
-    case Type.centerfire:
+    case AmmoType.centerfire:
       return work().then(helpers.classifyCenterfire)
 
     default:

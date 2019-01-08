@@ -1,9 +1,9 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { Type, ScrapeResponse } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 
-function work(page = 1) {
+function work(page = 1): Promise<IAmmoListing[]> {
   console.log(`loading durham outdoors ${page}`)
   return axios
     .get(
@@ -40,7 +40,7 @@ function work(page = 1) {
     })
 }
 
-export function durhamoutdoors(type: Type): Promise<ScrapeResponse> {
+export function durhamoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
   switch (type) {
     case 'rimfire':
     case 'centerfire':

@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import throat = require('throat')
 import helpers = require('../helpers')
-import { Type, ScrapeResponse } from '../types'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 const columns = [
   ['link', 'Article #'],
   ['brand', 'Brand'],
@@ -115,7 +115,7 @@ function makeCabelasReq(ammoType) {
   //    .then(classify);
 }
 
-export function cabelas(type: Type): Promise<ScrapeResponse> {
+export function cabelas(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
   // TODO: need to fix classifier for rimfire+shotgun
   if (type === 'rimfire') {
