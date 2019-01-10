@@ -26,7 +26,7 @@
     "catbox-redis": "^4.2.4",
     "cheerio": "^1.0.0-rc.2",
     "delay": "^4.1.0",
-    "fluent-logger": "^3.2.2",
+    "fluent-logger": "^3.2.3",
     "graphql": "^14.0.2",
     "hapi": "^17.8.1",
     "hapi-cron": "^1.0.5",
