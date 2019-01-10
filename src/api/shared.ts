@@ -68,6 +68,7 @@ export async function getScrapeResponses(
         brand: item.brand,
         minPrice: item.price,
         maxPrice: item.price,
+        ammoType: item.ammoType,
         minUnitCost: item.unitCost || 0,
         maxUnitCost: item.unitCost || 0,
         img: item.img,

@@ -123,6 +123,7 @@ export interface IAmmoListing {
   brand: string
   count: number | null
   unitCost: number | null
+  ammoType: AmmoType | null
 }
 
 // tslint:enable

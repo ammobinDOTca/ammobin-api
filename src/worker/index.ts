@@ -1,8 +1,9 @@
 const RSMQWorker = require('rsmq-worker')
-const classifier = require('ammobin-classifier')
+import classifier from 'ammobin-classifier'
 import * as CONSTANTS from '../constants'
 import { makeSearch } from '../scrapes'
 import { getKey } from '../helpers'
+import { AmmoType, IAmmoListing } from '../graphql-types'
 const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME, {
   host: 'redis',
   autostart: true,
@@ -69,6 +70,14 @@ function getCounts(items) {
   })
 }
 
+function setAmmoType(ammoType: AmmoType) {
+  return (items: IAmmoListing[]) =>
+    items.map(i => {
+      i.ammoType = ammoType
+      return i
+    })
+}
+
 worker.on('message', function(msg, next /* , id*/) {
   const { source, type } = JSON.parse(msg)
 
@@ -76,11 +85,12 @@ worker.on('message', function(msg, next /* , id*/) {
   logger.info({ type: 'started-scrape', source, ammoType: type })
   try {
     return makeSearch(source, type)
+      .then(items => items.filter(i => i.price))
       .then(classifyBrand)
       .then(i => proxyImages(i))
       .then(i => addSrcRefToLinks(i))
       .then(getCounts)
-      .then(items => items.filter(i => i.price))
+      .then(setAmmoType(type))
       .then(items => {
         logger.info({
           type: 'finished-scrape',

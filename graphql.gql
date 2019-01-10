@@ -36,6 +36,7 @@ type AmmoListing {
   brand: String!
   count: Float
   unitCost: Float
+  ammoType: AmmoType #!
 }
 type AmmoGroup {
   name: String!
