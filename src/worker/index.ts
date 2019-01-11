@@ -1,5 +1,5 @@
 const RSMQWorker = require('rsmq-worker')
-import classifier from 'ammobin-classifier'
+import * as classifier from 'ammobin-classifier'
 import * as CONSTANTS from '../constants'
 import { makeSearch } from '../scrapes'
 import { getKey } from '../helpers'
