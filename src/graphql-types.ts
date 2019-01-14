@@ -111,12 +111,12 @@ export interface IAmmoGroup {
   name: string
   brand: string
   calibre: string
-  ammoType: AmmoType | null
+  ammoType: AmmoType
   minPrice: number
   maxPrice: number
   minUnitCost: number | null
   maxUnitCost: number | null
-  img: string
+  img: string | null
   vendors: Array<IAmmoListing>
 }
 
@@ -132,7 +132,7 @@ export interface IAmmoListing {
   brand: string
   count: number | null
   unitCost: number | null
-  ammoType: AmmoType | null
+  ammoType: AmmoType
 }
 
 // tslint:enable
