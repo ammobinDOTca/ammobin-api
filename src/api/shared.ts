@@ -5,14 +5,50 @@ import {
   IAmmoListingsOnQueryArguments,
   IAmmoListings,
   AmmoType,
+  IAmmoGroup,
   IAmmoListing,
+  Province,
+  SortOrder,
+  SortField,
 } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
+
+function doesItemContainProvince(
+  item: IAmmoListing | any,
+  province: Province
+): boolean {
+  // does the ammo listing contain the given promise
+  // need to check 2 properties since have not fully migrated scrapes to return list of provinces instead of
+  // of comma separated string
+  // TODO: fix this
+  return (
+    (item.province && item.province.includes(province) >= 0) ||
+    (item.provinces && item.provinces.includes(province))
+  )
+}
 
 export async function getScrapeResponses(
   params: IAmmoListingsOnQueryArguments
 ): Promise<IAmmoListings> {
-  let { ammoType, page, pageSize, calibre, province, vendor } = params
+  let {
+    ammoType,
+    page,
+    pageSize,
+    calibre,
+    province,
+    vendor,
+    query,
+    sortField,
+    sortOrder,
+  } = params
+
+  if (!sortOrder) {
+    sortOrder = SortOrder.ASC
+  }
+
+  if (!sortField) {
+    sortField = SortField.minUnitCost
+  }
 
   if (isNaN(page) || page < 1) {
     page = 1
@@ -32,7 +68,7 @@ export async function getScrapeResponses(
       )
 
   const results: IAmmoListing[][] = await new Promise((resolve, reject) =>
-    client.mget(keys, (err, rres) =>
+    client.mget(keys, (err, rres: string[]) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
@@ -50,55 +86,131 @@ export async function getScrapeResponses(
       }
     })
 
-  const itemsGrouped = result.reduce((r, item) => {
-    // if provided, filter out items
-    if (
-      (calibre && item.calibre !== calibre) ||
-      (vendor && item.vendor !== vendor) ||
-      (province && item.provinces && !item.provinces.includes(province))
-    ) {
-      return r
-    }
-
-    const key = item.calibre + '_' + item.brand
-    if (!r[key]) {
-      r[key] = {
-        name: `${item.brand} ${item.calibre}`,
-        calibre: item.calibre,
-        brand: item.brand,
-        minPrice: item.price,
-        maxPrice: item.price,
-        ammoType: item.ammoType,
-        minUnitCost: item.unitCost || 0,
-        maxUnitCost: item.unitCost || 0,
-        img: item.img,
-        vendors: [item],
+  const itemsGrouped = result.reduce(
+    (r, item) => {
+      // if provided, filter out items
+      if (
+        (calibre && item.calibre !== calibre) ||
+        (vendor && item.vendor !== vendor) ||
+        (province && doesItemContainProvince(item, province)) ||
+        (query && !item.name.toLowerCase().includes(query.toLowerCase()))
+      ) {
+        return r
       }
-    } else {
-      const val = r[key]
-      val.minPrice = Math.min(item.price, val.minPrice)
-      val.maxPrice = Math.max(item.price, val.maxPrice)
 
-      if (item.unitCost) {
-        if (val.minUnitCost === 0) {
-          val.minUnitCost = item.unitCost
+      const key = item.calibre + '_' + item.brand
+      if (!r[key]) {
+        r[key] = {
+          name: `${item.brand} ${item.calibre}`,
+          calibre: item.calibre,
+          brand: item.brand,
+          minPrice: item.price,
+          maxPrice: item.price,
+          ammoType: item.ammoType,
+          minUnitCost: item.unitCost || 0,
+          maxUnitCost: item.unitCost || 0,
+          img: item.img,
+          vendors: [item],
+        } as IAmmoGroup
+      } else {
+        const val = r[key]
+        val.minPrice = Math.min(item.price, val.minPrice)
+        val.maxPrice = Math.max(item.price, val.maxPrice)
+
+        if (item.unitCost) {
+          if (val.minUnitCost === 0) {
+            val.minUnitCost = item.unitCost
+          }
+          val.minUnitCost = Math.min(item.unitCost, val.minUnitCost)
+          val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost)
         }
-        val.minUnitCost = Math.min(item.unitCost, val.minUnitCost)
-        val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost)
+
+        if (val.img) {
+          // randomly pick group image
+          val.img = Math.random() > 0.5 ? item.img : val.img
+        } else {
+          val.img = item.img
+        }
+
+        val.vendors.push(item)
       }
+      return r
+    },
+    <{ [key: string]: IAmmoGroup }>{}
+  )
 
-      val.img = val.img || item.img
-      val.vendors.push(item)
-    }
-    return r
-  }, {})
-
-  let res = Object.keys(itemsGrouped).map(k => itemsGrouped[k])
+  // flatten map and sort groups by sortField + sortKey
+  let res = Object.keys(itemsGrouped)
+    .map(k => itemsGrouped[k])
+    .sort((a, b) => {
+      let aa = a[sortField]
+      let bb = b[sortField]
+      // put unknown unit costs at the bottom of the sort order
+      if (sortField === SortField.minUnitCost) {
+        if (aa <= 0) {
+          aa = Number.MAX_SAFE_INTEGER
+        }
+        if (bb <= 0) {
+          bb = Number.MAX_SAFE_INTEGER
+        }
+      }
+      const order = sortOrder === SortOrder.ASC ? 1 : -1
+      if (aa === bb) {
+        return 0
+      } else if (aa > bb) {
+        return 1 * order
+      } else {
+        return -1 * order
+      }
+    })
+  // paginate
+  // and then sort vendor listings within the selected groups
+  let items = res.slice((page - 1) * pageSize, page * pageSize).map(row => {
+    row.vendors = row.vendors.sort((a, b) => {
+      let groupedKey: string
+      switch (sortField) {
+        case SortField.minUnitCost:
+          groupedKey = 'unitCost'
+          break
+        case SortField.name:
+          groupedKey = 'name'
+          break
+        case SortField.minPrice:
+          groupedKey = 'price'
+          break
+        case SortField.link:
+          groupedKey = 'vendor'
+          break
+        default:
+          console.error('unhandled sort key', sortField)
+      }
+      let aa = a[groupedKey]
+      let bb = b[groupedKey]
+      // put unknown unit costs at the bottom of the sort order
+      if (groupedKey === 'unitCost') {
+        if (aa <= 0) {
+          aa = Number.MAX_SAFE_INTEGER
+        }
+        if (bb <= 0) {
+          bb = Number.MAX_SAFE_INTEGER
+        }
+      }
+      const order = sortOrder === SortOrder.ASC ? 1 : -1
+      if (aa === bb) {
+        return 0
+      } else if (aa > bb) {
+        return 1 * order
+      } else {
+        return -1 * order
+      }
+    })
+    return row
+  })
 
   return {
     page,
     pageSize,
     pages: Math.ceil(res.length / pageSize),
-    items: res.slice((page - 1) * pageSize, page * pageSize),
+    items,
   } as IAmmoListings
 }
