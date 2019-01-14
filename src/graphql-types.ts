@@ -43,7 +43,8 @@ export interface IAmmoListingsOnQueryArguments {
   province?: Province | null
   vendor?: string | null
   sortOrder?: SortOrder | null
-  sortField?: string | null
+  sortField?: SortField | null
+  query?: string | null
 }
 
 export const enum Province {
@@ -90,6 +91,13 @@ export const enum SortOrder {
   DES = 'DES',
 }
 
+export const enum SortField {
+  name = 'name',
+  link = 'link',
+  minPrice = 'minPrice',
+  minUnitCost = 'minUnitCost',
+}
+
 export interface IAmmoListings {
   __typename: string | null
   page: number
@@ -108,6 +116,7 @@ export interface IAmmoGroup {
   maxPrice: number
   minUnitCost: number | null
   maxUnitCost: number | null
+  img: string
   vendors: Array<IAmmoListing>
 }
 

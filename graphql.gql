@@ -25,6 +25,14 @@ enum SortOrder {
   ASC
   DES
 }
+# column to sort on
+enum SortField {
+  name
+  link
+  minPrice
+  minUnitCost
+}
+
 type AmmoListing {
   img: String
   price: Float!
@@ -47,6 +55,7 @@ type AmmoGroup {
   maxPrice: Float!
   minUnitCost: Float
   maxUnitCost: Float
+  img: String!
   vendors: [AmmoListing!]!
 }
 type AmmoListings {
@@ -81,6 +90,7 @@ type Query {
     province: Province
     vendor: String
     sortOrder: SortOrder
-    sortField: String
+    sortField: SortField
+    query: String
   ): AmmoListings
 }
