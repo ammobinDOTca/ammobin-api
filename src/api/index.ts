@@ -463,7 +463,11 @@ server.events.on('response', function(request) {
   if (request.response.statusCode >= 500) {
     logger.error({
       type: 'http500',
-      request,
+      request: {
+        method: request.method.toUpperCase(),
+        url: request.url,
+        body: request.payload,
+      },
       string: `Error response (500) sent for request:  ${
         request.id
       } ${request.method.toUpperCase()} ${request.url.path} because:  ${
