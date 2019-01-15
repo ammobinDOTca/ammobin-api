@@ -355,7 +355,8 @@ server.route({
   handler: function(req, h) {
     let body = {}
     try {
-      body = JSON.parse(req.payload)
+      body =
+        typeof req.payload === 'string' ? JSON.parse(req.payload) : req.payload
     } catch (e) {
       console.error(
         'failed to parse content report',
