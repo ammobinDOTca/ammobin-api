@@ -357,13 +357,18 @@ server.route({
     try {
       body = JSON.parse(req.payload)
     } catch (e) {
-      console.error('failed to parse content report', e, req.payload)
+      console.error(
+        'failed to parse content report',
+        e,
+        req.payload,
+        typeof req.payload
+      )
     }
     logger.info({
       type: 'content-security-report',
       body,
     })
-    return h.success('thanks for reporting')
+    return h.response('thanks for reporting')
   },
 })
 
