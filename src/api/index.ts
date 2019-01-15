@@ -353,7 +353,12 @@ server.route({
   },
   path: '/content-security-report-uri',
   handler: function(req, h) {
-    const body = JSON.parse(req.payload)
+    let body = {}
+    try {
+      body = JSON.parse(req.payload)
+    } catch (e) {
+      console.error('failed to parse content report', e, req.payload)
+    }
     logger.info({
       type: 'content-security-report',
       body,
