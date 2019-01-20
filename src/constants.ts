@@ -37,6 +37,7 @@ export const SOURCES = [
   'northprosports.com',
   'wanstallsonline.com',
   'gothiclinearmoury.ca',
+  'rampartcorp.com',
 ]
 
 export const VENDORS = [
@@ -289,17 +290,24 @@ export const VENDORS = [
   },
   {
     name: 'Wanstalls',
-    link: 'https://www.wanstallsonline.com',
+    link: 'https://www.wanstallsonline.com/',
     logo: '/assets/wanstalls.png',
     provinces: ['BC'],
     location: 'Maple Ridge',
   },
   {
     name: 'Gothic Line Armoury',
-    link: 'https://gothiclinearmoury.ca',
+    link: 'https://gothiclinearmoury.ca/',
     logo: '/assets/gothic-line-armoury.jpg',
     provinces: ['AB'],
     location: 'Calagary',
+  },
+  {
+    name: 'Rampart',
+    link: 'https://rampartcorp.com/',
+    logo: '/assets/rampart.png',
+    provinces: ['ON'],
+    location: 'Ottawa',
   },
 ]
 
