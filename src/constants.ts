@@ -18,7 +18,7 @@ export const SOURCES = [
   'gun-shop.ca',
   'tigerarms.ca',
   'magdump.ca',
-  'rangeviewsports.ca',
+  'rangeviewcanada.com',
   'frontierfirearms.ca',
   'tradeexcanada.com',
   'bvoutdoors.com',
@@ -170,7 +170,7 @@ export const VENDORS = [
   },
   {
     name: 'Rangeview Sports',
-    link: 'https://www.rangeviewsports.ca/',
+    link: 'https://www.rangeviewcanada.com/',
     logo: '/logos/rangeview-sports.png',
     provinces: ['ON'],
     location: 'Newmarket',

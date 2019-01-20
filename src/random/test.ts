@@ -1,7 +1,7 @@
 import { makeSearch } from '../scrapes'
 
 async function work() {
-  await makeSearch('rampartcorp.com', 'centerfire' as any)
+  await makeSearch('rangeviewcanada.com', 'centerfire' as any)
     .then(f => console.log(f))
     .catch(e => console.error(e))
 }

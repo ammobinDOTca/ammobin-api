@@ -1,53 +1,67 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
+import { Province, AmmoType } from '../graphql-types'
+// https://www.rangeviewcanada.com/product-category/ammunition/page/
+const URL = 'https://www.rangeviewcanada.com'
 
-function fn(page) {
+async function fn(page: number = 1): Promise<any[]> {
+  console.log('rangeviewsports', page)
+  await helpers.delayScrape(URL)
+
   return axios
     .get(
-      `https://www.rangeviewsports.ca/collections/ammo?page=${page}&sort_by=best-selling`
+      `${URL}/product-category/ammunition/page/${page}?sort_by=best-selling&pagesize=60`,
+      {
+        headers: {
+          cookie: 'woocommerce_products_per_page=60',
+        },
+      }
     )
     .then(r => {
-      const $ = cheerio.load(r.data)
+      let $ = cheerio.load(r.data)
       const items = []
-      $('.grid-uniform .grid-item').each((index, row) => {
+      $('.product.purchasable').each((index, row) => {
         const result: any = {}
         const tha = $(row)
 
-        result.name = tha.find('p').text()
+        result.name = tha.find('.gridview .product-name a').text()
 
-        const link = tha.find('a').prop('href')
-        if (tha.find('.badge--sold-out').length || !link) {
+        result.link = tha.find('.woocommerce-loop-product__link').prop('href')
+        if (tha.find('.badge--sold-out').length) {
           return
         }
 
-        result.link = 'https://www.rangeviewsports.ca' + link
-        const src = tha.find('img').prop('src')
-        result.img = src ? 'https://www.rangeviewsports.ca' + src : null
+        result.img = tha.find('img').prop('src')
 
-        const priceTxt = tha.find('.product-item--price .h1').text()
+        const priceTxt = tha.find('.price-box').text()
 
-        result.price = parseFloat(priceTxt.trim().replace('$', '')) / 100 // account for everything be x.99
+        result.price = parseFloat(priceTxt.trim().replace('$', '')) // account for everything be x.99
 
         result.vendor = 'Rangeview Sports'
         result.province = 'ON'
+        result.provinces = [Province.ON]
 
         items.push(result)
       })
 
-      return items
+      const hasMorePages = $('.page-numbers .next').length > 0
+
+      if (hasMorePages) {
+        $ = null
+        return fn(page + 1).then(res => [...res, ...items])
+      } else {
+        return items
+      }
     })
 }
 
-export function rangeviewsports(type) {
+export function rangeviewsports(type: AmmoType) {
   switch (type) {
-    case 'rimfire':
-    case 'centerfire':
-    case 'shotgun':
-      // TODO: read number of pages to actually get
-      return Promise.all([fn(1), fn(2), fn(3)])
-        .then(helpers.combineResults)
-        .then(items => helpers.classifyBullets(items, type))
+    case AmmoType.rimfire:
+    case AmmoType.centerfire:
+    case AmmoType.shotgun:
+      return fn(1).then(items => helpers.classifyBullets(items, type))
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
