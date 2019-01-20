@@ -42,7 +42,7 @@ import { solelyOutdoors } from './solely-outdoors'
 import { northpro } from './northpro'
 import { wanstalls } from './wanstalls'
 import { gothicLineArmoury } from './gothic-line-armoury'
-
+import { rampart } from './rampart'
 import { AmmoType, IAmmoListing } from '../graphql-types'
 
 export function makeSearch(
@@ -154,6 +154,9 @@ export function makeSearch(
 
     case 'gothiclinearmoury.ca':
       return gothicLineArmoury(type)
+
+    case 'rampartcorp.com':
+      return rampart(type)
 
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
