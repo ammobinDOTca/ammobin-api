@@ -308,6 +308,7 @@ export const VENDORS = [
     logo: '/logos/rampart.png',
     provinces: ['ON'],
     location: 'Ottawa',
+    background: true,
   },
 ]
 
