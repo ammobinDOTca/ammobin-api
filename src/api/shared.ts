@@ -92,7 +92,7 @@ export async function getScrapeResponses(
       if (
         (calibre && item.calibre !== calibre) ||
         (vendor && item.vendor !== vendor) ||
-        (province && !doesItemContainProvince(item, province.toUpperCase())) ||
+        (province && !doesItemContainProvince(item, province)) ||
         (query && !item.name.toLowerCase().includes(query.toLowerCase()))
       ) {
         return r
