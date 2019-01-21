@@ -22,7 +22,7 @@ function doesItemContainProvince(
   // of comma separated string
   // TODO: fix this
   return (
-    (item.province && item.province.includes(province) >= 0) ||
+    (item.province && item.province.includes(province)) ||
     (item.provinces && item.provinces.includes(province))
   )
 }
@@ -88,11 +88,11 @@ export async function getScrapeResponses(
 
   const itemsGrouped = result.reduce(
     (r, item) => {
-      // if provided, filter out items
+      // if provided, filter out items that DONT match
       if (
         (calibre && item.calibre !== calibre) ||
         (vendor && item.vendor !== vendor) ||
-        (province && doesItemContainProvince(item, province)) ||
+        (province && !doesItemContainProvince(item, province.toUpperCase())) ||
         (query && !item.name.toLowerCase().includes(query.toLowerCase()))
       ) {
         return r
