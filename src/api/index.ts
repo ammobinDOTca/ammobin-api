@@ -8,6 +8,8 @@ import RedisSMQ from 'rsmq'
 import * as helpers from '../helpers'
 import * as fs from 'fs'
 const { ApolloServer } = require('apollo-server-hapi')
+const { RedisCache } = require('apollo-server-cache-redis')
+
 import { typeDefs, resolvers } from './graphql'
 import {
   SOURCES,
@@ -480,7 +482,17 @@ server.events.on('response', function(request) {
 
 async function doWork() {
   try {
-    const apolloServer = new ApolloServer({ typeDefs, resolvers })
+    const apolloServer = new ApolloServer({
+      typeDefs,
+      resolvers,
+      debug: false,
+      tracing: false,
+      cacheControl: false,
+      cors: false,
+      cache: new RedisCache({
+        host: 'redis',
+      }),
+    })
     await apolloServer.applyMiddleware({
       app: server,
     })
