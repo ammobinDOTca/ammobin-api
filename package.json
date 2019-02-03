@@ -32,7 +32,6 @@
     "fluent-logger": "^3.2.3",
     "graphql": "^14.0.2",
     "hapi": "^17.8.1",
-    "influx": "^5.0.7",
     "jsonp": "^0.2.1",
     "moment": "^2.23.0",
     "node-cron": "^2.0.3",
