@@ -202,11 +202,8 @@ server.route({
 
     let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
     if (host === 'ammobin.ca' || host === 'api.ammobin.ca') {
-      // handle older redirect based links
-      const queryTarget = url.parse(targetUrl.query.url)
-      host = queryTarget.hostname
-        ? queryTarget.hostname.replace('www.', '')
-        : ''
+      // received old redirect link. let redirect endpoint handle logging the click
+      return h.response('success')
     }
 
     if (SOURCES.indexOf(host) === -1) {
