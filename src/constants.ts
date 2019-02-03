@@ -272,6 +272,13 @@ export const VENDORS = [
     location: 'Ottawa',
     background: true,
   },
+  {
+    name: 'West Coast Hunting Supplies',
+    link: 'https://www.westcoasthunting.ca',
+    logo: '/logos/westcoasthunting-logo.png',
+    provinces: ['BC'],
+    location: 'Richmond',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v => url.parse(v.link).hostname)
