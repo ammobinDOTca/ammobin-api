@@ -1,47 +1,8 @@
 import { IVendor } from './graphql-types'
+import url from 'url'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
-export const SOURCES = [
-  'canadiantire.ca',
-  'sail.ca',
-  'alflahertys.com',
-  'firearmsoutletcanada.com',
-  'bullseyelondon.com',
-  'reliablegun.com',
-  'cabelas.ca',
-  'gotenda.com',
-  'canadaammo.com',
-  'wolverinesupplies.com',
-  'jobrookoutdoors.com',
-  'theammosource.com',
-  'hirschprecision.com',
-  'gun-shop.ca',
-  'tigerarms.ca',
-  'magdump.ca',
-  'rangeviewcanada.com',
-  'frontierfirearms.ca',
-  'tradeexcanada.com',
-  'bvoutdoors.com',
-  'nasgunsandammo.com',
-  'dantesports.com',
-  'leverarms.com',
-  'store.theshootingcentre.com',
-  'westernmetal.ca',
-  'alsimmonsgunshop.com',
-  'vancouvergunstore.ca',
-  'bartonsbigcountry.ca',
-  'theshootingedge.com',
-  'lanzshootingsupplies.com',
-  'durhamoutdoors.ca',
-  'solelyoutdoors.com',
-  'northprosports.com',
-  'wanstallsonline.com',
-  'gothiclinearmoury.ca',
-  'rampartcorp.com',
-]
-
 export const VENDORS = [
-  // todo: take info from above + client
   {
     name: "Cabela's",
     link: 'http://www.cabelas.ca/',
@@ -170,7 +131,8 @@ export const VENDORS = [
   },
   {
     name: 'Rangeview Sports',
-    link: 'https://www.rangeviewcanada.com/',
+    //link: 'https://www.rangeviewcanada.com/',
+    link: 'https://www.rangeviewsports.ca/',
     logo: '/logos/rangeview-sports.png',
     provinces: ['ON'],
     location: 'Newmarket',
@@ -311,6 +273,8 @@ export const VENDORS = [
     background: true,
   },
 ]
+
+export const SOURCES = VENDORS.map(v => url.parse(v.link).hostname)
 
 export const PROXY_URL = 'https://ammobin.ca/images'
 export const DATE_FORMAT = 'YYYY-MM-DD'

@@ -96,6 +96,7 @@ export function makeSearch(
       return magdump(type)
 
     case 'rangeviewcanada.com':
+    case 'rangeviewsports.ca':
       return rangeviewsports(type)
 
     case 'wolverinesupplies.com':
