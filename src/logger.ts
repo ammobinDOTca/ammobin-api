@@ -18,5 +18,8 @@ function createLogger(tag) {
 
 module.exports = {
   apiLogger: createLogger('ammobin.api'),
-  workerLogger: createLogger('ammobin.worker'),
+  workerLogger: createLogger('ammobin.api'),
 }
+
+export const apiLogger = createLogger('ammobin.api')
+export const workerLogger = createLogger('ammobin.api')

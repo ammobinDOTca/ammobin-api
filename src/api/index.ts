@@ -1,49 +1,19 @@
 import * as Hapi from 'hapi'
 import * as redis from 'redis'
-import * as hapiCron from 'hapi-cron'
 import * as moment from 'moment'
 import boom from 'boom'
 import * as url from 'url'
-import RedisSMQ from 'rsmq'
 import * as helpers from '../helpers'
 import * as fs from 'fs'
 const { ApolloServer } = require('apollo-server-hapi')
 const { RedisCache } = require('apollo-server-cache-redis')
 
 import { typeDefs, resolvers } from './graphql'
-import {
-  SOURCES,
-  DATE_FORMAT,
-  CACHE_REFRESH_HOURS,
-  QUEUE_NAME,
-} from '../constants'
+import { SOURCES, DATE_FORMAT, CACHE_REFRESH_HOURS } from '../constants'
 import { AmmoType } from '../graphql-types'
-const rsmq = new RedisSMQ({ host: 'redis' })
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
-const secretRefreshKey = Math.round(Math.random() * 10000000000).toString() // required to only allow us to refresh the cache on our terms
-console.log('secretRefreshKey', secretRefreshKey)
 
-rsmq.listQueues(function(err, queues) {
-  if (err) {
-    logger.error({ type: 'failed-to-list-rsmq-queues', error: err.toString() })
-    throw err
-  }
-  if (queues.indexOf(QUEUE_NAME) === -1) {
-    rsmq.createQueue({ qname: QUEUE_NAME }, function(err2, resp) {
-      if (err2) {
-        logger.error({
-          type: 'failed-to-create-rsmq-queues',
-          error: err2.toString(),
-        })
-        throw err
-      }
-      if (resp === 1) {
-        logger.info({ type: 'rsmq-queue-created' })
-      }
-    })
-  }
-})
 const server = new Hapi.Server({
   cache: [
     {
@@ -323,20 +293,6 @@ server.route({
   handler: () => bestPricesCache.get('centerfire'),
 })
 
-function queueUpCacheRefresh(type) {
-  return Promise.all(
-    SOURCES.map(
-      source =>
-        new Promise((resolve, reject) =>
-          rsmq.sendMessage(
-            { qname: QUEUE_NAME, message: JSON.stringify({ source, type }) },
-            (err, res) => (err ? reject(err) : resolve(res))
-          )
-        )
-    )
-  )
-}
-
 const TYPES: AmmoType[] = [
   AmmoType.centerfire,
   AmmoType.rimfire,
@@ -372,35 +328,6 @@ server.route({
   },
 })
 
-server.route({
-  method: 'GET',
-  path: '/refresh-cache',
-  handler: async function(req) {
-    const type = req.query.type
-    console.log(
-      'secret-refresh-key',
-      req.query['secret-refresh-key'],
-      secretRefreshKey
-    )
-    logger.info({
-      type: 'refresh-cache',
-      roundType: type,
-      correctKey: req.query['secret-refresh-key'] !== secretRefreshKey,
-    })
-    if (req.query['secret-refresh-key'] !== secretRefreshKey) {
-      throw boom.badRequest('fuck off. you dont have my super secret code...')
-    } else if (TYPES.indexOf(type) === -1) {
-      throw boom.badRequest('invalid type: ' + type)
-    }
-
-    await queueUpCacheRefresh(type)
-    await bestPricesCache.drop(type)
-
-    logger.info({ type: 'cache-refresh-initd', group: type })
-
-    return { message: 'ok' }
-  },
-})
 TYPES.forEach(type =>
   // Add the route
   server.route({
@@ -495,31 +422,6 @@ async function doWork() {
     })
 
     await apolloServer.installSubscriptionHandlers(server.listener)
-    // todo: figure out way to only run this on one node when running in swarm mode
-    await server.register({
-      plugin: hapiCron,
-
-      options: {
-        jobs: TYPES.map((t, index) => ({
-          name: 'load_' + t,
-          time: `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
-          timezone: 'America/Vancouver', // tmp hack to get around empty results being shown at 12am UTC (7pm est)
-          request: {
-            method: 'GET',
-            url: `/refresh-cache?type=${t}&secret-refresh-key=${secretRefreshKey}`,
-          },
-          onComplete: () => {
-            logger.info({
-              type: 'refresh-cache',
-              msg: `refresh ${t} has been queued up!`,
-            })
-          },
-        })),
-      },
-    })
-
-    await server.start()
-    // TYPES.forEach(type => queueUpCacheRefresh(type))
 
     await server.start()
     logger.info({ type: 'server-started', uri: server.info.uri })
