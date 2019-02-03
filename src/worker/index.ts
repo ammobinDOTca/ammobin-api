@@ -30,24 +30,6 @@ function proxyImages(items) {
   })
 }
 
-function addSrcRefToLinks(items) {
-  return items.map(i => {
-    if (!i.link) {
-      return i
-    }
-
-    if (i.link.indexOf('?') === -1) {
-      i.link += '?'
-    } else {
-      i.link += '&'
-    }
-    i.link = `https://ammobin.ca/api/track-outbound-click?url=${encodeURIComponent(
-      i.link + 'utm_source=ammobin.ca'
-    )}`
-    return i
-  })
-}
-
 function classifyBrand(items) {
   return items.map(i => {
     i.brand = classifier.classifyBrand(i.brand || i.name || '')
@@ -87,8 +69,7 @@ worker.on('message', function(msg, next /* , id*/) {
     return makeSearch(source, type)
       .then(items => items.filter(i => i.price))
       .then(classifyBrand)
-      .then(i => proxyImages(i))
-      .then(i => addSrcRefToLinks(i))
+      .then(proxyImages)
       .then(getCounts)
       .then(setAmmoType(type))
       .then(items => {
