@@ -32,7 +32,7 @@ export interface IVendorsOnQueryArguments {
 
 export interface IBestPricesOnQueryArguments {
   type?: AmmoType | null
-  calibre?: string | null
+  calibres?: Array<string> | null
 }
 
 export interface IAmmoListingsOnQueryArguments {
