@@ -198,21 +198,22 @@ server.route({
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers['user-agent'] || 'unknown'
     const body = JSON.parse(request.payload)
+    const targetUrl = url.parse(body.link, true)
 
-    if (!request.query.url) {
-      throw boom.badRequest('missing required param: url')
+    let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
+    if (host === 'ammobin.ca' || host === 'api.ammobin.ca') {
+      // handle older redirect based links
+      const queryTarget = url.parse(targetUrl.query.url)
+      host = queryTarget.hostname
+        ? queryTarget.hostname.replace('www.', '')
+        : ''
     }
 
-    const targetUrl = url.parse(request.query.url)
-
-    const host = targetUrl.hostname
-      ? targetUrl.hostname.replace('www.', '')
-      : ''
     if (SOURCES.indexOf(host) === -1) {
       throw boom.badRequest('invalid target url')
     }
-    const date = moment.utc().format(DATE_FORMAT)
 
+    const date = moment.utc().format(DATE_FORMAT)
     try {
       const results: any = await new Promise((resolve, reject) =>
         client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
@@ -220,26 +221,25 @@ server.route({
         )
       ).then(helpers.combineResults)
 
-      const encoded = encodeURIComponent(request.query.url)
+      const encoded = encodeURIComponent(body.link)
       const record = results.find(
         r => r && r.link && r.link.indexOf(encoded) >= 0
       ) // !!({} && -1) === true
 
       if (!record) {
-        console.warn(
-          'WARN: unable to find matching record for ' + request.query.url
-        )
+        console.warn('WARN: unable to find matching record for ' + body.link)
       }
 
       logger.info({
         type: 'track-outbound-click',
-        url: request.query.url,
-        userAgent,
-        record: {},
+        url: body.link,
+        userAgent: request.headers['user-agent'],
+        record,
       })
     } catch (e) {
       logger.error('ERROR: failed to track click: ' + e)
     }
+
     return h.response('success')
   },
 })
