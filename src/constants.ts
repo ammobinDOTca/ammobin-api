@@ -281,7 +281,9 @@ export const VENDORS = [
   },
 ]
 
-export const SOURCES = VENDORS.map(v => url.parse(v.link).hostname)
+export const SOURCES = VENDORS.map(v =>
+  url.parse(v.link).hostname.replace('www.', '')
+)
 
 export const PROXY_URL = 'https://ammobin.ca/images'
 export const DATE_FORMAT = 'YYYY-MM-DD'
