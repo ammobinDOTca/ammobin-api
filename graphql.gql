@@ -81,7 +81,7 @@ type BestPrice {
 # (A "Mutation" type will be covered later on.)
 type Query {
   vendors(province: Province): [Vendor]
-  bestPrices(type: AmmoType, calibre: String): [BestPrice]
+  bestPrices(type: AmmoType, calibres: [String!]): [BestPrice]
   ammoListings(
     page: Int
     pageSize: Int
