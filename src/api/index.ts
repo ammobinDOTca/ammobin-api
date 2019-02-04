@@ -391,6 +391,7 @@ server.events.on('response', function(request) {
     logger.info({
       type: 'graphql-query',
       query: request.payload.query,
+      variables: request.payload.variables,
     })
   }
   if (request.response.statusCode >= 500) {
