@@ -1,51 +1,55 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
+import { AmmoType, IAmmoListing } from '../graphql-types'
+
 const SITE = 'https://store.theshootingcentre.com'
 
-async function work(page = 1) {
+async function work(type: string, page = 1) {
   await helpers.delayScrape(SITE)
 
   console.log(`loading theShootingCenter ${page}`)
-  return axios.get(`${SITE}/collections/ammunition?page=${page}`).then(r => {
+  return axios.get(`${SITE}/ammunition/${type}?page=${page}`).then(r => {
     let $ = cheerio.load(r.data)
     const items = []
-    $(
-      '.grid-uniform .large--one-quarter.medium--one-third.small--one-half'
-    ).each((index, row) => {
+    $('.product-item').each((index, row) => {
       const result: any = {}
       const tha = $(row)
-      result.link = SITE + tha.find('.product-grid-item').prop('href')
-      result.img = tha.find('img').prop('src')
+      result.link = SITE + tha.find('.product-item-link').prop('href')
+      result.img = tha.find('.product-image-photo').prop('src')
       if (result.img && result.img.indexOf('no-image') >= 0) {
         result.img = null
       }
-      result.name = tha.find('p').text()
-      const priceTxt = tha.find('.product-item--price').text()
-      result.price = parseFloat(priceTxt.replace('$', '')) / 100 // every price is in 2 parts
+      result.name = tha
+        .find('.product-item-link')
+        .text()
+        .trim()
+      const priceTxt = tha.find('.price').text()
+      result.price = parseFloat(priceTxt.replace('$', ''))
 
       result.vendor = 'Calgary Shooting Center'
-      result.province = 'AB'
+      result.provinces = ['AB']
 
       items.push(result)
     })
 
-    if (items.length === 20) {
-      // just assumes 20 items per page
+    if ($('pages-item-next').length > 0) {
       $ = null // dont hold onto page for recursion
-      return work(page + 1).then(results => items.concat(results))
+      return work(type, page + 1).then(results => items.concat(results))
     } else {
       return items
     }
   })
 }
 
-export function theShootingCenter(type) {
+export function theShootingCenter(type: AmmoType): Promise<IAmmoListing[]> {
   switch (type) {
-    case 'rimfire':
-    case 'centerfire':
-    case 'shotgun':
-      return work().then(items => helpers.classifyBullets(items, type))
+    case AmmoType.rimfire:
+      return work('rimfire').then(helpers.classifyRimfire)
+    case AmmoType.centerfire:
+      return work('centrefire').then(helpers.classifyCenterfire)
+    case AmmoType.shotgun:
+      return work('shotshell').then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
