@@ -279,6 +279,13 @@ export const VENDORS = [
     provinces: ['BC'],
     location: 'Richmond',
   },
+  {
+    name: 'Siwash Sports',
+    link: 'https://www.siwashsports.ca',
+    logo: '/logos/siwash-sports-logo.png',
+    provinces: ['BC'],
+    location: 'Chilliwack',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>

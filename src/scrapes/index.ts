@@ -45,7 +45,7 @@ import { gothicLineArmoury } from './gothic-line-armoury'
 import { rampart } from './rampart'
 import { AmmoType, IAmmoListing } from '../graphql-types'
 import { westCoastHunting } from './westcoasthunting'
-
+import { siwashSports } from './siwash'
 export function makeSearch(
   source: string,
   type: AmmoType
@@ -161,6 +161,8 @@ export function makeSearch(
       return rampart(type)
     case 'westcoasthunting.ca':
       return westCoastHunting(type)
+    case 'siwashsports.ca':
+      return siwashSports(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

@@ -27,7 +27,7 @@ async function fn(type: String, page = 1): Promise<IAmmoListing[]> {
         .text()
         .replace('$', '')
     )
-    result.vendor = 'West Coast Hunnting Supplies'
+    result.vendor = 'West Coast Hunting Supplies'
     result.provinces = ['BC']
     items.push(result)
   })
