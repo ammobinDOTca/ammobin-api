@@ -378,7 +378,6 @@ server.events.on('response', function(request) {
   if (request.url.path === '/ping') {
     return // dont log ping requests
   }
-
   logger.info({
     type: 'api-req',
     remoteAddress: request.info.remoteAddress,
@@ -387,6 +386,16 @@ server.events.on('response', function(request) {
     statusCode: request.response.statusCode,
     timeMs: new Date().getTime() - request.info.received,
   })
+
+  if (
+    request.method.toUpperCase() === 'POST' &&
+    request.url.path === '/graphql'
+  ) {
+    logger.info({
+      type: 'graphql-query',
+      query: request.payload.query,
+    })
+  }
   if (request.response.statusCode >= 500) {
     logger.error({
       type: 'http500',
@@ -416,6 +425,10 @@ async function doWork() {
       cache: new RedisCache({
         host: 'redis',
       }),
+      formatError: error => {
+        logger.error({ type: 'graphql-error', error: error.toString() })
+        return error
+      },
     })
     await apolloServer.applyMiddleware({
       app: server,
