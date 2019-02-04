@@ -188,10 +188,7 @@ server.route({
         )
       ).then(helpers.combineResults)
 
-      const encoded = encodeURIComponent(body.link)
-      const record = results.find(
-        r => r && r.link && r.link.indexOf(encoded) >= 0
-      ) // !!({} && -1) === true
+      const record = results.find(r => r && r.link === body.link)
 
       if (!record) {
         console.warn('WARN: unable to find matching record for ' + body.link)
