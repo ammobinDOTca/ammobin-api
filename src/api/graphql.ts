@@ -2,7 +2,7 @@ const { gql } = require('apollo-server')
 import { VENDORS } from '../constants'
 import axios from 'axios'
 import fs from 'fs'
-import { getScrapeResponses } from './shared'
+import { getScrapeResponses, getBestPrices } from './shared'
 import {
   IAmmoListings,
   IAmmoListingsOnQueryArguments,
@@ -29,19 +29,8 @@ export const resolvers: any = {
           v.provinces.indexOf(args.province.toUpperCase()) >= 0
       )
     },
-    bestPrices: async (parent, args: IBestPricesOnQueryArguments) => {
-      const type = args.type || 'centerfire'
-      const { data } = await axios.get(
-        `https://api.ammobin.ca/best-popular-prices?type=${type}`
-      )
-      return Object.keys(data)
-        .filter(calibre => !args.calibres || args.calibres.includes(calibre))
-        .map(calibre => ({
-          calibre,
-          type,
-          unitCost: data[calibre],
-        }))
-    },
+    bestPrices: async (parent, args: IBestPricesOnQueryArguments) =>
+      getBestPrices(args),
     ammoListings: async (
       parent,
       args: IAmmoListingsOnQueryArguments

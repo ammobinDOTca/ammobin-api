@@ -10,8 +10,54 @@ import {
   Province,
   SortOrder,
   SortField,
+  IBestPricesOnQueryArguments,
+  IBestPrice,
 } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
+
+export async function getBestPrices(
+  params: IBestPricesOnQueryArguments
+): Promise<IBestPrice[]> {
+  const type = params.type || AmmoType.centerfire
+  const keys = SOURCES.map(s => helpers.getKey(s, type))
+  const res: any = await new Promise((resolve, reject) =>
+    client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
+  )
+  const { calibres } = params
+  const results: any = res.map(r => (r ? JSON.parse(r) : null))
+  const result = results
+    .reduce((final, result2) => {
+      return result2 && result2.length ? final.concat(result2) : final
+    }, [])
+    .reduce((response, item) => {
+      if (
+        !item ||
+        !item.calibre ||
+        !item.unitCost ||
+        item.calibre === 'UNKNOWN' ||
+        (calibres && !calibres.includes(item.calibre))
+      ) {
+        return response
+      }
+
+      if (!response[item.calibre]) {
+        response[item.calibre] = {
+          unitCost: Number.MAX_SAFE_INTEGER,
+          calibre: item.calibre,
+          type,
+        }
+      }
+
+      response[item.calibre].unitCost = Math.min(
+        response[item.calibre].unitCost,
+        item.unitCost
+      )
+
+      return response
+    }, {})
+
+  return Object.values(result)
+}
 
 function doesItemContainProvince(
   item: IAmmoListing | any,
