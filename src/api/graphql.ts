@@ -1,6 +1,5 @@
 const { gql } = require('apollo-server')
 import { VENDORS } from '../constants'
-import axios from 'axios'
 import fs from 'fs'
 import { getScrapeResponses, getBestPrices } from './shared'
 import {

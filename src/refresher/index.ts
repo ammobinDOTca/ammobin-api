@@ -7,12 +7,7 @@ import RedisSMQ from 'rsmq'
 
 import { AmmoType } from '../graphql-types'
 
-import {
-  SOURCES,
-  DATE_FORMAT,
-  CACHE_REFRESH_HOURS,
-  QUEUE_NAME,
-} from '../constants'
+import { SOURCES, CACHE_REFRESH_HOURS, QUEUE_NAME } from '../constants'
 import { workerLogger as logger } from '../logger'
 
 const rsmq = new RedisSMQ({ host: 'redis' })

@@ -4,12 +4,11 @@ import * as moment from 'moment'
 import boom from 'boom'
 import * as url from 'url'
 import * as helpers from '../helpers'
-import * as fs from 'fs'
 const { ApolloServer } = require('apollo-server-hapi')
 const { RedisCache } = require('apollo-server-cache-redis')
 
 import { typeDefs, resolvers } from './graphql'
-import { SOURCES, DATE_FORMAT, CACHE_REFRESH_HOURS } from '../constants'
+import { SOURCES, DATE_FORMAT } from '../constants'
 import { AmmoType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
@@ -56,7 +55,6 @@ server.route({
   path: '/track-click',
   handler: async function(request, h) {
     // record user agent + calibre + brand that user opened up
-    const userAgent = request.headers['user-agent'] || 'unknown'
     const body = JSON.parse(request.payload)
     const targetUrl = url.parse(body.link, true)
 

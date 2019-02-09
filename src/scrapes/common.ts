@@ -2,8 +2,7 @@ import axios from 'axios'
 
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
-import throat from 'throat'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { IAmmoListing, Province } from '../graphql-types'
 
 export interface Selectors {
   item: string

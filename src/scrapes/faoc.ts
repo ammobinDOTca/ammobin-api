@@ -4,7 +4,7 @@ function makeFaocReq(ammotype) {
   return helpers.makeWrapApiReq('faoc', ammotype).then(d => d.items || [])
 }
 
-export function faoc(type: AmmoType) {
+export function faoc(type: AmmoType): Promise<IAmmoListing[]> {
   if (type === AmmoType.rimfire) {
     return makeFaocReq('rimfire-ammunition').then(helpers.classifyRimfire)
   } else if (type === AmmoType.centerfire) {
