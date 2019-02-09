@@ -46,6 +46,8 @@ import { rampart } from './rampart'
 import { AmmoType, IAmmoListing } from '../graphql-types'
 import { westCoastHunting } from './westcoasthunting'
 import { siwashSports } from './siwash'
+import { tillsonburg } from './tillsonburg'
+
 export function makeSearch(
   source: string,
   type: AmmoType
@@ -163,6 +165,8 @@ export function makeSearch(
       return westCoastHunting(type)
     case 'siwashsports.ca':
       return siwashSports(type)
+    case 'tillsonburggunshop.com':
+      return tillsonburg(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

@@ -281,10 +281,17 @@ export const VENDORS = [
   },
   {
     name: 'Siwash Sports',
-    link: 'https://www.siwashsports.ca',
+    link: 'https://www.siwashsports.ca/',
     logo: '/logos/siwash-sports-logo.png',
     provinces: ['BC'],
     location: 'Chilliwack',
+  },
+  {
+    name: 'Tillsonburg Gun Shop',
+    link: 'https://tillsonburggunshop.com/',
+    logo: '/logos/tillsonburg-logo.png',
+    provinces: ['ON'],
+    location: 'Tillsonburg',
   },
 ]
 
