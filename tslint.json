@@ -34,7 +34,6 @@
       "check-separator",
       "check-type"
     ],
-    "no-invalid-this": [true],
-    "no-unused-variable": [true]
+    "no-invalid-this": [true]
   }
 }
