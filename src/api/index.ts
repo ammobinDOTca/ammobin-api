@@ -72,7 +72,7 @@ server.route({
     try {
       const results: any = await new Promise((resolve, reject) =>
         client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
-          err ? reject(err) : resolve(res.map(JSON.parse))
+          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
@@ -117,7 +117,7 @@ server.route({
     try {
       const results: any = await new Promise((resolve, reject) =>
         client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
-          err ? reject(err) : resolve(res.map(JSON.parse))
+          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
