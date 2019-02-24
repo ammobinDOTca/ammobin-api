@@ -47,6 +47,7 @@ import { AmmoType, IAmmoListing } from '../graphql-types'
 import { westCoastHunting } from './westcoasthunting'
 import { siwashSports } from './siwash'
 import { tillsonburg } from './tillsonburg'
+import { crafm } from './crafm'
 
 export function makeSearch(
   source: string,
@@ -167,6 +168,8 @@ export function makeSearch(
       return siwashSports(type)
     case 'tillsonburggunshop.com':
       return tillsonburg(type)
+    case 'crafm.com':
+      return crafm(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

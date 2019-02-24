@@ -293,6 +293,13 @@ export const VENDORS = [
     provinces: ['ON'],
     location: 'Tillsonburg',
   },
+  {
+    name: 'CRAFM',
+    link: 'https://www.crafm.com/',
+    logo: '/logos/crafm-logo.png',
+    provinces: ['QC'],
+    location: 'Montréal',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
