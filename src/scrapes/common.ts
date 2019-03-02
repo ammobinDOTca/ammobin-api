@@ -20,6 +20,22 @@ export interface Info {
   provinces: Province[]
 }
 
+function correctUrl(baseUrl: string, url: string): string {
+  // note: assuming everyone is on https b/c its 2019
+  if (!url || !baseUrl) {
+    return null
+  } else if (url.startsWith('//')) {
+    return 'https:' + url
+  } else if (url.startsWith('/')) {
+    return 'https://' + baseUrl + url
+  } else if (!url.startsWith('http')) {
+    // some people use relative urls....
+    return 'https://' + baseUrl + '/' + url
+  }
+
+  return url
+}
+
 export async function scrape(
   getUrl: (page: number) => string,
   info: Info,
@@ -38,8 +54,9 @@ export async function scrape(
     if (selectors.outOfStock && tha.find(selectors.outOfStock).length > 0) {
       return
     }
-    result.link = tha.find(selectors.link).prop('href')
-    result.img = tha.find(selectors.img).prop('src')
+    result.link = correctUrl(info.site, tha.find(selectors.link).prop('href'))
+    result.img = correctUrl(info.site, tha.find(selectors.img).prop('src'))
+
     result.name = tha
       .find(selectors.name)
       .text()
@@ -48,7 +65,7 @@ export async function scrape(
       .find(selectors.price)
       .last()
       .text() // sale price come last...
-    result.price = parseFloat(priceTxt.replace('$', ''))
+    result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
     result.vendor = info.vendor
     result.provinces = info.provinces

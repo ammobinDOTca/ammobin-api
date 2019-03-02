@@ -1,51 +1,29 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
-
-function work(page = 1): Promise<IAmmoListing[]> {
-  console.log(`loading durham outdoors ${page}`)
-  return axios
-    .get(
-      `https://durhamoutdoors.ca/collections/ammo-and-reloading?page=${page}`
-    )
-    .then(r => {
-      const $ = cheerio.load(r.data)
-      const items = []
-      $('.product').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-
-        if (
-          tha
-            .find('sale')
-            .text()
-            .toLowerCase() === 'sold out'
-        ) {
-          return
-        }
-
-        // TODO: all of this does not work yet...
-        result.link = 'https://durhamoutdoors.ca' + tha.find('a').prop('href')
-        result.img = 'https://' + tha.find('a img').prop('src')
-        result.name = tha.find('.title').text()
-        const priceTxt = tha.find('.price').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'Durham Outdoors'
-        result.province = 'ON'
-
-        items.push(result)
-      })
-      return items
-    })
-}
+import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { scrape } from './common'
 
 export function durhamoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
   switch (type) {
-    case 'rimfire':
-    case 'centerfire':
-    case 'shotgun':
-      return work().then(i => helpers.classifyBullets(i, type))
+    case AmmoType.rimfire:
+    case AmmoType.centerfire:
+    case AmmoType.shotgun:
+      return scrape(
+        page =>
+          `https://durhamoutdoors.ca/Ammo-and-reloading_c_12-${page}.html`,
+        {
+          site: 'durhamoutdoors.ca',
+          vendor: 'Durham Outdoors',
+          provinces: [Province.ON],
+        },
+        {
+          item: '.product-item',
+          name: '.name',
+          img: '.img img',
+          link: '.name a',
+          price: '.price ',
+          // nextPage:'', // todo: not able to get selector
+        }
+      ).then(i => helpers.classifyBullets(i, type))
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
