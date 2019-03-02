@@ -1,74 +1,49 @@
-import axios from 'axios'
-
-import cheerio = require('cheerio')
 import throat = require('throat')
-
+import { scrape, Info, Selectors } from './common'
 import * as helpers from '../helpers'
-const SITE = 'https://vancouvergunstore.ca'
-// 0 based list
-async function work(type, page = 1) {
-  await helpers.delayScrape(SITE)
-  console.log(`loading ${type} page ${page} for vancouver gun store`)
+import { AmmoType, IAmmoListing, Province } from '../graphql-types'
 
-  return axios
-    .get(`${SITE}/collections/ammunition/${type}?page=${page}`)
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product-index').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-
-        result.link = SITE + tha.find('.prod-image a').prop('href')
-        result.img = 'https:' + tha.find('.prod-image img').prop('src')
-        result.name = tha.find('.product-info-inner h3').text()
-        const salePrice = tha.find('.price .onsale').text()
-        const priceTxt = tha.find('.price .prod-price').text()
-        result.price = parseFloat(
-          (salePrice && salePrice.length > 0 ? salePrice : priceTxt).replace(
-            '$',
-            ''
-          )
-        )
-
-        result.vendor = 'Vancouver Gun Store'
-        result.province = 'BC'
-
-        // div always present, empty if actually in stock
-        if (tha.find('.product-index-inner .so').length) {
-          return
-        }
-
-        items.push(result)
-      })
-
-      if ($('.fa-caret-right').length) {
-        $ = null // dont hold onto page
-        return work(type, page + 1).then(res => items.concat(res))
-      } else {
-        return items
-      }
-    })
-}
-
-export function vancouvergunstore(type) {
+export function vancouvergunstore(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
+  const info: Info = {
+    site: 'vancouvergunstore.ca',
+    vendor: 'Vancouver Gun Store',
+    provinces: [Province.BC],
+  }
 
+  const selectors: Selectors = {
+    item: '.product-inner',
+    name: '.woocommerce-loop-product__title',
+    img: '.attachment-woocommerce_thumbnail',
+    link: '.woocommerce-LoopProduct-link',
+    price: '.woocommerce-Price-amount',
+    nextPage: '.next',
+  }
+
+  const BASE = 'https://vancouvergunstore.ca/product-category/ammunition/'
   switch (type) {
-    case 'rimfire':
-      return work('Rimfire').then(items => helpers.classifyRimfire(items))
+    case AmmoType.rimfire:
+      return scrape(p => `${BASE}/rimfire?paged=${p}`, info, selectors).then(
+        items => helpers.classifyRimfire(items)
+      )
 
     case 'centerfire':
       return Promise.all(
-        ['Rifle-Centerfire', 'Pistol-Centerfire'].map(t =>
-          throttle(() => work(t, 1))
+        ['pistol', 'rifle', 'bulk'].map(t =>
+          throttle(() =>
+            scrape(p => `${BASE}/${t}?paged=${p}`, info, selectors)
+          )
         )
       )
         .then(helpers.combineResults)
         .then(items => helpers.classifyCenterfire(items))
 
     case 'shotgun':
-      return work('Shotshell').then(items => helpers.classifyShotgun(items))
+      return scrape(
+        p => `${BASE}/shotgun-ammunition?paged=${p}`,
+        info,
+        selectors
+      ).then(items => helpers.classifyShotgun(items))
 
     default:
       return Promise.reject(new Error('unknown type: ' + type))
