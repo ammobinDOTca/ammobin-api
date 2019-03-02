@@ -60,6 +60,14 @@ function setAmmoType(ammoType: AmmoType) {
     })
 }
 
+function appendGAParam() {
+  return (items: IAmmoListing[]) =>
+    items.map(i => {
+      i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
+      return i
+    })
+}
+
 worker.on('message', function(msg, next /* , id*/) {
   const { source, type } = JSON.parse(msg)
 
@@ -67,11 +75,12 @@ worker.on('message', function(msg, next /* , id*/) {
   logger.info({ type: 'started-scrape', source, ammoType: type })
   try {
     return makeSearch(source, type)
-      .then(items => items.filter(i => i.price))
+      .then(items => items.filter(i => i.price && i.link && i.name))
       .then(classifyBrand)
       .then(proxyImages)
       .then(getCounts)
       .then(setAmmoType(type))
+      .then(appendGAParam)
       .then(items => {
         logger.info({
           type: 'finished-scrape',
