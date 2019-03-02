@@ -60,13 +60,11 @@ function setAmmoType(ammoType: AmmoType) {
     })
 }
 
-function appendGAParam() {
-  return (items: IAmmoListing[]) =>
-    items.map(i => {
-      i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
-      return i
-    })
-}
+const appendGAParam = (items: IAmmoListing[]) =>
+  items.map(i => {
+    i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
+    return i
+  })
 
 worker.on('message', function(msg, next /* , id*/) {
   const { source, type } = JSON.parse(msg)
@@ -89,7 +87,6 @@ worker.on('message', function(msg, next /* , id*/) {
           items: items.length,
           duration: new Date().valueOf() - searchStart.valueOf(),
         })
-
         const key = getKey(source, type)
 
         return new Promise((resolve, reject) =>
