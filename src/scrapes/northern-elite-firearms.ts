@@ -18,6 +18,7 @@ export function northernEliteFirearms(type: AmmoType): Promise<IAmmoListing[]> {
     link: '.product-title a',
     price: '.price',
     nextPage: '.next',
+    outOfStock: '.out-stock',
   }
 
   const BASE = 'https://www.northernelitefirearms.ca/product-category'
