@@ -300,6 +300,13 @@ export const VENDORS = [
     provinces: ['QC'],
     location: 'Montréal',
   },
+  {
+    name: 'Northern Elite Firearms',
+    link: 'https://www.northernelitefirearms.ca/',
+    logo: '/logos/northern-elite-firearms-logo.png',
+    provinces: ['SK'],
+    location: 'Prince Albert',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>

@@ -48,6 +48,7 @@ import { westCoastHunting } from './westcoasthunting'
 import { siwashSports } from './siwash'
 import { tillsonburg } from './tillsonburg'
 import { crafm } from './crafm'
+import { northernEliteFirearms } from './northern-elite-firearms'
 
 export function makeSearch(
   source: string,
@@ -170,6 +171,8 @@ export function makeSearch(
       return tillsonburg(type)
     case 'crafm.com':
       return crafm(type)
+    case 'northernelitefirearms.ca':
+      return northernEliteFirearms(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }
