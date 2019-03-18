@@ -1,4 +1,4 @@
-import { IVendor } from './graphql-types'
+import { IVendor, Province } from './graphql-types'
 import url from 'url'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
@@ -306,6 +306,13 @@ export const VENDORS = [
     logo: '/logos/northern-elite-firearms-logo.png',
     provinces: ['SK'],
     location: 'Prince Albert',
+  },
+  {
+    name: 'Canadian GunHub',
+    link: 'https://gun-hub.mybigcommerce.com/',
+    logo: '/logos/canadian-gunhub-logo.png',
+    provinces: [Province.AB],
+    location: 'Dunmore',
   },
 ]
 

@@ -49,12 +49,16 @@ import { siwashSports } from './siwash'
 import { tillsonburg } from './tillsonburg'
 import { crafm } from './crafm'
 import { northernEliteFirearms } from './northern-elite-firearms'
+import { gunhub } from './gunhub'
 
 export function makeSearch(
   source: string,
   type: AmmoType
 ): Promise<IAmmoListing[]> {
   switch (source) {
+    case 'gun-hub.mybigcommerce.com':
+      return gunhub(type)
+
     case 'cabelas.ca':
       return cabelas(type)
 
