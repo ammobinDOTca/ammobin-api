@@ -27,7 +27,7 @@ async function work(type, page = 1) {
         result.name = tha.find('.kw-details-title').text()
         const priceTxt = tha.find('.price').text()
         result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'NAS Guns And Ammo'
+        result.vendor = 'NAS Guns & Ammo'
         result.province = 'ON'
 
         items.push(result)

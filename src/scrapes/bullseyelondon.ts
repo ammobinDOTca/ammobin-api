@@ -1,7 +1,12 @@
 import * as helpers from '../helpers'
 import { AmmoType, IAmmoListing } from '../graphql-types'
 function makeBullsReq(ammotype) {
-  return helpers.makeWrapApiReq('bullseye', ammotype).then(d => d.items)
+  return helpers.makeWrapApiReq('bullseye', ammotype).then(d =>
+    d.items.map((i: IAmmoListing) => {
+      i.vendor = 'Bulls Eye London'
+      return i
+    })
+  )
 }
 
 export function bullseyelondon(type: AmmoType): Promise<IAmmoListing[]> {

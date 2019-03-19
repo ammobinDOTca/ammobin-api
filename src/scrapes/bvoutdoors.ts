@@ -27,7 +27,7 @@ async function work(type, page = 1): Promise<IAmmoListing[]> {
         const priceTxt = tha.find('.text-price').text()
         result.price = parseFloat(priceTxt.replace('$', ''))
         result.brand = tha.find('.caption h6').text()
-        result.vendor = 'Outdoor Essentials'
+        result.vendor = 'BV Outdoor Essentials'
         result.province = 'BC'
 
         items.push(result)

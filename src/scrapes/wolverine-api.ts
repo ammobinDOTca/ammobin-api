@@ -66,7 +66,7 @@ function makeWolverine(type) {
                 i.ImageFile +
                 i.ImageExtension
               : null,
-          vendor: 'Wolverine',
+          vendor: 'Wolverine Supplies',
           province: 'MB',
           price: i.Price,
           calibre,

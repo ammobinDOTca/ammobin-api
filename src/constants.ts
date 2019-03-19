@@ -229,7 +229,7 @@ export const VENDORS = [
     location: 'St Ann',
   },
   {
-    name: 'Duram Outdoors',
+    name: 'Durham Outdoors',
     link: 'https://durhamoutdoors.ca/',
     logo: '/logos/duram-logo.png',
     provinces: ['ON'],

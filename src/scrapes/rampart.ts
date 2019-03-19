@@ -7,7 +7,7 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
   const throttle = throat(1)
   const info: Info = {
     site: 'rampartcorp.com',
-    vendor: 'Rampart Corp',
+    vendor: 'Rampart',
     provinces: [Province.ON],
   }
   const selectors: Selectors = {

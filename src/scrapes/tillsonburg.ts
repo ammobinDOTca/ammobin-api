@@ -4,7 +4,7 @@ import { scrape, Info, Selectors } from './common'
 export async function tillsonburg(type: AmmoType): Promise<IAmmoListing[]> {
   const info: Info = {
     site: 'tillsonburggunshop.com',
-    vendor: 'Tillsonburg',
+    vendor: 'Tillsonburg Gun Shop',
     provinces: [Province.ON],
   }
   const selectors: Selectors = {

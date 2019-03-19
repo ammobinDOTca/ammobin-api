@@ -24,7 +24,7 @@ function work(type): Promise<IAmmoListing[]> {
         result.name = tha.find('.woocommerce-loop-product__title').text()
         const priceTxt = tha.find('.woocommerce-Price-amount').text()
         result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'Dante'
+        result.vendor = 'Dante Sports'
         result.province = 'QC'
 
         items.push(result)

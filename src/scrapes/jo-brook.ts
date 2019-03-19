@@ -1,15 +1,24 @@
 import * as helpers from '../helpers'
+import { IAmmoListing, AmmoType } from '../graphql-types'
 
-function makeJoBrook(ammotype) {
-  return helpers.makeWrapApiReq('jobrook', ammotype).then(d => d.items || [])
+function makeJoBrook(ammotype: string): Promise<IAmmoListing[]> {
+  return helpers
+    .makeWrapApiReq('jobrook', ammotype)
+    .then(d => d.items || [])
+    .then(d =>
+      d.map(i => {
+        i.vendor = 'Jo Brook Outdoors'
+        return i
+      })
+    )
 }
 
-export function jobrook(type) {
+export function jobrook(type: AmmoType): Promise<IAmmoListing[]> {
   switch (type) {
-    case 'rimfire':
+    case AmmoType.rimfire:
       return makeJoBrook('rimfire').then(helpers.classifyRimfire)
 
-    case 'centerfire':
+    case AmmoType.centerfire:
       return Promise.all([
         makeJoBrook('rifle'),
         makeJoBrook('pistol'),
@@ -18,7 +27,7 @@ export function jobrook(type) {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
 
-    case 'shotgun':
+    case AmmoType.shotgun:
       return makeJoBrook('shotgun').then(helpers.classifyShotgun)
 
     default:

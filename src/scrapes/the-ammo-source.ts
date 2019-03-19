@@ -45,7 +45,7 @@ async function getStuff(cPath, page = 1) {
         })
         result.price = result.price || -1
 
-        result.vendor = 'Ammo Source'
+        result.vendor = 'The Ammo Source'
         result.province = 'ON'
         items.push(result)
       })
