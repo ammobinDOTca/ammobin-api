@@ -8,7 +8,7 @@ const throttle = throat(1)
 export async function crafm(type: AmmoType): Promise<IAmmoListing[]> {
   const info: Info = {
     site: 'crafm.com',
-    vendor: 'crafm',
+    vendor: 'CRAFM',
     provinces: [Province.QC],
   }
   const selectors: Selectors = {
