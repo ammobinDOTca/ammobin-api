@@ -51,7 +51,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run generate-types  && pretty-quick --staged && npm t"
+      "pre-commit": " pretty-quick --staged && npm t"
     }
   }
 }
