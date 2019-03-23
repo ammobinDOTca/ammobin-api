@@ -43,7 +43,6 @@ export async function scrape(
   page = 1
 ): Promise<IAmmoListing[]> {
   await helpers.delayScrape(info.site)
-
   const r = await axios.get(getUrl(page))
   let $ = cheerio.load(r.data)
   const items = []
