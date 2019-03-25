@@ -18,13 +18,6 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
     price: '.price',
   }
   switch (type) {
-    case AmmoType.rimfire:
-      return scrape(
-        page => `https://rampartcorp.com/firearms/ammunition/rimfire/`,
-        info,
-        selectors
-      ).then(helpers.classifyRimfire)
-
     case AmmoType.centerfire:
       return Promise.all(
         ['rifle', 'pistol'].map(t =>
@@ -42,12 +35,8 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.classifyCenterfire)
 
     case AmmoType.shotgun:
-      return scrape(
-        page => `https://rampartcorp.com/firearms/ammunition/shotshells/`,
-        info,
-        selectors
-      ).then(helpers.classifyShotgun)
-
+    case AmmoType.rimfire:
+      return Promise.resolve([]) // 20190324: not selling rimfire or shotgun.
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
