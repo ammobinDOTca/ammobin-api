@@ -314,6 +314,13 @@ export const VENDORS = [
     provinces: [Province.AB],
     location: 'Dunmore',
   },
+  {
+    name: 'Budget Shooter Supply',
+    link: 'https://www.budgetshootersupply.ca',
+    logo: '/logos/budgetshootersupply-logo.png',
+    provinces: [Province.BC],
+    location: 'Surrey',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
