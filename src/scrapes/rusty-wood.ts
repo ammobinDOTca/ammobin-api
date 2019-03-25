@@ -26,9 +26,12 @@ export function rustyWood(type: AmmoType): Promise<IAmmoListing[]> {
     case AmmoType.centerfire:
     case AmmoType.rimfire:
       return Promise.all(
-        ['factory', 'custom-loaded'].map(t =>
-          throttle(() => scrape(p => `${BASE}/${t}/page/${p}`, info, selectors))
-        )
+        [
+          'factory',
+          'custom-loaded',
+          'custom-loaded/page/2',
+          'custom-loaded/page/3',
+        ].map(t => throttle(() => scrape(p => `${BASE}/${t}`, info, selectors)))
       )
         .then(helpers.combineResults)
         .then(helpers.classify(type))
