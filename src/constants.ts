@@ -321,6 +321,13 @@ export const VENDORS = [
     provinces: [Province.BC],
     location: 'Surrey',
   },
+  {
+    name: 'Rusty Wood',
+    link: 'https://www.rustywood.ca',
+    logo: '/logos/rustywood-logo.png',
+    provinces: [Province.BC],
+    location: 'Mission',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>

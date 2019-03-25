@@ -75,6 +75,10 @@ export function classifyShotgun(items: IAmmoListing[]): IAmmoListing[] {
   })
 }
 
+export function classify(ammo: AmmoType) {
+  return (items: IAmmoListing[]) => classifyBullets(items, ammo)
+}
+
 export function classifyBullets(
   items: IAmmoListing[],
   ammo: AmmoType

@@ -51,12 +51,15 @@ import { crafm } from './crafm'
 import { northernEliteFirearms } from './northern-elite-firearms'
 import { gunhub } from './gunhub'
 import { budgetShooterSupply } from './budget-shooter-supply'
+import { rustyWood } from './rusty-wood'
 
 export function makeSearch(
   source: string,
   type: AmmoType
 ): Promise<IAmmoListing[]> {
   switch (source) {
+    case 'rustywood.ca':
+      return rustyWood(type)
     case 'budgetshootersupply.ca':
       return budgetShooterSupply(type)
     case 'gun-hub.mybigcommerce.com':
