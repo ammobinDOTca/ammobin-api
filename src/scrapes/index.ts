@@ -53,11 +53,15 @@ import { gunhub } from './gunhub'
 import { budgetShooterSupply } from './budget-shooter-supply'
 import { rustyWood } from './rusty-wood'
 import { theGunDealer } from './the-gun-dealer'
+import { waspMunitions } from './wasp-munitions'
+
 export function makeSearch(
   source: string,
   type: AmmoType
 ): Promise<IAmmoListing[]> {
   switch (source) {
+    case 'waspmunitions.ca':
+      return waspMunitions(type)
     case 'thegundealer.net':
       return theGunDealer(type)
     case 'rustywood.ca':

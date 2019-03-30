@@ -335,6 +335,13 @@ export const VENDORS = [
     provinces: [Province.NB],
     location: 'McAdam',
   },
+  {
+    name: 'WASP Munitions',
+    link: 'https://waspmunitions.ca',
+    logo: '/logos/waspmunitions-logo.png',
+    provinces: [Province.AB],
+    location: 'Sylvan Lake',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
