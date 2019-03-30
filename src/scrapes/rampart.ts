@@ -13,7 +13,7 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
   const selectors: Selectors = {
     item: '.product',
     name: '.card-title',
-    img: '.card-image',
+    img: '', // '.card-image', // disabled since images load async
     link: '.card-figure a',
     price: '.price',
   }
