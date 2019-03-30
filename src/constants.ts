@@ -328,6 +328,13 @@ export const VENDORS = [
     provinces: [Province.BC],
     location: 'Mission',
   },
+  {
+    name: 'The Gun Dealer',
+    link: 'https://thegundealer.net',
+    logo: '/logos/the-gun-dealer-logo.png',
+    provinces: [Province.NB],
+    location: 'McAdam',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
