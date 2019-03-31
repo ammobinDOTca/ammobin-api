@@ -331,7 +331,7 @@ export const VENDORS = [
   {
     name: 'The Gun Dealer',
     link: 'https://thegundealer.net',
-    logo: '/logos/the-gun-dealer-logo.png',
+    logo: '/logos/thegundealer-logo.png',
     provinces: [Province.NB],
     location: 'McAdam',
   },
