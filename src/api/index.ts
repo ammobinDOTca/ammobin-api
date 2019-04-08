@@ -5,7 +5,6 @@ import boom from 'boom'
 import * as url from 'url'
 import * as helpers from '../helpers'
 const { ApolloServer } = require('apollo-server-hapi')
-const { RedisCache } = require('apollo-server-cache-redis')
 
 import { typeDefs, resolvers } from './graphql'
 import { SOURCES, DATE_FORMAT } from '../constants'
@@ -256,9 +255,6 @@ async function doWork() {
       tracing: false,
       cacheControl: true,
       cors: false,
-      cache: new RedisCache({
-        host: 'redis',
-      }),
       formatError: error => {
         logger.error({ type: 'graphql-error', error: error.toString() })
         return error
