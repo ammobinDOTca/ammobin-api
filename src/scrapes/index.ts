@@ -54,12 +54,15 @@ import { budgetShooterSupply } from './budget-shooter-supply'
 import { rustyWood } from './rusty-wood'
 import { theGunDealer } from './the-gun-dealer'
 import { waspMunitions } from './wasp-munitions'
+import { greatNorthPercision as greatNorthPrecision } from './great-north-precision'
 
 export function makeSearch(
   source: string,
   type: AmmoType
 ): Promise<IAmmoListing[]> {
   switch (source) {
+    case 'greatnorthprecision.com':
+      return greatNorthPrecision(type)
     case 'waspmunitions.ca':
       return waspMunitions(type)
     case 'thegundealer.net':

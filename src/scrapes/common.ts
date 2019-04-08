@@ -47,7 +47,7 @@ export async function scrape(
   let $ = cheerio.load(r.data)
   const items = []
   $(selectors.item).each((index, row) => {
-    const result: any = {}
+    const result = {} as IAmmoListing
     const tha = $(row)
 
     if (selectors.outOfStock && tha.find(selectors.outOfStock).length > 0) {
@@ -64,6 +64,7 @@ export async function scrape(
       .find(selectors.price)
       .last()
       .text() // sale price come last...
+
     result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
     result.vendor = info.vendor

@@ -2,11 +2,12 @@ import * as helpers from '../helpers'
 import throat = require('throat')
 import axios from 'axios'
 import cheerio = require('cheerio')
+import { RENDERTRON_URL } from '../constants'
 
 async function makeTendaRequest(ammotype, page = 1) {
   await helpers.delayScrape(`https://www.gotenda.com`)
   const f = await axios.get(
-    `http://rendertron:3000/render/https://gotenda.com/product-category/ammunition/${ammotype}/page/${page}/?number=48`
+    `${RENDERTRON_URL}/render/https://gotenda.com/product-category/ammunition/${ammotype}/page/${page}/?number=48`
   )
 
   let $ = cheerio.load(f.data)

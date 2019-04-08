@@ -342,6 +342,13 @@ export const VENDORS = [
     provinces: [Province.AB],
     location: 'Sylvan Lake',
   },
+  {
+    name: 'Great North Precision',
+    link: 'https://greatnorthprecision.com',
+    logo: '/logos/greatnorthprecision-logo.png',
+    provinces: [Province.BC],
+    location: 'Kelowna',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
@@ -351,3 +358,5 @@ export const SOURCES = VENDORS.map(v =>
 export const PROXY_URL = 'https://ammobin.ca/images'
 export const DATE_FORMAT = 'YYYY-MM-DD'
 export const CACHE_REFRESH_HOURS = 4
+
+export const RENDERTRON_URL = 'http://rendertron:3000'
