@@ -1,10 +1,10 @@
 import * as helpers from '../helpers'
 import throat = require('throat')
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
 
-export function theAmmoSource(type: AmmoType): Promise<IAmmoListing[]> {
+export function theAmmoSource(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
     site: 'theammosource.com',
@@ -22,21 +22,21 @@ export function theAmmoSource(type: AmmoType): Promise<IAmmoListing[]> {
   }
   const BASE = `https://${info.site}`
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(
         p => `${BASE}/rimfire-ammunition/?sort=featured&page=${p}`,
         info,
         selectors
       ).then(helpers.classifyRimfire)
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return scrape(
         p => `${BASE}/shotgun-ammunition/?sort=featured&page=${p}`,
         info,
         selectors
       ).then(helpers.classifyShotgun)
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['rifle-ammunition', 'pistol-ammunition', 'surplus-ammunition'].map(t =>
           throttle(() =>

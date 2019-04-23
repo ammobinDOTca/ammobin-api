@@ -4,7 +4,7 @@ import moment from 'moment'
 import { DATE_FORMAT } from './constants'
 import { WRAPAPI_KEY } from './scrapes/wrap-api-key'
 import delay from 'delay'
-import { AmmoType, IAmmoListing } from './graphql-types'
+import { ItemType, IItemListing } from './graphql-types'
 // in memory cache of site to delay so as to not spam robots.txt
 const _siteToDelayMap = {}
 
@@ -43,14 +43,14 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
   return delay
 }
 
-export const getKey = (source: string, type: AmmoType) => {
+export const getKey = (source: string, type: ItemType) => {
   return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}`
 }
 
-export function combineResults(results: IAmmoListing[][]): IAmmoListing[] {
+export function combineResults(results: IItemListing[][]): IItemListing[] {
   return results.reduce((final, r) => (r ? final.concat(r) : final), [])
 }
-export function classifyRimfire(items: IAmmoListing[]): IAmmoListing[] {
+export function classifyRimfire(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
     i.calibre = classifier
       .classifyRimfire(i.calibre || i.name || '')
@@ -58,7 +58,7 @@ export function classifyRimfire(items: IAmmoListing[]): IAmmoListing[] {
     return i
   })
 }
-export const classifyCenterfire = (items: IAmmoListing[]): IAmmoListing[] => {
+export const classifyCenterfire = (items: IItemListing[]): IItemListing[] => {
   return items.map(i => {
     i.calibre = classifier
       .classifyCenterFire(i.calibre || i.name || '')
@@ -66,7 +66,7 @@ export const classifyCenterfire = (items: IAmmoListing[]): IAmmoListing[] => {
     return i
   })
 }
-export function classifyShotgun(items: IAmmoListing[]): IAmmoListing[] {
+export function classifyShotgun(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
     i.calibre = classifier
       .classifyShotgun(i.calibre || i.name || '')
@@ -75,14 +75,14 @@ export function classifyShotgun(items: IAmmoListing[]): IAmmoListing[] {
   })
 }
 
-export function classify(ammo: AmmoType) {
-  return (items: IAmmoListing[]) => classifyBullets(items, ammo)
+export function classify(ammo: ItemType) {
+  return (items: IItemListing[]) => classifyBullets(items, ammo)
 }
 
 export function classifyBullets(
-  items: IAmmoListing[],
-  ammo: AmmoType
-): IAmmoListing[] {
+  items: IItemListing[],
+  ammo: ItemType
+): IItemListing[] {
   /**
    * classify all items of a certain type, then remove all those which where not classified
    */
@@ -102,7 +102,7 @@ export function makeWrapApiReq(
   target: string,
   ammotype: string,
   page = 1
-): Promise<{ page: number; lastPage: number; items: IAmmoListing[] }> {
+): Promise<{ page: number; lastPage: number; items: IItemListing[] }> {
   return axios({
     url: `https://wrapapi.com/use/meta-ammo-ca/${target}/${target}/latest`,
     method: 'post',

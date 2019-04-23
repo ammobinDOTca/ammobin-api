@@ -3,9 +3,9 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
-async function fn(type: String, page = 1): Promise<IAmmoListing[]> {
+async function fn(type: String, page = 1): Promise<IItemListing[]> {
   const r = await axios.get(
     `http://www.westcoasthunting.ca/product-category/ammunition/${type}/page/${page}/`
   )
@@ -42,13 +42,13 @@ async function fn(type: String, page = 1): Promise<IAmmoListing[]> {
   }
 }
 
-export function westCoastHunting(type: AmmoType): Promise<IAmmoListing[]> {
+export function westCoastHunting(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return fn('rimfire-others').then(i => helpers.classifyBullets(i, type))
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all([
         throttle(() => fn('handgun-ammo')),
         throttle(() => fn('rifle-ammo')),
@@ -56,7 +56,7 @@ export function westCoastHunting(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.combineResults)
         .then(i => helpers.classifyBullets(i, type))
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return fn('shotgun-ammo').then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))

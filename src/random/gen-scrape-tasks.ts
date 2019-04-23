@@ -1,4 +1,4 @@
-import { AmmoType } from '../graphql-types'
+import { ItemType } from '../graphql-types'
 import { SOURCES, QUEUE_NAME } from '../constants'
 import RedisSMQ from 'rsmq'
 
@@ -18,7 +18,7 @@ async function doWork() {
       )
     )
   }
-  await queueUpCacheRefresh(AmmoType.rimfire)
+  await queueUpCacheRefresh(ItemType.rimfire)
   process.exit(0)
 }
 

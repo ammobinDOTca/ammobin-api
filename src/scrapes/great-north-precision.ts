@@ -1,14 +1,14 @@
 import throat from 'throat'
 
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 import { RENDERTRON_URL } from '../constants'
 const throttle = throat(1)
 
 export async function greatNorthPercision(
-  type: AmmoType
-): Promise<IAmmoListing[]> {
+  type: ItemType
+): Promise<IItemListing[]> {
   const info: Info = {
     site: 'greatnorthprecision.com',
     vendor: 'Great North Percision',
@@ -28,7 +28,7 @@ export async function greatNorthPercision(
       info.site
     }/ammo/${t}?page=${page}&show=100`
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return Promise.all(
         ['Rimfire-Ammo'].map(t =>
           throttle(() => scrape(getUrl(t), info, selectors))
@@ -36,7 +36,7 @@ export async function greatNorthPercision(
       )
         .then(helpers.combineResults)
         .then(helpers.classifyRimfire)
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['Rifle-Ammo', 'Pistol-Ammo'].map(t =>
           throttle(() => scrape(getUrl(t), info, selectors))
@@ -44,7 +44,7 @@ export async function greatNorthPercision(
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return scrape(getUrl('Shotgun-Ammo'), info, selectors).then(
         helpers.classifyShotgun
       )

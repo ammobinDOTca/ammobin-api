@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 async function work(type: string, page = 1) {
   await helpers.delayScrape('https://www.bartonsbigcountry.ca')
 
@@ -54,14 +54,14 @@ async function work(type: string, page = 1) {
       }
     })
 }
-export function barton(type: AmmoType): Promise<IAmmoListing[]> {
+export function barton(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return work('rimfire').then(helpers.classifyRimfire)
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['centerfire-pistol', 'centerfire-rifle', 'bulk-surplus'].map(t =>
           throttle(() => work(t, 1))
@@ -70,7 +70,7 @@ export function barton(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return work('shotgun-ammunition').then(helpers.classifyShotgun)
 
     default:

@@ -16,7 +16,6 @@ export function alSimmons(type: AmmoType): Promise<IAmmoListing[]> {
     img: '.wp-post-image',
     link: '.product-title a',
     price: '.price',
-
     nextPage: '.next',
     outOfStock: '.out-of-stock',
   }

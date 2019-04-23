@@ -8,7 +8,7 @@ const { ApolloServer } = require('apollo-server-hapi')
 
 import { typeDefs, resolvers } from './graphql'
 import { SOURCES, DATE_FORMAT } from '../constants'
-import { AmmoType } from '../graphql-types'
+import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
 
@@ -149,7 +149,7 @@ server.route({
   method: 'GET',
   path: '/dank',
   handler: async () => {
-    const keys = SOURCES.map(s => helpers.getKey(s, AmmoType.centerfire))
+    const keys = SOURCES.map(s => helpers.getKey(s, ItemType.centerfire))
     const results: any = await new Promise((resolve, reject) => {
       client.mget(keys, (err, res) =>
         err ? reject(err) : resolve(res.map(r => (r ? JSON.parse(r) : null)))
@@ -171,10 +171,10 @@ server.route({
   },
 })
 
-const TYPES: AmmoType[] = [
-  AmmoType.centerfire,
-  AmmoType.rimfire,
-  AmmoType.shotgun,
+const TYPES: ItemType[] = [
+  ItemType.centerfire,
+  ItemType.rimfire,
+  ItemType.shotgun,
 ]
 
 server.route({

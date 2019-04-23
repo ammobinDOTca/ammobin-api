@@ -1,8 +1,8 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
-function work(type): Promise<IAmmoListing[]> {
+import { ItemType, IItemListing } from '../graphql-types'
+function work(type): Promise<IItemListing[]> {
   console.log(`loading dante ${type}`)
   return axios
     .get(
@@ -32,15 +32,15 @@ function work(type): Promise<IAmmoListing[]> {
       return items
     })
 }
-export function dante(type: AmmoType): Promise<IAmmoListing[]> {
+export function dante(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return work('rimfire').then(helpers.classifyRimfire)
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return work('centerfire').then(helpers.classifyCenterfire)
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return work('shotshells').then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))

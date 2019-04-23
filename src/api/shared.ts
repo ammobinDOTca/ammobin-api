@@ -2,11 +2,11 @@ import { SOURCES } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
 import {
-  IAmmoListingsOnQueryArguments,
-  IAmmoListings,
-  AmmoType,
+  IItemsListingsOnQueryArguments,
+  IItemListings,
+  ItemType,
   IAmmoGroup,
-  IAmmoListing,
+  IItemListing,
   Province,
   SortOrder,
   SortField,
@@ -18,7 +18,7 @@ const client = redis.createClient({ host: 'redis' })
 export async function getBestPrices(
   params: IBestPricesOnQueryArguments
 ): Promise<IBestPrice[]> {
-  const type = params.type || AmmoType.centerfire
+  const type = params.type || ItemType.centerfire
   const keys = SOURCES.map(s => helpers.getKey(s, type))
   const res: any = await new Promise((resolve, reject) =>
     client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
@@ -60,7 +60,7 @@ export async function getBestPrices(
 }
 
 function doesItemContainProvince(
-  item: IAmmoListing | any,
+  item: IItemListing | any,
   province: Province
 ): boolean {
   // does the ammo listing contain the given promise
@@ -74,10 +74,10 @@ function doesItemContainProvince(
 }
 
 export async function getScrapeResponses(
-  params: IAmmoListingsOnQueryArguments
-): Promise<IAmmoListings> {
+  params: IItemsListingsOnQueryArguments
+): Promise<IItemListings> {
   let {
-    ammoType,
+    itemType,
     page,
     pageSize,
     calibre,
@@ -106,20 +106,20 @@ export async function getScrapeResponses(
     pageSize = 100
   }
 
-  const keys: string[] = ammoType
-    ? SOURCES.map(s => helpers.getKey(s, ammoType))
-    : [AmmoType.rimfire, AmmoType.centerfire, AmmoType.shotgun].reduce(
+  const keys: string[] = ItemType
+    ? SOURCES.map(s => helpers.getKey(s, ItemType))
+    : [ItemType.rimfire, ItemType.centerfire, ItemType.shotgun].reduce(
         (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
         []
       )
 
-  const results: IAmmoListing[][] = await new Promise((resolve, reject) =>
+  const results: IItemListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres: string[]) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
 
-  const result: IAmmoListing[] = results
+  const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
     .filter(r => r && r.price > 0 && r.calibre && r.calibre !== 'UNKNOWN')
     .sort(function(a, b) {
@@ -152,7 +152,7 @@ export async function getScrapeResponses(
           brand: item.brand,
           minPrice: item.price,
           maxPrice: item.price,
-          ammoType: item.ammoType,
+          ItemType: item.ItemType,
           minUnitCost: item.unitCost || 0,
           maxUnitCost: item.unitCost || 0,
           img: item.img,
@@ -258,5 +258,5 @@ export async function getScrapeResponses(
     pageSize,
     pages: Math.ceil(res.length / pageSize),
     items,
-  } as IAmmoListings
+  } as IItemListings
 }

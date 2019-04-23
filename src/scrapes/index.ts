@@ -43,7 +43,7 @@ import { northpro } from './northpro'
 import { wanstalls } from './wanstalls'
 import { gothicLineArmoury } from './gothic-line-armoury'
 import { rampart } from './rampart'
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 import { westCoastHunting } from './westcoasthunting'
 import { siwashSports } from './siwash'
 import { tillsonburg } from './tillsonburg'
@@ -60,8 +60,8 @@ import { xmetal } from './xmetal'
 
 export function makeSearch(
   source: string,
-  type: AmmoType
-): Promise<IAmmoListing[]> {
+  type: ItemType
+): Promise<IItemListing[]> {
   switch (source) {
     case 'xmetaltargets.com':
       return xmetal(type)
