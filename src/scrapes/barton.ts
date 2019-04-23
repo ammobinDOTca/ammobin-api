@@ -1,78 +1,58 @@
-import axios from 'axios'
-import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { AmmoType, IAmmoListing } from '../graphql-types'
-async function work(type: string, page = 1) {
-  await helpers.delayScrape('https://www.bartonsbigcountry.ca')
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { Info, Selectors, scrape } from './common'
 
-  console.log(`loading Bartons ${type} ${page}`)
-  return axios
-    .get(
-      `https://www.bartonsbigcountry.ca/ammunition/${type}.html?product_list_limit=30&p=${page}`
-    )
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.content .item').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-        result.link = tha.find('.product-item-link').prop('href')
-        result.img = tha.find('.product-image-photo').prop('src')
-        result.name = tha
-          .find('.item-title')
-          .text()
-          .trim()
-        const priceTxt = tha
-          .find('.price')
-          .last()
-          .text() // sale price come last...
-        result.price = parseFloat(priceTxt.replace('CA$', ''))
-        if (isNaN(result.price)) {
-          return // dont include empty prices
-        }
-        result.vendor = 'Bartons Big Country'
-        result.province = 'AB'
+function work(path: String) {
+  const info: Info = {
+    site: 'bartonsbigcountry.ca',
+    vendor: `Bartons Big Country`,
+    provinces: [Province.AB],
+  }
 
-        items.push(result)
-      })
+  const selectors: Selectors = {
+    item: '.product-item-info',
+    name: '.product-item-link',
+    img: '.product-image-photo',
+    link: '.product-item-link',
+    price: '.price',
 
-      if (items.length && $('.pages-item-next').length > 0) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1)
-          .then(results => items.concat(results))
-          .catch(e => {
-            // sometimes go too far and get 404
-            if (e.response && e.response.status === 404) {
-              console.warn('went too far with al simmons page: ' + page)
-              return items
-            }
-            throw e
-          })
-      } else {
-        return items
-      }
-    })
+    nextPage: '.pages-item-next',
+  }
+  const BASE = 'https://' + info.site
+  return scrape(
+    p => `${BASE}/index.php/${path}.html?product_list_limit=30&p=${p}`,
+    info,
+    selectors
+  )
 }
-export function barton(type: AmmoType): Promise<IAmmoListing[]> {
+
+export function barton(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   switch (type) {
-    case AmmoType.rimfire:
-      return work('rimfire').then(helpers.classifyRimfire)
+    case ItemType.rimfire:
+      return work('ammunition/rimfire').then(helpers.classifyRimfire)
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['centerfire-pistol', 'centerfire-rifle', 'bulk-surplus'].map(t =>
-          throttle(() => work(t, 1))
+          throttle(() => work('ammunition/' + t))
         )
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
+    case ItemType.shotgun:
+      return work('ammunition/shotgun-ammunition').then(helpers.classifyShotgun)
 
-    case AmmoType.shotgun:
-      return work('shotgun-ammunition').then(helpers.classifyShotgun)
-
+    case ItemType.shot:
+      return work('reloading/bullets')
+    case ItemType.case:
+      return work('reloading/brass')
+    case ItemType.powder:
+      return work('reloading/powder')
+    case ItemType.primer:
+      return Promise.resolve([]) // no results as of 20190511
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

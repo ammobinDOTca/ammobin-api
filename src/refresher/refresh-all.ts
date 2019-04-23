@@ -1,11 +1,11 @@
 import { ItemType } from '../graphql-types'
-import { SOURCES, QUEUE_NAME } from '../constants'
+import { SOURCES, QUEUE_NAME, TYPES } from '../constants'
 import RedisSMQ from 'rsmq'
 
 async function doWork() {
   const rsmq = new RedisSMQ({ host: 'redis' })
 
-  function queueUpCacheRefresh(type) {
+  function queueUpCacheRefresh(type: ItemType) {
     return Promise.all(
       SOURCES.map(
         source =>
@@ -18,7 +18,7 @@ async function doWork() {
       )
     )
   }
-  await queueUpCacheRefresh(ItemType.rimfire)
+  await Promise.all(TYPES.map(queueUpCacheRefresh))
   process.exit(0)
 }
 

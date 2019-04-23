@@ -1,8 +1,15 @@
 # types of ammo.
-enum AmmoType {
+enum ItemType {
+  ammo # collection the following
   centerfire
   rimfire
   shotgun
+
+  reloading # collection of the following
+  powder
+  shot
+  case
+  primer
 }
 # provinces  (and territories) of canada
 enum Province {
@@ -10,7 +17,7 @@ enum Province {
   BC
   MB
   NB
-  NF
+  NL
   NS
   NT
   NU
@@ -33,36 +40,36 @@ enum SortField {
   minUnitCost
 }
 
-type AmmoListing {
+type ItemListing {
   img: String
   price: Float!
   name: String!
   link: String!
   vendor: String!
   provinces: [Province] #[Province!]!
-  calibre: String!
+  subType: String #!
   brand: String!
   count: Float
   unitCost: Float
-  ammoType: AmmoType!
+  itemType: ItemType!
 }
-type AmmoGroup {
+type ItemGroup {
   name: String!
   brand: String!
-  calibre: String!
-  ammoType: AmmoType!
+  subType: String #!
+  itemType: ItemType!
   minPrice: Float!
   maxPrice: Float!
   minUnitCost: Float
   maxUnitCost: Float
   img: String
-  vendors: [AmmoListing!]!
+  vendors: [ItemListing!]!
 }
-type AmmoListings {
+type ItemListings {
   page: Int!
   pages: Int!
   pageSize: Int!
-  items: [AmmoGroup!]!
+  items: [ItemGroup!]!
 }
 type Vendor {
   name: String!
@@ -71,26 +78,27 @@ type Vendor {
   logo: String!
   link: String!
   background: Boolean
+  hasReloadingItems: Boolean
 }
 type BestPrice {
   unitCost: Float!
   calibre: String!
-  type: AmmoType #!
+  type: ItemType!
 }
 # The "Query" type is the root of all GraphQL queries.
 # (A "Mutation" type will be covered later on.)
 type Query {
   vendors(province: Province): [Vendor]
-  bestPrices(type: AmmoType, calibres: [String!]): [BestPrice]
-  ammoListings(
+  bestPrices(type: ItemType, calibres: [String!]): [BestPrice]
+  itemsListings(
     page: Int
     pageSize: Int
-    ammoType: AmmoType
-    calibre: String
+    itemType: ItemType
+    subType: String
     province: Province
     vendor: String
     sortOrder: SortOrder
     sortField: SortField
     query: String
-  ): AmmoListings
+  ): ItemListings
 }

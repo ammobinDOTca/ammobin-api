@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
-import { IAmmoListing, Province } from '../graphql-types'
+import { IItemListing, Province } from '../graphql-types'
 
 export interface Selectors {
   item: string
@@ -41,13 +41,13 @@ export async function scrape(
   info: Info,
   selectors: Selectors,
   page = 1
-): Promise<IAmmoListing[]> {
+): Promise<IItemListing[]> {
   await helpers.delayScrape(info.site)
   const r = await axios.get(getUrl(page))
   let $ = cheerio.load(r.data)
   const items = []
   $(selectors.item).each((index, row) => {
-    const result = {} as IAmmoListing
+    const result = {} as IItemListing
     const tha = $(row)
 
     if (selectors.outOfStock && tha.find(selectors.outOfStock).length > 0) {
@@ -73,7 +73,11 @@ export async function scrape(
     items.push(result)
   })
 
-  if (selectors.nextPage && $(selectors.nextPage).length > 0) {
+  if (
+    selectors.nextPage &&
+    $(selectors.nextPage).length > 0 &&
+    items.length > 0
+  ) {
     $ = null // dont hold onto page for recursion
     const more = await scrape(getUrl, info, selectors, page + 1)
     return items.concat(more)

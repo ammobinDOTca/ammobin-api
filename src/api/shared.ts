@@ -1,12 +1,12 @@
-import { SOURCES } from '../constants'
+import { SOURCES, AMMO_TYPES, RELOAD_TYPES } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
 import {
-  IAmmoListingsOnQueryArguments,
-  IAmmoListings,
-  AmmoType,
-  IAmmoGroup,
-  IAmmoListing,
+  IItemsListingsOnQueryArguments,
+  IItemListings,
+  ItemType,
+  IItemGroup,
+  IItemListing,
   Province,
   SortOrder,
   SortField,
@@ -18,13 +18,13 @@ const client = redis.createClient({ host: 'redis' })
 export async function getBestPrices(
   params: IBestPricesOnQueryArguments
 ): Promise<IBestPrice[]> {
-  const type = params.type || AmmoType.centerfire
+  const type = params.type || ItemType.centerfire
   const keys = SOURCES.map(s => helpers.getKey(s, type))
   const res: any = await new Promise((resolve, reject) =>
     client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
   )
   const { calibres } = params
-  const results: any = res.map(r => (r ? JSON.parse(r) : null))
+  const results: IItemListing[][] = res.map(r => (r ? JSON.parse(r) : null))
   const result = results
     .reduce((final, result2) => {
       return result2 && result2.length ? final.concat(result2) : final
@@ -32,24 +32,25 @@ export async function getBestPrices(
     .reduce((response, item) => {
       if (
         !item ||
-        !item.calibre ||
+        !item.subType ||
         !item.unitCost ||
-        item.calibre === 'UNKNOWN' ||
-        (calibres && !calibres.includes(item.calibre))
+        item.subType === 'UNKNOWN' ||
+        (calibres && !calibres.includes(item.subType))
       ) {
         return response
       }
 
-      if (!response[item.calibre]) {
-        response[item.calibre] = {
+      if (!response[item.subType]) {
+        response[item.subType] = {
           unitCost: Number.MAX_SAFE_INTEGER,
-          calibre: item.calibre,
+          calibre: item.subType,
+          subType: item.subType,
           type,
         }
       }
 
-      response[item.calibre].unitCost = Math.min(
-        response[item.calibre].unitCost,
+      response[item.subType].unitCost = Math.min(
+        response[item.subType].unitCost,
         item.unitCost
       )
 
@@ -60,7 +61,7 @@ export async function getBestPrices(
 }
 
 function doesItemContainProvince(
-  item: IAmmoListing | any,
+  item: IItemListing | any,
   province: Province
 ): boolean {
   // does the ammo listing contain the given promise
@@ -74,13 +75,13 @@ function doesItemContainProvince(
 }
 
 export async function getScrapeResponses(
-  params: IAmmoListingsOnQueryArguments
-): Promise<IAmmoListings> {
+  params: IItemsListingsOnQueryArguments
+): Promise<IItemListings> {
   let {
-    ammoType,
+    itemType,
     page,
     pageSize,
-    calibre,
+    subType,
     province,
     vendor,
     query,
@@ -106,23 +107,42 @@ export async function getScrapeResponses(
     pageSize = 100
   }
 
-  const keys: string[] = ammoType
-    ? SOURCES.map(s => helpers.getKey(s, ammoType))
-    : [AmmoType.rimfire, AmmoType.centerfire, AmmoType.shotgun].reduce(
-        (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
-        []
-      )
+  let types: ItemType[]
+  switch (itemType) {
+    case ItemType.reloading:
+      types = RELOAD_TYPES
+      break
+    // default to ammo if nothing
+    case ItemType.ammo:
+    case undefined:
+    case null:
+      types = AMMO_TYPES
+      break
+    default:
+      types = [itemType]
+  }
 
-  const results: IAmmoListing[][] = await new Promise((resolve, reject) =>
+  const keys: string[] = types.reduce(
+    (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
+    []
+  )
+
+  const results: IItemListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres: string[]) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
-
-  const result: IAmmoListing[] = results
+  // only filters out ammo without subType set (not setup for reloading yet)
+  const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
-    .filter(r => r && r.price > 0 && r.calibre && r.calibre !== 'UNKNOWN')
-    .sort(function(a, b) {
+    .filter(
+      r =>
+        r &&
+        r.price > 0 &&
+        (!AMMO_TYPES.includes(itemType) ||
+          (r.subType && r.subType !== 'UNKNOWN'))
+    )
+    .sort((a, b) => {
       if (a.price > b.price) {
         return 1
       } else if (a.price < b.price) {
@@ -136,7 +156,7 @@ export async function getScrapeResponses(
     (r, item) => {
       // if provided, filter out items that DONT match
       if (
-        (calibre && item.calibre !== calibre) ||
+        (subType && item.subType !== subType) ||
         (vendor && item.vendor !== vendor) ||
         (province && !doesItemContainProvince(item, province)) ||
         (query && !item.name.toLowerCase().includes(query.toLowerCase()))
@@ -144,20 +164,20 @@ export async function getScrapeResponses(
         return r
       }
 
-      const key = item.calibre + '_' + item.brand
+      const key = item.subType + '_' + item.brand
       if (!r[key]) {
         r[key] = {
-          name: `${item.brand} ${item.calibre}`,
-          calibre: item.calibre,
+          name: `${item.brand} ${item.subType}`,
+          subType: item.subType,
           brand: item.brand,
           minPrice: item.price,
           maxPrice: item.price,
-          ammoType: item.ammoType,
+          itemType: item.itemType,
           minUnitCost: item.unitCost || 0,
           maxUnitCost: item.unitCost || 0,
           img: item.img,
           vendors: [item],
-        } as IAmmoGroup
+        } as IItemGroup
       } else {
         const val = r[key]
         val.minPrice = Math.min(item.price, val.minPrice)
@@ -182,7 +202,7 @@ export async function getScrapeResponses(
       }
       return r
     },
-    <{ [key: string]: IAmmoGroup }>{}
+    <{ [key: string]: IItemGroup }>{}
   )
 
   // flatten map and sort groups by sortField + sortKey
@@ -258,5 +278,5 @@ export async function getScrapeResponses(
     pageSize,
     pages: Math.ceil(res.length / pageSize),
     items,
-  } as IAmmoListings
+  } as IItemListings
 }

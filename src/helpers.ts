@@ -4,7 +4,7 @@ import moment from 'moment'
 import { DATE_FORMAT } from './constants'
 import { WRAPAPI_KEY } from './scrapes/wrap-api-key'
 import delay from 'delay'
-import { AmmoType, IAmmoListing } from './graphql-types'
+import { ItemType, IItemListing } from './graphql-types'
 // in memory cache of site to delay so as to not spam robots.txt
 const _siteToDelayMap = {}
 
@@ -18,7 +18,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     return _siteToDelayMap[site]
   }
 
-  let delay = 1000 // default to 1s between requests
+  let delayMs = 1000 // default to 1s between requests
   try {
     const robots = await axios.get(site + '/robots.txt').then(d => d.data)
 
@@ -30,7 +30,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
       .find(l => l[0].toLowerCase() === 'crawl-delay')
 
     if (f) {
-      delay = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
+      delayMs = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
     } else {
       console.debug('no Crawl-delay found for ' + site)
     }
@@ -38,51 +38,51 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     console.error('ERROR ' + site, e && e.message ? e.message : e)
   }
 
-  _siteToDelayMap[site] = delay
+  _siteToDelayMap[site] = delayMs
 
-  return delay
+  return delayMs
 }
 
-export const getKey = (source: string, type: AmmoType) => {
+export const getKey = (source: string, type: ItemType) => {
   return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}`
 }
 
-export function combineResults(results: IAmmoListing[][]): IAmmoListing[] {
+export function combineResults(results: IItemListing[][]): IItemListing[] {
   return results.reduce((final, r) => (r ? final.concat(r) : final), [])
 }
-export function classifyRimfire(items: IAmmoListing[]): IAmmoListing[] {
+export function classifyRimfire(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyRimfire(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyRimfire(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
 }
-export const classifyCenterfire = (items: IAmmoListing[]): IAmmoListing[] => {
+export const classifyCenterfire = (items: IItemListing[]): IItemListing[] => {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyCenterFire(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyCenterFire(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
 }
-export function classifyShotgun(items: IAmmoListing[]): IAmmoListing[] {
+export function classifyShotgun(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyShotgun(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyShotgun(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
 }
 
-export function classify(ammo: AmmoType) {
-  return (items: IAmmoListing[]) => classifyBullets(items, ammo)
+export function classify(ammo: ItemType) {
+  return (items: IItemListing[]) => classifyBullets(items, ammo)
 }
 
 export function classifyBullets(
-  items: IAmmoListing[],
-  ammo: AmmoType
-): IAmmoListing[] {
+  items: IItemListing[],
+  ammo: ItemType
+): IItemListing[] {
   /**
    * classify all items of a certain type, then remove all those which where not classified
    */
@@ -91,18 +91,18 @@ export function classifyBullets(
       const f = classifier.classifyAmmo(i.name || '')
 
       if (f.type === ammo) {
-        i.calibre = f.calibre.toUpperCase()
+        i.subType = f.calibre.toUpperCase()
       }
 
       return i
     })
-    .filter(f => f.calibre)
+    .filter(f => f.subType)
 }
 export function makeWrapApiReq(
   target: string,
   ammotype: string,
   page = 1
-): Promise<{ page: number; lastPage: number; items: IAmmoListing[] }> {
+): Promise<{ page: number; lastPage: number; items: IItemListing[] }> {
   return axios({
     url: `https://wrapapi.com/use/meta-ammo-ca/${target}/${target}/latest`,
     method: 'post',

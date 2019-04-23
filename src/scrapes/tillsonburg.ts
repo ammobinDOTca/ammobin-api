@@ -1,7 +1,7 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
-export async function tillsonburg(type: AmmoType): Promise<IAmmoListing[]> {
+export async function tillsonburg(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'tillsonburggunshop.com',
     vendor: 'Tillsonburg Gun Shop',
@@ -16,13 +16,13 @@ export async function tillsonburg(type: AmmoType): Promise<IAmmoListing[]> {
   }
   const getUrl = t => page => `https://tillsonburggunshop.com/${t}`
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return [] // no rimfire as of 20190208
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return scrape(getUrl('Ammunition/Centerfire'), info, selectors).then(
         helpers.classifyCenterfire
       )
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return scrape(
         getUrl('index.php?route=product/category&path=170_180'),
         info,

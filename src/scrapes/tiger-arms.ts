@@ -1,10 +1,10 @@
 import * as helpers from '../helpers'
 import throat = require('throat')
-import { Province, AmmoType, IAmmoListing } from '../graphql-types'
+import { Province, ItemType, IItemListing } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
 
-export function tigerArms(type: AmmoType): Promise<IAmmoListing[]> {
+export function tigerArms(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   const info: Info = {
@@ -24,14 +24,14 @@ export function tigerArms(type: AmmoType): Promise<IAmmoListing[]> {
   const BASE = 'https://tigerarms.ca/product-category/ammunition'
 
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(
         p => `${BASE}/rimfire-ammo?paged=${p}`,
         info,
         selectors
       ).then(items => helpers.classifyBullets(items, type))
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['rifle-ammo', 'handgun-ammo'].map(s =>
           throttle(() =>
@@ -42,7 +42,7 @@ export function tigerArms(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.combineResults)
         .then(i => helpers.classifyBullets(i, type))
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return scrape(
         p => `${BASE}/shotgun-ammo?paged=${p}`,
         info,

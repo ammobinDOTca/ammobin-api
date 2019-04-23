@@ -8,8 +8,8 @@ import {
   combineResults,
 } from '../helpers'
 import throat = require('throat')
-import { AmmoType, IAmmoListing } from '../graphql-types'
-async function work(type, page = 1): Promise<IAmmoListing[]> {
+import { ItemType, IItemListing, Province } from '../graphql-types'
+async function work(type, page = 1): Promise<IItemListing[]> {
   await delayScrape('https://www.bvoutdoors.com')
 
   console.log(`loading bvoutdoors ${type} ${page}`)
@@ -29,6 +29,7 @@ async function work(type, page = 1): Promise<IAmmoListing[]> {
         result.brand = tha.find('.caption h6').text()
         result.vendor = 'BV Outdoor Essentials'
         result.province = 'BC'
+        result.provinces = [Province.BC]
 
         items.push(result)
       })
@@ -41,7 +42,7 @@ async function work(type, page = 1): Promise<IAmmoListing[]> {
       }
     })
 }
-export function bvoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
+export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   switch (type) {
@@ -67,6 +68,14 @@ export function bvoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
       )
         .then(combineResults)
         .then(classifyShotgun)
+    case ItemType.case:
+      return work('reloading-unprimed-brass-341')
+    case ItemType.shot:
+      return work('Reloading-Bullets-%26-Brass-110')
+    case ItemType.primer:
+      return work('Reloading-Primers-342')
+    case ItemType.powder:
+      return work('Reloading-Powder-%26-Primers-111')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

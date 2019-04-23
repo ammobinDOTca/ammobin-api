@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { Province, AmmoType } from '../graphql-types'
+import { Province, ItemType } from '../graphql-types'
 // https://www.rangeviewcanada.com/product-category/ammunition/page/
 const URL = 'https://www.rangeviewcanada.com'
 
@@ -56,11 +56,11 @@ async function fn(page: number = 1): Promise<any[]> {
     })
 }
 
-export function rangeviewsports(type: AmmoType) {
+export function rangeviewsports(type: ItemType) {
   switch (type) {
-    case AmmoType.rimfire:
-    case AmmoType.centerfire:
-    case AmmoType.shotgun:
+    case ItemType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.shotgun:
       return fn(1).then(items => helpers.classifyBullets(items, type))
     default:
       return Promise.reject(new Error('unknown type: ' + type))

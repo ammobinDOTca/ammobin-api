@@ -7,8 +7,8 @@ import * as helpers from '../helpers'
 const { ApolloServer } = require('apollo-server-hapi')
 
 import { typeDefs, resolvers } from './graphql'
-import { SOURCES, DATE_FORMAT } from '../constants'
-import { AmmoType } from '../graphql-types'
+import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
+import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
 
@@ -42,8 +42,8 @@ server.route({
       type: 'track-view',
       userAgent,
       brand: body.brand,
-      calibre: body.calibre,
-      // body
+      subType: body.subType,
+      itemType: body.itemType,
     })
     return h.response('success')
   },
@@ -69,9 +69,12 @@ server.route({
 
     const date = moment.utc().format(DATE_FORMAT)
     try {
+      // todo update to include reloading and check if value is provided by the request body
       const results: any = await new Promise((resolve, reject) =>
-        client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
-          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
+        client.mget(
+          AMMO_TYPES.map(type => `${date}_${host}_${type}`),
+          (err, res) =>
+            err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
@@ -114,9 +117,12 @@ server.route({
     const date = moment.utc().format(DATE_FORMAT)
 
     try {
+      // TODO: have the client pass up the item type (as well so that we dont have to load in everything)
       const results: any = await new Promise((resolve, reject) =>
-        client.mget(TYPES.map(type => `${date}_${host}_${type}`), (err, res) =>
-          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
+        client.mget(
+          AMMO_TYPES.map(type => `${date}_${host}_${type}`),
+          (err, res) =>
+            err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
@@ -149,7 +155,7 @@ server.route({
   method: 'GET',
   path: '/dank',
   handler: async () => {
-    const keys = SOURCES.map(s => helpers.getKey(s, AmmoType.centerfire))
+    const keys = SOURCES.map(s => helpers.getKey(s, ItemType.centerfire))
     const results: any = await new Promise((resolve, reject) => {
       client.mget(keys, (err, res) =>
         err ? reject(err) : resolve(res.map(r => (r ? JSON.parse(r) : null)))
@@ -159,7 +165,7 @@ server.route({
     return results
       .reduce((final, result) => final.concat(result || []), [])
       .filter(r => r && r.price > 0 && r.calibre === 'UNKNOWN')
-      .sort(function(a, b) {
+      .sort((a, b) => {
         if (a.price > b.price) {
           return 1
         } else if (a.price < b.price) {
@@ -170,12 +176,6 @@ server.route({
       })
   },
 })
-
-const TYPES: AmmoType[] = [
-  AmmoType.centerfire,
-  AmmoType.rimfire,
-  AmmoType.shotgun,
-]
 
 server.route({
   method: 'POST',
@@ -215,7 +215,7 @@ server.events.on('response', function(request) {
     remoteAddress: request.info.remoteAddress,
     method: request.method.toUpperCase(),
     path: request.url.path,
-    statusCode: request.response.statusCode,
+    statusCode: request.response ? request.response.statusCode : 0,
     timeMs: new Date().getTime() - request.info.received,
   })
 
@@ -229,7 +229,7 @@ server.events.on('response', function(request) {
       variables: request.payload.variables,
     })
   }
-  if (request.response.statusCode >= 500) {
+  if (request.response && request.response.statusCode >= 500) {
     logger.error({
       type: 'http500',
       request: {

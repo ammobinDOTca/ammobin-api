@@ -1,8 +1,8 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 
-export function gunhub(type: AmmoType): Promise<IAmmoListing[]> {
+export function gunhub(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'gun-hub.mybigcommerce.com',
     vendor: `Canadian Gunhub`,
@@ -22,9 +22,9 @@ export function gunhub(type: AmmoType): Promise<IAmmoListing[]> {
 
   const BASE = 'https://gun-hub.mybigcommerce.com/ammunition'
   switch (type) {
-    case AmmoType.centerfire:
-    case AmmoType.shotgun:
-    case AmmoType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.shotgun:
+    case ItemType.rimfire:
       return scrape(p => `${BASE}/?page=${p}`, info, selectors).then(items =>
         helpers.classifyBullets(items, type)
       )

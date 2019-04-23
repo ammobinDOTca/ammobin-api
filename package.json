@@ -23,15 +23,15 @@
   "license": "MIT",
   "dependencies": {
     "ammobin-classifier": "0.0.35",
-    "apollo-server": "^2.4.8",
-    "apollo-server-hapi": "^2.4.8",
+    "apollo-server": "^2.5.0",
+    "apollo-server-hapi": "^2.5.0",
     "axios": "^0.18.0",
     "boom": "^7.3.0",
-    "cheerio": "^1.0.0-rc.2",
-    "delay": "^4.1.0",
+    "cheerio": "^1.0.0-rc.3",
+    "delay": "^4.2.0",
     "fluent-logger": "^3.3.1",
-    "graphql": "^14.1.1",
-    "hapi": "^17.8.5",
+    "graphql": "^14.3.0",
+    "hapi": "^18.1.0",
     "jsonp": "^0.2.1",
     "moment": "^2.24.0",
     "node-cron": "^2.0.3",
@@ -43,13 +43,13 @@
   },
   "devDependencies": {
     "gql2ts": "^1.10.1",
-    "husky": "^2.0.0",
-    "nodemon": "^1.18.10",
-    "prettier": "^1.16.4",
+    "husky": "^2.3.0",
+    "nodemon": "^1.19.0",
+    "prettier": "^1.17.1",
     "pretty-quick": "^1.10.0",
-    "ts-node-dev": "^1.0.0-pre.32",
-    "tslint": "^5.14.0",
-    "typescript": "^3.3.4000"
+    "ts-node-dev": "^1.0.0-pre.39",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   },
   "husky": {
     "hooks": {

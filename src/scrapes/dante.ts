@@ -1,47 +1,49 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
-function work(type): Promise<IAmmoListing[]> {
-  console.log(`loading dante ${type}`)
-  return axios
-    .get(
-      `https://www.dantesports.com/en/product-category/shop/ammunition/${type}/?product_count=100`
-    )
-    .then(r => {
-      const $ = cheerio.load(r.data)
-      const items = []
-      $('.product').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
+import { scrape, Info, Selectors } from './common'
 
-        if (tha.prop('class').indexOf('outofstock') >= 0) {
-          return
-        }
+import { Province, ItemType, IItemListing } from '../graphql-types'
+function work(type: String): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'dantesports.com',
+    vendor: `Dante Sports`,
+    provinces: [Province.QC],
+  }
 
-        result.link = tha.find('.woocommerce-LoopProduct-link').prop('href')
-        result.img = tha.find('.wp-post-image').prop('src')
-        result.name = tha.find('.woocommerce-loop-product__title').text()
-        const priceTxt = tha.find('.woocommerce-Price-amount').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'Dante Sports'
-        result.province = 'QC'
+  const selectors: Selectors = {
+    item: '.product',
+    name: '.woocommerce-loop-product__title',
+    img: '.wp-post-image',
+    link: '.woocommerce-LoopProduct-link',
+    price: '.woocommerce-Price-amount',
 
-        items.push(result)
-      })
-      return items
-    })
+    //nextPage: '.next',
+    outOfStock: '.outofstock',
+  }
+
+  return scrape(
+    _ =>
+      `https://www.${
+        info.site
+      }/en/product-category/shop/${type}/?product_count=100`,
+    info,
+    selectors
+  )
 }
-export function dante(type: AmmoType): Promise<IAmmoListing[]> {
+export function dante(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case AmmoType.rimfire:
-      return work('rimfire').then(helpers.classifyRimfire)
+    case ItemType.rimfire:
+      return work('ammunition/rimfire')
 
-    case AmmoType.centerfire:
-      return work('centerfire').then(helpers.classifyCenterfire)
+    case ItemType.centerfire:
+      return work('ammunition/centerfire')
 
-    case AmmoType.shotgun:
-      return work('shotshells').then(helpers.classifyShotgun)
+    case ItemType.shotgun:
+      return work('ammunition/shotshells')
+    case ItemType.shot:
+      return work('reloading/campro')
+    case ItemType.powder:
+    case ItemType.case:
+    case ItemType.primer:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

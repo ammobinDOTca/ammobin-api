@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
 
-export function xmetal(type: AmmoType): Promise<IAmmoListing[]> {
+export function xmetal(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'xmetaltargets.com',
     vendor: `Xmetal Targets`,
@@ -21,10 +21,10 @@ export function xmetal(type: AmmoType): Promise<IAmmoListing[]> {
   }
 
   switch (type) {
-    case AmmoType.rimfire:
-    case AmmoType.shotgun:
+    case ItemType.rimfire:
+    case ItemType.shotgun:
       return Promise.resolve([])
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return scrape(
         _ => `https://xmetaltargets.com/product-category/ammunition/`,
         info,
