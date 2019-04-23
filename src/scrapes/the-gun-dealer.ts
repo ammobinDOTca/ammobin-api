@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 import throat from 'throat'
 
-export function theGunDealer(type: AmmoType): Promise<IAmmoListing[]> {
+export function theGunDealer(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'thegundealer.net',
     vendor: `The Gun Dealer`,
@@ -22,7 +22,7 @@ export function theGunDealer(type: AmmoType): Promise<IAmmoListing[]> {
 
   const BASE = `https://www.${info.site}/product-category/ammunition/`
   switch (type) {
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['handgun', 'rifle', 'bulk-ammunition'].map(t =>
           throttle(() => scrape(p => `${BASE}/${t}/page/${p}`, info, selectors))
@@ -30,7 +30,7 @@ export function theGunDealer(type: AmmoType): Promise<IAmmoListing[]> {
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return Promise.all(
         ['shotgun'].map(t =>
           throttle(() => scrape(p => `${BASE}/${t}/page/${p}`, info, selectors))
@@ -38,7 +38,7 @@ export function theGunDealer(type: AmmoType): Promise<IAmmoListing[]> {
       )
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun)
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(p => `${BASE}/rimfire/page/${p}`, info, selectors).then(
         helpers.classifyRimfire
       )

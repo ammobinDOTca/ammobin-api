@@ -23,7 +23,7 @@ export interface IQuery {
   __typename: string | null
   vendors: Array<IVendor | null> | null
   bestPrices: Array<IBestPrice | null> | null
-  ammoListings: IAmmoListings | null
+  itemsListings: IItemListings | null
 }
 
 export interface IVendorsOnQueryArguments {
@@ -31,15 +31,15 @@ export interface IVendorsOnQueryArguments {
 }
 
 export interface IBestPricesOnQueryArguments {
-  type?: AmmoType | null
+  type?: ItemType | null
   calibres?: Array<string> | null
 }
 
-export interface IAmmoListingsOnQueryArguments {
+export interface IItemsListingsOnQueryArguments {
   page?: number | null
   pageSize?: number | null
-  ammoType?: AmmoType | null
-  calibre?: string | null
+  itemType?: ItemType | null
+  subType?: string | null
   province?: Province | null
   vendor?: string | null
   sortOrder?: SortOrder | null
@@ -71,19 +71,26 @@ export interface IVendor {
   logo: string
   link: string
   background: boolean | null
+  hasReloadingItems: boolean | null
 }
 
-export const enum AmmoType {
+export const enum ItemType {
+  ammo = 'ammo',
   centerfire = 'centerfire',
   rimfire = 'rimfire',
   shotgun = 'shotgun',
+  reloading = 'reloading',
+  powder = 'powder',
+  shot = 'shot',
+  case = 'case',
+  primer = 'primer',
 }
 
 export interface IBestPrice {
   __typename: string | null
   unitCost: number
   calibre: string
-  type: AmmoType | null
+  type: ItemType
 }
 
 export const enum SortOrder {
@@ -98,29 +105,29 @@ export const enum SortField {
   minUnitCost = 'minUnitCost',
 }
 
-export interface IAmmoListings {
+export interface IItemListings {
   __typename: string | null
   page: number
   pages: number
   pageSize: number
-  items: Array<IAmmoGroup>
+  items: Array<IItemGroup>
 }
 
-export interface IAmmoGroup {
+export interface IItemGroup {
   __typename: string | null
   name: string
   brand: string
   calibre: string
-  ammoType: AmmoType
+  itemType: ItemType
   minPrice: number
   maxPrice: number
   minUnitCost: number | null
   maxUnitCost: number | null
   img: string | null
-  vendors: Array<IAmmoListing>
+  vendors: Array<IItemListing>
 }
 
-export interface IAmmoListing {
+export interface IItemListing {
   __typename: string | null
   img: string | null
   price: number
@@ -128,11 +135,11 @@ export interface IAmmoListing {
   link: string
   vendor: string
   provinces: Array<Province | null> | null
-  calibre: string
+  subType: string
   brand: string
   count: number | null
   unitCost: number | null
-  ammoType: AmmoType
+  itemType: ItemType
 }
 
 // tslint:enable

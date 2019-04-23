@@ -3,8 +3,8 @@ import { VENDORS } from '../constants'
 import fs from 'fs'
 import { getScrapeResponses, getBestPrices } from './shared'
 import {
-  IAmmoListings,
-  IAmmoListingsOnQueryArguments,
+  IItemListings,
+  IItemsListingsOnQueryArguments,
   IBestPricesOnQueryArguments,
 } from '../graphql-types'
 const schema = fs.readFileSync(process.cwd() + '/graphql.gql')
@@ -40,8 +40,8 @@ export const resolvers: any = {
       getBestPrices(args),
     ammoListings: async (
       parent,
-      args: IAmmoListingsOnQueryArguments
-    ): Promise<IAmmoListings> => {
+      args: IItemsListingsOnQueryArguments
+    ): Promise<IItemListings> => {
       let res = await getScrapeResponses(args)
 
       return res

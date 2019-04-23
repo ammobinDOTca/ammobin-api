@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 
 const SITE = 'https://store.theshootingcentre.com'
 
@@ -42,13 +42,13 @@ async function work(type: string, page = 1) {
   })
 }
 
-export function theShootingCenter(type: AmmoType): Promise<IAmmoListing[]> {
+export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return work('rimfire').then(helpers.classifyRimfire)
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return work('centrefire').then(helpers.classifyCenterfire)
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return work('shotshell').then(helpers.classifyShotgun)
     default:
       return Promise.reject(new Error('unknown type: ' + type))

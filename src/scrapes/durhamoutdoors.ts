@@ -1,12 +1,12 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape } from './common'
 
-export function durhamoutdoors(type: AmmoType): Promise<IAmmoListing[]> {
+export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case AmmoType.rimfire:
-    case AmmoType.centerfire:
-    case AmmoType.shotgun:
+    case ItemType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.shotgun:
       return scrape(
         page =>
           `https://durhamoutdoors.ca/Ammo-and-reloading_c_12-${page}.html`,

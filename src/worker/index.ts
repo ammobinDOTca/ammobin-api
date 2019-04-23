@@ -3,7 +3,7 @@ import * as classifier from 'ammobin-classifier'
 import * as CONSTANTS from '../constants'
 import { makeSearch } from '../scrapes'
 import { getKey } from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME, {
   host: 'redis',
   autostart: true,
@@ -52,15 +52,15 @@ function getCounts(items) {
   })
 }
 
-function setAmmoType(ammoType: AmmoType) {
-  return (items: IAmmoListing[]) =>
+function setItemType(itemType: ItemType) {
+  return (items: IItemListing[]) =>
     items.map(i => {
-      i.ammoType = ammoType
+      i.itemType = itemType
       return i
     })
 }
 
-const appendGAParam = (items: IAmmoListing[]) =>
+const appendGAParam = (items: IItemListing[]) =>
   items.map(i => {
     i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
     return i
@@ -70,20 +70,20 @@ worker.on('message', function(msg, next /* , id*/) {
   const { source, type } = JSON.parse(msg)
 
   const searchStart = new Date()
-  logger.info({ type: 'started-scrape', source, ammoType: type })
+  logger.info({ type: 'started-scrape', source, ItemType: type })
   try {
     return makeSearch(source, type)
       .then(items => items.filter(i => i.price && i.link && i.name))
       .then(classifyBrand)
       .then(proxyImages)
       .then(getCounts)
-      .then(setAmmoType(type))
+      .then(setItemType(type))
       .then(appendGAParam)
       .then(items => {
         logger.info({
           type: 'finished-scrape',
           source,
-          ammoType: type,
+          ItemType: type,
           items: items.length,
           duration: new Date().valueOf() - searchStart.valueOf(),
         })
@@ -104,7 +104,7 @@ worker.on('message', function(msg, next /* , id*/) {
         logger.info({
           type: 'failed-scrape',
           source,
-          ammoType: type,
+          ItemType: type,
           msg: e.message,
         })
         next(e)
@@ -113,7 +113,7 @@ worker.on('message', function(msg, next /* , id*/) {
     logger.info({
       type: 'failed-scrape',
       source,
-      ammoType: type,
+      ItemType: type,
       msg: e.message,
     })
     return next(e)

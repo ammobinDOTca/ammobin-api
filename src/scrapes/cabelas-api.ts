@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import throat = require('throat')
 import helpers = require('../helpers')
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 const columns = [
   ['link', 'Article #'],
   ['brand', 'Brand'],
@@ -110,12 +110,12 @@ async function makeCabelasCalibre(ammotype, subtype) {
     .then(classify)
 }
 
-function makeCabelasReq(ammoType) {
-  return makeCabelasCalibre(ammoType, null)
+function makeCabelasReq(itemType) {
+  return makeCabelasCalibre(itemType, null)
   //    .then(classify);
 }
 
-export function cabelas(type: AmmoType): Promise<IAmmoListing[]> {
+export function cabelas(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   // TODO: need to fix classifier for rimfire+shotgun
   if (type === 'rimfire') {

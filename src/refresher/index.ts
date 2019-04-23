@@ -5,16 +5,16 @@
 import cron = require('node-cron')
 import RedisSMQ from 'rsmq'
 
-import { AmmoType } from '../graphql-types'
+import { ItemType } from '../graphql-types'
 
 import { SOURCES, CACHE_REFRESH_HOURS, QUEUE_NAME } from '../constants'
 import { workerLogger as logger } from '../logger'
 
 const rsmq = new RedisSMQ({ host: 'redis' })
-const TYPES: AmmoType[] = [
-  AmmoType.centerfire,
-  AmmoType.rimfire,
-  AmmoType.shotgun,
+const TYPES: ItemType[] = [
+  ItemType.centerfire,
+  ItemType.rimfire,
+  ItemType.shotgun,
 ]
 
 function queueUpCacheRefresh(type) {

@@ -1,9 +1,9 @@
 import throat = require('throat')
 import { scrape, Info, Selectors } from './common'
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
-export function vancouvergunstore(type: AmmoType): Promise<IAmmoListing[]> {
+export function vancouvergunstore(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
     site: 'vancouvergunstore.ca',
@@ -22,7 +22,7 @@ export function vancouvergunstore(type: AmmoType): Promise<IAmmoListing[]> {
 
   const BASE = 'https://vancouvergunstore.ca/product-category/ammunition/'
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(p => `${BASE}/rimfire?paged=${p}`, info, selectors).then(
         items => helpers.classifyRimfire(items)
       )

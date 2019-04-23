@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 
-export function alflahertys(type: AmmoType): Promise<IAmmoListing[]> {
+export function alflahertys(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   const info: Info = {
@@ -25,7 +25,7 @@ export function alflahertys(type: AmmoType): Promise<IAmmoListing[]> {
 
   const BASE = 'https://alflahertys.com'
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(
         p =>
           `${BASE}/shooting-supplies-and-firearms/ammunition/rimfire-ammunition?page=${p}&setCurrencyId=1`,
@@ -33,7 +33,7 @@ export function alflahertys(type: AmmoType): Promise<IAmmoListing[]> {
         selectors
       ).then(items => helpers.classifyRimfire(items))
 
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         [
           'shooting-supplies-and-firearms/ammunition/bulk-centerfire',
@@ -51,7 +51,7 @@ export function alflahertys(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.combineResults)
         .then(items => helpers.classifyCenterfire(items))
 
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return scrape(
         p =>
           `${BASE}/shooting-supplies-and-firearms/ammunition/shotgun-ammunition?page=${p}&setCurrencyId=1`,

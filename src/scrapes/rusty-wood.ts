@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 import throat from 'throat'
 
-export function rustyWood(type: AmmoType): Promise<IAmmoListing[]> {
+export function rustyWood(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'rustywood.ca',
     vendor: `Rusty Wood`,
@@ -23,8 +23,8 @@ export function rustyWood(type: AmmoType): Promise<IAmmoListing[]> {
 
   const BASE = `https://www.${info.site}/shop`
   switch (type) {
-    case AmmoType.centerfire:
-    case AmmoType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.rimfire:
       return Promise.all(
         [
           'factory',
@@ -35,7 +35,7 @@ export function rustyWood(type: AmmoType): Promise<IAmmoListing[]> {
       )
         .then(helpers.combineResults)
         .then(helpers.classify(type))
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return Promise.resolve([])
 
     default:

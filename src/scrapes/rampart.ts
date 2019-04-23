@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 
-export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
+export function rampart(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
     site: 'rampartcorp.com',
@@ -18,7 +18,7 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
     price: '.price',
   }
   switch (type) {
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['rifle', 'pistol'].map(t =>
           throttle(() =>
@@ -34,8 +34,8 @@ export function rampart(type: AmmoType): Promise<IAmmoListing[]> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
 
-    case AmmoType.shotgun:
-    case AmmoType.rimfire:
+    case ItemType.shotgun:
+    case ItemType.rimfire:
       return Promise.resolve([]) // 20190324: not selling rimfire or shotgun.
     default:
       return Promise.reject(new Error('unknown type: ' + type))

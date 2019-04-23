@@ -1,10 +1,10 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 function makeCanadaAmmoRequest(ammotype) {
   return helpers.makeWrapApiReq('canadaammo', ammotype).then(d => d.items || [])
 }
 
-export function canadaammo(type: AmmoType): Promise<IAmmoListing[]> {
+export function canadaammo(type: ItemType): Promise<IItemListing[]> {
   if (type === 'rimfire') {
     return Promise.resolve([]) // dont have a separate rimfire category
   } else if (type === 'centerfire') {
