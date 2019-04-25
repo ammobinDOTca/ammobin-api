@@ -18,7 +18,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     return _siteToDelayMap[site]
   }
 
-  let delay = 1000 // default to 1s between requests
+  let delayMs = 1000 // default to 1s between requests
   try {
     const robots = await axios.get(site + '/robots.txt').then(d => d.data)
 
@@ -30,7 +30,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
       .find(l => l[0].toLowerCase() === 'crawl-delay')
 
     if (f) {
-      delay = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
+      delayMs = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
     } else {
       console.debug('no Crawl-delay found for ' + site)
     }
@@ -38,9 +38,9 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     console.error('ERROR ' + site, e && e.message ? e.message : e)
   }
 
-  _siteToDelayMap[site] = delay
+  _siteToDelayMap[site] = delayMs
 
-  return delay
+  return delayMs
 }
 
 export const getKey = (source: string, type: ItemType) => {
@@ -52,24 +52,24 @@ export function combineResults(results: IItemListing[][]): IItemListing[] {
 }
 export function classifyRimfire(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyRimfire(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyRimfire(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
 }
 export const classifyCenterfire = (items: IItemListing[]): IItemListing[] => {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyCenterFire(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyCenterFire(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
 }
 export function classifyShotgun(items: IItemListing[]): IItemListing[] {
   return items.map(i => {
-    i.calibre = classifier
-      .classifyShotgun(i.calibre || i.name || '')
+    i.subType = classifier
+      .classifyShotgun(i.subType || i.name || '')
       .toUpperCase()
     return i
   })
@@ -91,12 +91,12 @@ export function classifyBullets(
       const f = classifier.classifyAmmo(i.name || '')
 
       if (f.type === ammo) {
-        i.calibre = f.calibre.toUpperCase()
+        i.subType = f.calibre.toUpperCase()
       }
 
       return i
     })
-    .filter(f => f.calibre)
+    .filter(f => f.subType)
 }
 export function makeWrapApiReq(
   target: string,
