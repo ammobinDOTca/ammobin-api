@@ -5,7 +5,7 @@ import {
   IItemsListingsOnQueryArguments,
   IItemListings,
   ItemType,
-  IAmmoGroup,
+  IItemGroup,
   IItemListing,
   Province,
   SortOrder,
@@ -144,20 +144,20 @@ export async function getScrapeResponses(
         return r
       }
 
-      const key = item.calibre + '_' + item.brand
+      const key = item.subType + '_' + item.brand
       if (!r[key]) {
         r[key] = {
           name: `${item.brand} ${item.calibre}`,
-          calibre: item.calibre,
+          subType: item.calibre,
           brand: item.brand,
           minPrice: item.price,
           maxPrice: item.price,
-          ItemType: item.ItemType,
+          itemType: item.ItemType,
           minUnitCost: item.unitCost || 0,
           maxUnitCost: item.unitCost || 0,
           img: item.img,
           vendors: [item],
-        } as IAmmoGroup
+        } as IItemGroup
       } else {
         const val = r[key]
         val.minPrice = Math.min(item.price, val.minPrice)
@@ -182,7 +182,7 @@ export async function getScrapeResponses(
       }
       return r
     },
-    <{ [key: string]: IAmmoGroup }>{}
+    <{ [key: string]: IItemGroup }>{}
   )
 
   // flatten map and sort groups by sortField + sortKey

@@ -131,7 +131,7 @@ export const VENDORS = [
   },
   {
     name: 'Rangeview Sports',
-    //link: 'https://www.rangeviewcanada.com/',
+    // link: 'https://www.rangeviewcanada.com/',
     link: 'https://www.rangeviewsports.ca/',
     logo: '/logos/rangeview-sports.png',
     provinces: ['ON'],
