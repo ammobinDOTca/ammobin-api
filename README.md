@@ -16,6 +16,7 @@ do normal nodejs dev stuff
 
 ```
 127.0.0.1 redis
+127.0.0.1 rendertron
 ```
 
 to /etc/hosts (server + worker expect redis to be available at the host 'redis')

@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   redis:
     image: redis:3.0-alpine
@@ -16,3 +16,8 @@ services:
       - ./fluentd.conf:/fluentd/etc/fluentd.conf
     environment:
       - FLUENTD_CONF=fluentd.conf
+  rendertron:
+    image: ammobindotca/rendertron
+    restart: always
+    ports:
+      - 127.0.0.1:3000:3000
