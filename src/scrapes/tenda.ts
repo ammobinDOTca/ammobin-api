@@ -3,7 +3,7 @@ import throat = require('throat')
 import axios from 'axios'
 import cheerio = require('cheerio')
 import { RENDERTRON_URL } from '../constants'
-
+import { Province } from '../graphql-types'
 async function makeTendaRequest(ammotype, page = 1) {
   await helpers.delayScrape(`https://www.gotenda.com`)
   const f = await axios.get(
@@ -16,7 +16,7 @@ async function makeTendaRequest(ammotype, page = 1) {
     const result: any = {}
     const tha = $(row)
     result.link = tha.find('.product-thumb-link').prop('href')
-    result.img = tha.find('.product-thum-link img').prop('src')
+    result.img = tha.find('.product-thumb-link img').prop('src')
     result.name = tha
       .find('.title-product')
       .text()
@@ -30,19 +30,22 @@ async function makeTendaRequest(ammotype, page = 1) {
       return // dont include empty prices
     }
     result.vendor = 'Tenda'
-    result.province = 'ON'
+    result.provinces = [Province.ON]
 
     items.push(result)
   })
 
-  if (items.length && $('.product-pagi-nav .next').length > 0) {
+  if (items.length > 0 && $('.product-pagi-nav .next').length > 0) {
     $ = null // dont hold onto page for recursion
     return makeTendaRequest(ammotype, page + 1)
       .then(results => items.concat(results))
       .catch(e => {
-        // sometimes go too far and get 404
-        if (e.response && e.response.status === 404) {
-          console.warn('went too far with tenda: ' + page)
+        if (e.response && e.response.status !== 200) {
+          console.warn(
+            `went too far with tenda. got HTTP ${
+              e.response.status
+            } on page ${page} for ${ammotype}`
+          )
           return items
         }
         throw e
