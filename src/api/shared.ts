@@ -80,7 +80,7 @@ export async function getScrapeResponses(
     itemType,
     page,
     pageSize,
-    calibre,
+    subType,
     province,
     vendor,
     query,
@@ -106,8 +106,9 @@ export async function getScrapeResponses(
     pageSize = 100
   }
 
-  const keys: string[] = ItemType
-    ? SOURCES.map(s => helpers.getKey(s, ItemType))
+  // TODO: update list of item types to include reloading ones
+  const keys: string[] = itemType
+    ? SOURCES.map(s => helpers.getKey(s, itemType))
     : [ItemType.rimfire, ItemType.centerfire, ItemType.shotgun].reduce(
         (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
         []
@@ -121,7 +122,7 @@ export async function getScrapeResponses(
 
   const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
-    .filter(r => r && r.price > 0 && r.calibre && r.calibre !== 'UNKNOWN')
+    .filter(r => r && r.price > 0 && r.subType && r.subType !== 'UNKNOWN')
     .sort(function(a, b) {
       if (a.price > b.price) {
         return 1
@@ -136,7 +137,7 @@ export async function getScrapeResponses(
     (r, item) => {
       // if provided, filter out items that DONT match
       if (
-        (calibre && item.calibre !== calibre) ||
+        (subType && item.subType !== subType) ||
         (vendor && item.vendor !== vendor) ||
         (province && !doesItemContainProvince(item, province)) ||
         (query && !item.name.toLowerCase().includes(query.toLowerCase()))
@@ -147,12 +148,12 @@ export async function getScrapeResponses(
       const key = item.subType + '_' + item.brand
       if (!r[key]) {
         r[key] = {
-          name: `${item.brand} ${item.calibre}`,
-          subType: item.calibre,
+          name: `${item.brand} ${item.subType}`,
+          subType: item.subType,
           brand: item.brand,
           minPrice: item.price,
           maxPrice: item.price,
-          itemType: item.ItemType,
+          itemType: item.itemType,
           minUnitCost: item.unitCost || 0,
           maxUnitCost: item.unitCost || 0,
           img: item.img,
