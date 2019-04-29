@@ -349,6 +349,13 @@ export const VENDORS = [
     provinces: [Province.BC],
     location: 'Kelowna',
   },
+  {
+    name: 'Tesro',
+    link: 'https://tesro.ca',
+    logo: '/logos/tesro-logo.png',
+    provinces: [Province.ON],
+    location: 'Ottawa',
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
