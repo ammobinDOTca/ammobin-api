@@ -56,7 +56,7 @@ type ItemListing {
 type ItemGroup {
   name: String!
   brand: String!
-  calibre: String!
+  subType: String!
   itemType: ItemType!
   minPrice: Float!
   maxPrice: Float!
