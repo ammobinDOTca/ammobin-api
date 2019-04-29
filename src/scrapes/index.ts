@@ -56,12 +56,15 @@ import { theGunDealer } from './the-gun-dealer'
 import { waspMunitions } from './wasp-munitions'
 import { greatNorthPercision as greatNorthPrecision } from './great-north-precision'
 import { tesro } from './tesro'
+import { xmetal } from './xmetal'
 
 export function makeSearch(
   source: string,
   type: AmmoType
 ): Promise<IAmmoListing[]> {
   switch (source) {
+    case 'xmetaltargets.com':
+      return xmetal(type)
     case 'tesro.ca':
       return tesro(type)
     case 'greatnorthprecision.com':

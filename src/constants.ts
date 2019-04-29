@@ -356,6 +356,13 @@ export const VENDORS = [
     provinces: [Province.ON],
     location: 'Ottawa',
   },
+  {
+    name: 'Xmetal Targets',
+    link: 'https://xmetaltargets.com',
+    logo: '/logos/xmetaltargets-logo.png',
+    provinces: [Province.QC],
+    location: `L'Isle-Verte`,
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
