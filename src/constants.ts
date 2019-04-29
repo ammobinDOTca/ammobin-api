@@ -1,10 +1,10 @@
-import { IVendor, Province } from './graphql-types'
+import { IVendor, Province, ItemType } from './graphql-types'
 import url from 'url'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
 export const VENDORS = [
   {
-    name: "Cabela's",
+    name: `Cabela's`,
     link: 'http://www.cabelas.ca/',
     logo: '/logos/cabelas-logo.png',
     provinces: ['BC', 'AB', 'SK', 'MB', 'ON'],
@@ -25,7 +25,7 @@ export const VENDORS = [
     location: 'Ajax',
   },
   {
-    name: "Al Flaherty's",
+    name: `Al Flaherty's`,
     link: 'https://www.alflahertys.com/',
     logo: '/logos/al-flahertys-logo.png',
     provinces: ['ON'],
@@ -360,3 +360,17 @@ export const DATE_FORMAT = 'YYYY-MM-DD'
 export const CACHE_REFRESH_HOURS = 4
 
 export const RENDERTRON_URL = 'http://rendertron:3000'
+
+export const AMMO_TYPES: ItemType[] = [
+  ItemType.centerfire,
+  ItemType.rimfire,
+  ItemType.shotgun,
+]
+export const RELOAD_TYPES: ItemType[] = [
+  ItemType.case,
+  ItemType.powder,
+  ItemType.primer,
+  ItemType.shot,
+]
+
+export const TYPES: ItemType[] = [...AMMO_TYPES, ...RELOAD_TYPES]

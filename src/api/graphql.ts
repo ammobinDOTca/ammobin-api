@@ -38,7 +38,7 @@ export const resolvers: any = {
     },
     bestPrices: async (parent, args: IBestPricesOnQueryArguments) =>
       getBestPrices(args),
-    ammoListings: async (
+    itemsListings: async (
       parent,
       args: IItemsListingsOnQueryArguments
     ): Promise<IItemListings> => {
