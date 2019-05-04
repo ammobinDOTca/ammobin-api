@@ -11,7 +11,7 @@ async function fn(page: number = 1): Promise<any[]> {
 
   return axios
     .get(
-      `${URL}/product-category/ammunition/page/${page}?sort_by=best-selling&pagesize=60`,
+      `${URL}/product-category/ammo/page/${page}?sort_by=best-selling&pagesize=60`,
       {
         headers: {
           cookie: 'woocommerce_products_per_page=60',
