@@ -7,11 +7,7 @@ import * as helpers from '../helpers'
 const { ApolloServer } = require('apollo-server-hapi')
 
 import { typeDefs, resolvers } from './graphql'
-<<<<<<< HEAD
-import { SOURCES, DATE_FORMAT } from '../constants'
-=======
 import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
->>>>>>> feab54d9e1e79924b667054539fbc6048034108a
 import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
@@ -184,15 +180,6 @@ server.route({
   },
 })
 
-<<<<<<< HEAD
-const TYPES: ItemType[] = [
-  ItemType.centerfire,
-  ItemType.rimfire,
-  ItemType.shotgun,
-]
-
-=======
->>>>>>> feab54d9e1e79924b667054539fbc6048034108a
 server.route({
   method: 'POST',
   config: {

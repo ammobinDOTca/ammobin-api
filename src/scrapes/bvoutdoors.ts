@@ -8,11 +8,7 @@ import {
   combineResults,
 } from '../helpers'
 import throat = require('throat')
-<<<<<<< HEAD
 import { ItemType, IItemListing, Province } from '../graphql-types'
-=======
-import { ItemType, IItemListing } from '../graphql-types'
->>>>>>> feab54d9e1e79924b667054539fbc6048034108a
 async function work(type, page = 1): Promise<IItemListing[]> {
   await delayScrape('https://www.bvoutdoors.com')
 
