@@ -106,7 +106,11 @@ export async function getScrapeResponses(
     pageSize = 100
   }
 
+<<<<<<< HEAD
   // TODO: update list of item types to include reloading ones
+=======
+  // todo: break out into ammo, ammo type, reloading, and reloading type
+>>>>>>> feab54d9e1e79924b667054539fbc6048034108a
   const keys: string[] = itemType
     ? SOURCES.map(s => helpers.getKey(s, itemType))
     : [ItemType.rimfire, ItemType.centerfire, ItemType.shotgun].reduce(
@@ -123,7 +127,11 @@ export async function getScrapeResponses(
   const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
     .filter(r => r && r.price > 0 && r.subType && r.subType !== 'UNKNOWN')
+<<<<<<< HEAD
     .sort(function(a, b) {
+=======
+    .sort((a, b) => {
+>>>>>>> feab54d9e1e79924b667054539fbc6048034108a
       if (a.price > b.price) {
         return 1
       } else if (a.price < b.price) {

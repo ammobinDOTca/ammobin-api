@@ -5,6 +5,7 @@
 import cron = require('node-cron')
 import RedisSMQ from 'rsmq'
 
+<<<<<<< HEAD
 import { ItemType } from '../graphql-types'
 
 import { SOURCES, CACHE_REFRESH_HOURS, QUEUE_NAME } from '../constants'
@@ -16,6 +17,17 @@ const TYPES: ItemType[] = [
   ItemType.rimfire,
   ItemType.shotgun,
 ]
+=======
+import {
+  SOURCES,
+  CACHE_REFRESH_HOURS,
+  QUEUE_NAME,
+  AMMO_TYPES,
+} from '../constants'
+import { workerLogger as logger } from '../logger'
+
+const rsmq = new RedisSMQ({ host: 'redis' })
+>>>>>>> feab54d9e1e79924b667054539fbc6048034108a
 
 function queueUpCacheRefresh(type) {
   return Promise.all(
@@ -37,7 +49,7 @@ rsmq.listQueues((err, queues) => {
     throw err
   }
   if (queues.indexOf(QUEUE_NAME) === -1) {
-    rsmq.createQueue({ qname: QUEUE_NAME }, function(err2, resp) {
+    rsmq.createQueue({ qname: QUEUE_NAME }, (err2, resp) => {
       if (err2) {
         logger.error({
           type: 'failed-to-create-rsmq-queues',
@@ -52,7 +64,8 @@ rsmq.listQueues((err, queues) => {
   }
 })
 
-TYPES.map((t, index) =>
+// TODO: update this to include reloading (once ready)
+AMMO_TYPES.map((t, index) =>
   cron.schedule(
     `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
     async () => {
