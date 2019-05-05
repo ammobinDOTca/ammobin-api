@@ -8,7 +8,7 @@ import {
   combineResults,
 } from '../helpers'
 import throat = require('throat')
-import { ItemType, IItemListing } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 async function work(type, page = 1): Promise<IItemListing[]> {
   await delayScrape('https://www.bvoutdoors.com')
 
@@ -29,6 +29,7 @@ async function work(type, page = 1): Promise<IItemListing[]> {
         result.brand = tha.find('.caption h6').text()
         result.vendor = 'BV Outdoor Essentials'
         result.province = 'BC'
+        result.provinces = [Province.BC]
 
         items.push(result)
       })
@@ -69,6 +70,12 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
         .then(classifyShotgun)
     case ItemType.case:
       return work('reloading-unprimed-brass-341')
+    case ItemType.shot:
+      return work('Reloading-Bullets-%26-Brass-110')
+    case ItemType.primer:
+      return work('Reloading-Primers-342')
+    case ItemType.powder:
+      return work('Reloading-Powder-%26-Primers-111')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
