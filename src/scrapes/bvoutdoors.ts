@@ -67,6 +67,8 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
       )
         .then(combineResults)
         .then(classifyShotgun)
+    case ItemType.case:
+      return work('reloading-unprimed-brass-341')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

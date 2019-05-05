@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
 
-export function alSimmons(type: AmmoType): Promise<IAmmoListing[]> {
+export function alSimmons(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'alsimmonsgunshop.com',
     vendor: `Al Simmons`,
@@ -21,9 +21,9 @@ export function alSimmons(type: AmmoType): Promise<IAmmoListing[]> {
   }
 
   switch (type) {
-    case AmmoType.rimfire:
-    case AmmoType.centerfire:
-    case AmmoType.shotgun:
+    case ItemType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.shotgun:
       return scrape(
         p =>
           `https://${

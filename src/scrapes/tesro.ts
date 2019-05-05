@@ -1,9 +1,9 @@
 import * as helpers from '../helpers'
-import { AmmoType, IAmmoListing, Province } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
 
-export function tesro(type: AmmoType): Promise<IAmmoListing[]> {
+export function tesro(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'tesro.ca',
     vendor: `Tesro`,
@@ -22,7 +22,7 @@ export function tesro(type: AmmoType): Promise<IAmmoListing[]> {
   }
 
   switch (type) {
-    case AmmoType.rimfire:
+    case ItemType.rimfire:
       return scrape(
         _ =>
           `https://www.${
@@ -31,7 +31,7 @@ export function tesro(type: AmmoType): Promise<IAmmoListing[]> {
         info,
         selectors
       ).then(helpers.classifyRimfire)
-    case AmmoType.centerfire:
+    case ItemType.centerfire:
       return Promise.all(
         ['centerfire-ammunition', 'pistol-ammunition'].map(s =>
           scrape(
@@ -46,7 +46,7 @@ export function tesro(type: AmmoType): Promise<IAmmoListing[]> {
       )
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
-    case AmmoType.shotgun:
+    case ItemType.shotgun:
       return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
