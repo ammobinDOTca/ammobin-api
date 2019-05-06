@@ -33,6 +33,19 @@ export function alSimmons(type: ItemType): Promise<IItemListing[]> {
         selectors
       ).then(helpers.classify(type))
 
+    case ItemType.shot:
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+      return scrape(
+        p =>
+          `https://${
+            info.site
+          }/product-category/reloading/page/${p}/?product_count=100`,
+        info,
+        selectors
+      )
+
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
