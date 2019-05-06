@@ -44,7 +44,7 @@ async function work(type: string, page = 1) {
           .catch(e => {
             // sometimes go too far and get 404
             if (e.response && e.response.status === 404) {
-              console.warn('went too far with al simmons page: ' + page)
+              console.warn('went too far with bartons page: ' + page)
               return items
             }
             throw e
@@ -72,6 +72,7 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.shotgun:
       return work('shotgun-ammunition').then(helpers.classifyShotgun)
+    // todo: reloading
 
     default:
       return Promise.reject(new Error('unknown type: ' + type))

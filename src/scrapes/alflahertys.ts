@@ -58,7 +58,16 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
         info,
         selectors
       ).then(items => helpers.classifyShotgun(items))
-
+    case ItemType.shot:
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+      return scrape(
+        p =>
+          `${BASE}/shooting-supplies-and-firearms/reloading-uncontrolled-items/?page=${p}&setCurrencyId=1`,
+        info,
+        selectors
+      )
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
