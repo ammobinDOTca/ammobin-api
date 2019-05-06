@@ -14,7 +14,9 @@
     "dev": "ts-node-dev ./src/api/index.ts",
     "dev:worker": "ts-node-dev ./src/worker/index.ts",
     "dev:refresher": "ts-node-dev ./src/refresher/index.ts",
-    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh"
+    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "types": "dist/index.d.ts",
   "author": "Simon Ramsay",
@@ -36,7 +38,8 @@
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
     "throat": "^4.1.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "gql2ts": "^1.10.1",
@@ -52,5 +55,6 @@
     "hooks": {
       "pre-commit": " pretty-quick --staged && npm t"
     }
-  }
+  },
+  "snyk": true
 }
