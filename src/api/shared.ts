@@ -24,7 +24,7 @@ export async function getBestPrices(
     client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
   )
   const { calibres } = params
-  const results: any = res.map(r => (r ? JSON.parse(r) : null))
+  const results: IItemListing[][] = res.map(r => (r ? JSON.parse(r) : null))
   const result = results
     .reduce((final, result2) => {
       return result2 && result2.length ? final.concat(result2) : final
@@ -32,24 +32,25 @@ export async function getBestPrices(
     .reduce((response, item) => {
       if (
         !item ||
-        !item.calibre ||
+        !item.subType ||
         !item.unitCost ||
-        item.calibre === 'UNKNOWN' ||
-        (calibres && !calibres.includes(item.calibre))
+        item.subType === 'UNKNOWN' ||
+        (calibres && !calibres.includes(item.subType))
       ) {
         return response
       }
 
-      if (!response[item.calibre]) {
-        response[item.calibre] = {
+      if (!response[item.subType]) {
+        response[item.subType] = {
           unitCost: Number.MAX_SAFE_INTEGER,
-          calibre: item.calibre,
+          calibre: item.subType,
+          subType: item.subType,
           type,
         }
       }
 
-      response[item.calibre].unitCost = Math.min(
-        response[item.calibre].unitCost,
+      response[item.subType].unitCost = Math.min(
+        response[item.subType].unitCost,
         item.unitCost
       )
 
