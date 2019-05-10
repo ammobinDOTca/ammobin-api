@@ -52,7 +52,7 @@ export const enum Province {
   BC = 'BC',
   MB = 'MB',
   NB = 'NB',
-  NF = 'NF',
+  NL = 'NL',
   NS = 'NS',
   NT = 'NT',
   NU = 'NU',
