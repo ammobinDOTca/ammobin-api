@@ -218,7 +218,7 @@ server.events.on('response', function(request) {
     remoteAddress: request.info.remoteAddress,
     method: request.method.toUpperCase(),
     path: request.url.path,
-    statusCode: request.response.statusCode,
+    statusCode: request.response ? request.response.statusCode : 0,
     timeMs: new Date().getTime() - request.info.received,
   })
 
@@ -232,7 +232,7 @@ server.events.on('response', function(request) {
       variables: request.payload.variables,
     })
   }
-  if (request.response.statusCode >= 500) {
+  if (request.response && request.response.statusCode >= 500) {
     logger.error({
       type: 'http500',
       request: {
