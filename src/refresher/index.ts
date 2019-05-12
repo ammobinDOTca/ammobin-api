@@ -5,12 +5,7 @@
 import cron = require('node-cron')
 import RedisSMQ from 'rsmq'
 
-import {
-  SOURCES,
-  CACHE_REFRESH_HOURS,
-  QUEUE_NAME,
-  AMMO_TYPES,
-} from '../constants'
+import { SOURCES, CACHE_REFRESH_HOURS, QUEUE_NAME, TYPES } from '../constants'
 import { workerLogger as logger } from '../logger'
 
 const rsmq = new RedisSMQ({ host: 'redis' })
@@ -50,8 +45,7 @@ rsmq.listQueues((err, queues) => {
   }
 })
 
-// TODO: update this to include reloading (once ready)
-AMMO_TYPES.map((t, index) =>
+TYPES.map((t, index) =>
   cron.schedule(
     `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
     async () => {
