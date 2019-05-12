@@ -66,49 +66,52 @@ const appendGAParam = (items: IItemListing[]) =>
     return i
   })
 
-worker.on('message', function(msg, next /* , id*/) {
+worker.on('message', (msg, next /* , id*/) => {
   const { source, type } = JSON.parse(msg)
 
   const searchStart = new Date()
   logger.info({ type: 'started-scrape', source, ItemType: type })
   try {
-    return makeSearch(source, type)
-      .then(items => items.filter(i => i.price && i.link && i.name))
-      .then(classifyBrand)
-      .then(proxyImages)
-      .then(getCounts)
-      .then(setItemType(type))
-      .then(appendGAParam)
-      .then(items => {
-        logger.info({
-          type: 'finished-scrape',
-          source,
-          ItemType: type,
-          items: items.length,
-          duration: new Date().valueOf() - searchStart.valueOf(),
-        })
-        const key = getKey(source, type)
+    return (
+      makeSearch(source, type)
+        .then(items => items.filter(i => i.price && i.link && i.name))
+        // .then(classify(type)) // TODO: use this instead. requires testing....
+        .then(classifyBrand)
+        .then(proxyImages)
+        .then(getCounts)
+        .then(setItemType(type))
+        .then(appendGAParam)
+        .then(items => {
+          logger.info({
+            type: 'finished-scrape',
+            source,
+            ItemType: type,
+            items: items.length,
+            duration: new Date().valueOf() - searchStart.valueOf(),
+          })
+          const key = getKey(source, type)
 
-        return new Promise((resolve, reject) =>
-          client.set(
-            key,
-            JSON.stringify(items),
-            'EX',
-            172800 /*seconds => 48hrs*/,
-            err => (err ? reject(err) : resolve(items))
+          return new Promise((resolve, reject) =>
+            client.set(
+              key,
+              JSON.stringify(items),
+              'EX',
+              172800 /*seconds => 48hrs*/,
+              err => (err ? reject(err) : resolve(items))
+            )
           )
-        )
-      })
-      .then(() => next())
-      .catch(e => {
-        logger.info({
-          type: 'failed-scrape',
-          source,
-          ItemType: type,
-          msg: e.message,
         })
-        next(e)
-      })
+        .then(() => next())
+        .catch(e => {
+          logger.info({
+            type: 'failed-scrape',
+            source,
+            ItemType: type,
+            msg: e.message,
+          })
+          next(e)
+        })
+    )
   } catch (e) {
     logger.info({
       type: 'failed-scrape',
@@ -121,7 +124,7 @@ worker.on('message', function(msg, next /* , id*/) {
 })
 
 // optional error listeners
-worker.on('error', function(err, msg) {
+worker.on('error', (err, msg) => {
   logger.info({
     type: 'scrape-error',
     message: err && err.message ? err.message : err,
@@ -129,7 +132,7 @@ worker.on('error', function(err, msg) {
   })
 })
 
-worker.on('timeout', function(msg) {
+worker.on('timeout', msg => {
   logger.info({ type: 'TIMEOUT-worker', msg })
 })
 
