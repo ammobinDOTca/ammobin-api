@@ -73,7 +73,11 @@ export async function scrape(
     items.push(result)
   })
 
-  if (selectors.nextPage && $(selectors.nextPage).length > 0) {
+  if (
+    selectors.nextPage &&
+    $(selectors.nextPage).length > 0 &&
+    items.length > 0
+  ) {
     $ = null // dont hold onto page for recursion
     const more = await scrape(getUrl, info, selectors, page + 1)
     return items.concat(more)
