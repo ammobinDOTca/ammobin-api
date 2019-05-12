@@ -47,7 +47,7 @@ rsmq.listQueues((err, queues) => {
 
 TYPES.map((t, index) =>
   cron.schedule(
-    `0 ${index * 15} */${CACHE_REFRESH_HOURS} * * *`,
+    `0 ${index} */${CACHE_REFRESH_HOURS} * * *`,
     async () => {
       logger.info({
         type: 'refresh-cache',
