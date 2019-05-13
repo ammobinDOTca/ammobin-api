@@ -1,4 +1,4 @@
-import { SOURCES, AMMO_TYPES } from '../constants'
+import { SOURCES, AMMO_TYPES, RELOAD_TYPES } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
 import {
@@ -107,13 +107,25 @@ export async function getScrapeResponses(
     pageSize = 100
   }
 
-  // todo: break out into ammo, ammo type, reloading, and reloading type
-  const keys: string[] = itemType
-    ? SOURCES.map(s => helpers.getKey(s, itemType))
-    : AMMO_TYPES.reduce(
-        (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
-        []
-      )
+  let types: ItemType[]
+  switch (itemType) {
+    case ItemType.reloading:
+      types = RELOAD_TYPES
+      break
+    // default to ammo if nothing
+    case ItemType.ammo:
+    case undefined:
+    case null:
+      types = AMMO_TYPES
+      break
+    default:
+      types = [itemType]
+  }
+
+  const keys: string[] = types.reduce(
+    (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
+    []
+  )
 
   const results: IItemListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres: string[]) =>
