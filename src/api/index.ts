@@ -42,11 +42,8 @@ server.route({
       type: 'track-view',
       userAgent,
       brand: body.brand,
-      subType: body.subType,
-      itemType: body.itemType,
-      // todo: rm this once migrated client
-      calibre: body.calibre,
-      // body
+      subtype: body.subtype,
+      itemtype: body.itemtype,
     })
     return h.response('success')
   },
