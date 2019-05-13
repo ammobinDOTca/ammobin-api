@@ -47,7 +47,7 @@ type ItemListing {
   link: String!
   vendor: String!
   provinces: [Province] #[Province!]!
-  subType: String!
+  subType: String #!
   brand: String!
   count: Float
   unitCost: Float

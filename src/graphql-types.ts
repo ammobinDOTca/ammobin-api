@@ -135,7 +135,7 @@ export interface IItemListing {
   link: string
   vendor: string
   provinces: Array<Province | null> | null
-  subType: string
+  subType: string | null
   brand: string
   count: number | null
   unitCost: number | null
