@@ -1,4 +1,4 @@
-import { SOURCES } from '../constants'
+import { SOURCES, AMMO_TYPES } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
 import {
@@ -110,7 +110,7 @@ export async function getScrapeResponses(
   // todo: break out into ammo, ammo type, reloading, and reloading type
   const keys: string[] = itemType
     ? SOURCES.map(s => helpers.getKey(s, itemType))
-    : [ItemType.rimfire, ItemType.centerfire, ItemType.shotgun].reduce(
+    : AMMO_TYPES.reduce(
         (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
         []
       )
@@ -120,10 +120,16 @@ export async function getScrapeResponses(
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
-
+  // only filters out ammo without subType set (not setup for reloading yet)
   const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])
-    .filter(r => r && r.price > 0 && r.subType && r.subType !== 'UNKNOWN')
+    .filter(
+      r =>
+        r &&
+        r.price > 0 &&
+        (!AMMO_TYPES.includes(itemType) ||
+          (r.subType && r.subType !== 'UNKNOWN'))
+    )
     .sort((a, b) => {
       if (a.price > b.price) {
         return 1
