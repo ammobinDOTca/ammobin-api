@@ -117,7 +117,7 @@ export interface IItemGroup {
   __typename: string | null
   name: string
   brand: string
-  subType: string
+  subType: string | null
   itemType: ItemType
   minPrice: number
   maxPrice: number
