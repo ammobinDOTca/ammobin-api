@@ -42,8 +42,8 @@ server.route({
       type: 'track-view',
       userAgent,
       brand: body.brand,
-      subtype: body.subtype,
-      itemtype: body.itemtype,
+      subType: body.subType,
+      itemType: body.itemType,
     })
     return h.response('success')
   },
