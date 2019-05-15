@@ -1,10 +1,10 @@
 const RSMQWorker = require('rsmq-worker')
 import * as classifier from 'ammobin-classifier'
-import * as CONSTANTS from '../constants'
+import { AMMO_TYPES, PROXY_URL, QUEUE_NAME } from '../constants'
 import { makeSearch } from '../scrapes'
-import { getKey } from '../helpers'
+import { getKey, classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
-const worker = new RSMQWorker(CONSTANTS.QUEUE_NAME, {
+const worker = new RSMQWorker(QUEUE_NAME, {
   host: 'redis',
   autostart: true,
   timeout: 180000 /*3 mins*/,
@@ -25,7 +25,7 @@ function proxyImages(items) {
     if (i.img.indexOf('//') === 0) {
       i.img = 'http://' + i.img
     }
-    i.img = CONSTANTS.PROXY_URL + '/x160/' + i.img
+    i.img = PROXY_URL + '/x160/' + i.img
     return i
   })
 }
@@ -72,46 +72,51 @@ worker.on('message', (msg, next /* , id*/) => {
   const searchStart = new Date()
   logger.info({ type: 'started-scrape', source, ItemType: type })
   try {
-    return (
-      makeSearch(source, type)
-        .then(items => items.filter(i => i.price && i.link && i.name))
-        // .then(classify(type)) // TODO: use this instead. requires testing....
-        .then(classifyBrand)
-        .then(proxyImages)
-        .then(getCounts)
-        .then(setItemType(type))
-        .then(appendGAParam)
-        .then(items => {
-          logger.info({
-            type: 'finished-scrape',
-            source,
-            ItemType: type,
-            items: items.length,
-            duration: new Date().valueOf() - searchStart.valueOf(),
-          })
-          const key = getKey(source, type)
+    return makeSearch(source, type)
+      .then(items => items.filter(i => i.price && i.link && i.name))
+      .then(items =>
+        AMMO_TYPES.includes(type)
+          ? classifyBullets(items, type)
+          : items.map(i => {
+              i.subType = type // dont have way to classify subType for reloading items, so just duplicate field
+              return i
+            })
+      )
+      .then(classifyBrand)
+      .then(proxyImages)
+      .then(getCounts)
+      .then(setItemType(type))
+      .then(appendGAParam)
+      .then(items => {
+        logger.info({
+          type: 'finished-scrape',
+          source,
+          ItemType: type,
+          items: items.length,
+          duration: new Date().valueOf() - searchStart.valueOf(),
+        })
+        const key = getKey(source, type)
 
-          return new Promise((resolve, reject) =>
-            client.set(
-              key,
-              JSON.stringify(items),
-              'EX',
-              172800 /*seconds => 48hrs*/,
-              err => (err ? reject(err) : resolve(items))
-            )
+        return new Promise((resolve, reject) =>
+          client.set(
+            key,
+            JSON.stringify(items),
+            'EX',
+            172800 /*seconds => 48hrs*/,
+            err => (err ? reject(err) : resolve(items))
           )
+        )
+      })
+      .then(() => next())
+      .catch(e => {
+        logger.info({
+          type: 'failed-scrape',
+          source,
+          ItemType: type,
+          msg: e.message,
         })
-        .then(() => next())
-        .catch(e => {
-          logger.info({
-            type: 'failed-scrape',
-            source,
-            ItemType: type,
-            msg: e.message,
-          })
-          next(e)
-        })
-    )
+        next(e)
+      })
   } catch (e) {
     logger.info({
       type: 'failed-scrape',
