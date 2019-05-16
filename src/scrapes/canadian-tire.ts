@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as helpers from '../helpers'
-import { ItemType, IItemListing } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
 function work(page: string): Promise<IItemListing[]> {
   // TODO: need to get all result pages  ("pagination": {"total": 6, )
@@ -30,6 +30,20 @@ function work(page: string): Promise<IItemListing[]> {
           link: 'http://www.canadiantire.ca' + item['pdp-url'],
           img: item['thumb-img-url'],
           vendor: 'Canadian Tire',
+          provinces: [
+            Province.YT,
+            Province.NT,
+            Province.BC,
+            Province.AB,
+            Province.SK,
+            Province.MB,
+            Province.ON,
+            Province.QC,
+            Province.NB,
+            Province.PE,
+            Province.NS,
+            Province.NL,
+          ],
           _id: item['prod-id'],
         }
       })
@@ -64,19 +78,24 @@ function work(page: string): Promise<IItemListing[]> {
 }
 
 export function canadiantire(type: ItemType): Promise<IItemListing[]> {
-  if (type === ItemType.rimfire) {
-    return work('Rimfire Ammunition').then(helpers.classifyRimfire)
-  } else if (type === ItemType.centerfire) {
-    return work('Centerfire Ammunition').then(helpers.classifyCenterfire)
-  } else if (type === ItemType.shotgun) {
-    return Promise.all([
-      work('Lead Shotgun Shells'),
-      work('Steel Shotgun Shells'),
-      work('Slugs & Buckshots'),
-    ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyShotgun)
-  } else {
-    throw new Error(`unknown type: ${type}`)
+  switch (type) {
+    case ItemType.rimfire:
+      return work('Rimfire Ammunition')
+    case ItemType.centerfire:
+      return work('Centerfire Ammunition')
+    case ItemType.shotgun:
+      return Promise.all([
+        work('Lead Shotgun Shells'),
+        work('Steel Shotgun Shells'),
+        work('Slugs & Buckshots'),
+      ]).then(helpers.combineResults)
+    case ItemType.shot:
+    case ItemType.powder:
+    case ItemType.case:
+    case ItemType.primer:
+      return Promise.resolve([])
+
+    default:
+      throw new Error(`unknown type: ${type}`)
   }
 }

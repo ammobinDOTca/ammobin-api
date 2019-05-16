@@ -54,7 +54,7 @@ export const VENDORS = [
       'NB',
       'PE',
       'NS',
-      'NF',
+      'NL',
     ],
     location: 'all over the place',
   },
