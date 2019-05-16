@@ -20,28 +20,35 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
     nextPage: '.next',
   }
   const getUrl = t => page =>
-    `https://www.crafm.com/product-category/ammunition/${t}/page/${page}/`
+    `https://www.${info.site}/product-category/${t}/page/${page}/`
   switch (type) {
     case ItemType.rimfire:
       return Promise.all(
         ['handgun', 'revolver-2'].map(t =>
-          throttle(() => scrape(getUrl(t), info, selectors))
+          throttle(() => scrape(getUrl('ammunition/' + t), info, selectors))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyRimfire)
+      ).then(helpers.combineResults)
     case ItemType.centerfire:
       return Promise.all(
         ['handgun', 'revolver-2', 'rifle'].map(t =>
-          throttle(() => scrape(getUrl(t), info, selectors))
+          throttle(() => scrape(getUrl('ammunition/' + t), info, selectors))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
     case ItemType.shotgun:
-      return scrape(getUrl('shotgun'), info, selectors).then(
+      return scrape(getUrl('ammunition/shotgun'), info, selectors).then(
         helpers.classifyShotgun
       )
+    case ItemType.powder:
+      return scrape(
+        getUrl('reloading-equipment/powder-primers'),
+        info,
+        selectors
+      )
+    case ItemType.shot:
+      return scrape(getUrl('ammunition/projectiles'), info, selectors)
+    case ItemType.primer:
+    case ItemType.case:
+      return Promise.resolve([])
     default:
       throw new Error('unknown type: ' + type)
   }
