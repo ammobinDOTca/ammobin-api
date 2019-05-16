@@ -1,23 +1,50 @@
-import * as helpers from '../helpers'
-import { ItemType, IItemListing } from '../graphql-types'
-function makeCanadaAmmoRequest(ammotype) {
-  return helpers.makeWrapApiReq('canadaammo', ammotype).then(d => d.items || [])
+import { combineResults } from '../helpers'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
+
+function work(path: String) {
+  const info: Info = {
+    site: 'canadaammo.com',
+    vendor: `Canada Ammo`,
+    provinces: [Province.BC, Province.ON],
+  }
+
+  const selectors: Selectors = {
+    item: '.product__product',
+    name: '.product__name',
+    img: '.product__image img',
+    link: '.product__button.product__button--left a',
+    price: '.product__price',
+  }
+
+  return scrape(
+    p =>
+      `https://www.${
+        info.site
+      }/product/byCategory/${path}/?page=${p}&status=instock&count=72`,
+    info,
+    selectors
+  )
 }
 
 export function canadaammo(type: ItemType): Promise<IItemListing[]> {
-  if (type === 'rimfire') {
-    return Promise.resolve([]) // dont have a separate rimfire category
-  } else if (type === 'centerfire') {
-    return Promise.all([
-      // these may include rimfire ammo in the future, may need to filter those out
-      makeCanadaAmmoRequest('rifle-ammo'),
-      makeCanadaAmmoRequest('handgun-ammo'),
-    ])
-      .then(helpers.combineResults)
-      .then(helpers.classifyCenterfire)
-  } else if (type === 'shotgun') {
-    return makeCanadaAmmoRequest('shotgun-ammo').then(helpers.classifyShotgun)
-  } else {
-    throw new Error(`unknown type ${type}`)
+  switch (type) {
+    case ItemType.rimfire:
+    case ItemType.case:
+      return Promise.resolve([])
+    case ItemType.centerfire:
+      return Promise.all([work('rifle-ammo'), work('handgun-ammo')]).then(
+        combineResults
+      )
+    case ItemType.shotgun:
+      return work('shotgun-ammo')
+    case ItemType.powder:
+      return work('smokeless-powder')
+    case ItemType.shot:
+      return work('projectiles')
+    case ItemType.primer:
+      return work('primers')
+    default:
+      throw new Error('Unknown type: ' + type)
   }
 }
