@@ -24,6 +24,11 @@ export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
           // nextPage:'', // todo: not able to get selector
         }
       ).then(i => helpers.classifyBullets(i, type))
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.shot:
+    case ItemType.primer:
+      return Promise.resolve([]) // 20190519 TODO: check on this site later, they keep things too messy for now.
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
