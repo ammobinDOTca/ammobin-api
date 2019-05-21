@@ -1,31 +1,28 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
 import helpers = require('../helpers')
 import throat = require('throat')
-import { ItemType, IItemListing } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 function work(type: string): Promise<IItemListing[]> {
-  return axios
-    .get(`http://frontierfirearms.ca/ammunition-reloading/${type}.html`)
-    .then(r => {
-      const $ = cheerio.load(r.data)
-      const items = []
-      $('#frmCompare li').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-        result.link = tha.find('.pname').prop('href')
-        result.img = tha.find('img').prop('src')
-        result.name = tha.find('.pname').text()
-        const priceTxt =
-          tha.find('.p-price .SalePrice').text() || tha.find('.p-price').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'Frontier Firearms'
-        result.province = 'SK'
+  const info: Info = {
+    site: 'frontierfirearms.ca',
+    vendor: `Frontier Firearms`,
+    provinces: [Province.SK],
+  }
 
-        items.push(result)
-      })
-
-      return items
-    })
+  const selectors: Selectors = {
+    item: '#frmCompare li',
+    name: '.pname',
+    img: 'img',
+    link: '.pname',
+    price: '.p-price',
+    // nextPage: '.next',
+    // outOfStock: '.out-of-stock',
+  }
+  return scrape(
+    p => `https://${info.site}/ammunition-reloading/${type}.html`,
+    info,
+    selectors
+  )
 }
 
 export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
@@ -33,7 +30,7 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
 
   switch (type) {
     case ItemType.rimfire:
-      return work('rimfire-ammunition').then(helpers.classifyRimfire)
+      return work('rimfire-ammunition')
 
     case ItemType.centerfire:
       return Promise.all(
@@ -42,12 +39,17 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
           'hand-gun-ammunition',
           'centerfire-ammunition',
         ].map(t => throttle(() => work(t)))
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return work('shotgun-shells').then(helpers.classifyShotgun)
+      return work('shotgun-shells')
+    case ItemType.case:
+      return work('hornady/hornady-brass')
+    case ItemType.shot:
+      return work('hornady/bullets')
+    case ItemType.primer:
+    case ItemType.powder:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
