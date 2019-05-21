@@ -134,7 +134,7 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
           ...[
             '9-3mm-366',
             '22-caliber-222-227',
-            '270-caliber-227',
+            '270-caliber-277',
             '30-caliber-308',
             '303-caliber-311-312',
             '338-caliber-338-339',
