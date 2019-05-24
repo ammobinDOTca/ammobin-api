@@ -39,7 +39,7 @@
     "rsmq-worker": "^0.5.2",
     "throat": "^4.1.0",
     "winston": "^3.2.1",
-    "snyk": "^1.161.1"
+    "snyk": "^1.166.0"
   },
   "devDependencies": {
     "gql2ts": "^1.10.1",
