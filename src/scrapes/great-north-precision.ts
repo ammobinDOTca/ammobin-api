@@ -26,28 +26,29 @@ export async function greatNorthPercision(
   const getUrl = t => page =>
     `${RENDERTRON_URL}/render/https://www.${
       info.site
-    }/ammo/${t}?page=${page}&show=100`
+    }/${t}?page=${page}&show=100`
   switch (type) {
     case ItemType.rimfire:
       return Promise.all(
         ['Rimfire-Ammo'].map(t =>
-          throttle(() => scrape(getUrl(t), info, selectors))
+          throttle(() => scrape(getUrl('ammo/' + t), info, selectors))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyRimfire)
+      ).then(helpers.combineResults)
     case ItemType.centerfire:
       return Promise.all(
         ['Rifle-Ammo', 'Pistol-Ammo'].map(t =>
-          throttle(() => scrape(getUrl(t), info, selectors))
+          throttle(() => scrape(getUrl('ammo/' + t), info, selectors))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
     case ItemType.shotgun:
-      return scrape(getUrl('Shotgun-Ammo'), info, selectors).then(
-        helpers.classifyShotgun
-      )
+      return scrape(getUrl('ammo/Shotgun-Ammo'), info, selectors)
+    case ItemType.case:
+      return scrape(getUrl('reloading/Brass'), info, selectors)
+    case ItemType.powder:
+    case ItemType.primer:
+      return scrape(getUrl('reloading/Powders-Primers'), info, selectors)
+    case ItemType.shot:
+      return scrape(getUrl('reloading/Bullets'), info, selectors)
     default:
       throw new Error('unknown type: ' + type)
   }
