@@ -33,6 +33,11 @@ async function work(type = 'doesnt matter', page = 1): Promise<IItemListing[]> {
 
 export function gothicLineArmoury(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.shot:
+    case ItemType.primer:
+
     case ItemType.rimfire:
     case ItemType.shotgun:
       return Promise.resolve([])
