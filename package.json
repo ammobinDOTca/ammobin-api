@@ -39,8 +39,9 @@
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
     "snyk": "^1.166.0",
-    "throat": "^4.1.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "throat": "^5.0.0",
+    "snyk": "^1.166.0"
   },
   "devDependencies": {
     "@types/boom": "^7.2.1",
