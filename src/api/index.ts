@@ -6,6 +6,7 @@ import boom from 'boom'
 import * as url from 'url'
 import * as helpers from '../helpers'
 import { ApolloServer } from 'apollo-server-hapi'
+import responseCachePlugin from 'apollo-server-plugin-response-cache'
 
 import { typeDefs, resolvers } from './graphql'
 import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
@@ -258,10 +259,13 @@ async function doWork() {
       resolvers,
       debug: false,
       tracing: false,
-      cacheControl: true,
       formatError: error => {
         logger.error({ type: 'graphql-error', error: error.toString() })
         return error
+      },
+      plugins: [responseCachePlugin()],
+      cacheControl: {
+        defaultMaxAge: 4 * 60 * 60 * 1000, // 4hrs
       },
     })
     await apolloServer.applyMiddleware({
