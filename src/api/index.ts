@@ -1,10 +1,11 @@
-import * as Hapi from 'hapi'
+import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
+
 import * as redis from 'redis'
 import * as moment from 'moment'
 import boom from 'boom'
 import * as url from 'url'
 import * as helpers from '../helpers'
-const { ApolloServer } = require('apollo-server-hapi')
+import { ApolloServer } from 'apollo-server-hapi'
 
 import { typeDefs, resolvers } from './graphql'
 import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
@@ -12,7 +13,7 @@ import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
 
-const server = new Hapi.Server({
+const server = new Server({
   routes: { cors: true },
   host: '0.0.0.0',
   port: process.env.PORT || 8080,
@@ -37,7 +38,7 @@ server.route({
   handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers['user-agent'] || 'unknown'
-    const body = JSON.parse(request.payload)
+    const body = JSON.parse(request.payload as string)
     logger.info({
       type: 'track-view',
       userAgent,
@@ -54,7 +55,7 @@ server.route({
   path: '/track-click',
   handler: async function(request, h) {
     // record user agent + calibre + brand that user opened up
-    const body = JSON.parse(request.payload)
+    const body = JSON.parse(request.payload as string)
     const targetUrl = url.parse(body.link, true)
 
     let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
@@ -106,7 +107,7 @@ server.route({
       throw boom.badRequest('missing required param: url')
     }
 
-    const targetUrl = url.parse(request.query.url)
+    const targetUrl = url.parse(request.query.url as string)
 
     const host = targetUrl.hostname
       ? targetUrl.hostname.replace('www.', '')
@@ -126,20 +127,21 @@ server.route({
         )
       ).then(helpers.combineResults)
 
-      const encoded = encodeURIComponent(request.query.url)
+      const encoded = encodeURIComponent(request.query.url as string)
       const record = results.find(
         r => r && r.link && r.link.indexOf(encoded) >= 0
       ) // !!({} && -1) === true
 
       if (!record) {
         console.warn(
-          'WARN: unable to find matching record for ' + request.query.url
+          'WARN: unable to find matching record for ' +
+            (request.query.url as string)
         )
       }
 
       logger.info({
         type: 'track-outbound-click',
-        url: request.query.url,
+        url: request.query.url as string,
         userAgent: request.headers['user-agent'],
         record,
       })
@@ -147,7 +149,7 @@ server.route({
       logger.error('ERROR: failed to track click: ' + e)
     }
 
-    return h.redirect(request.query.url)
+    return h.redirect(request.query.url as string)
   },
 })
 
@@ -204,32 +206,37 @@ server.route({
     })
     return h.response('thanks for reporting')
   },
-})
+} as ServerRoute)
 
-server.events.on('response', function(request) {
-  if (request.url.path === '/ping') {
+server.events.on('response', (request: Request) => {
+  if (request.url.pathname === '/ping') {
     return // dont log ping requests
   }
   logger.info({
     type: 'api-req',
     remoteAddress: request.info.remoteAddress,
     method: request.method.toUpperCase(),
-    path: request.url.path,
-    statusCode: request.response ? request.response.statusCode : 0,
+    path: request.url.pathname,
+    statusCode: request.response
+      ? (request.response as ResponseObject).statusCode
+      : 0,
     timeMs: new Date().getTime() - request.info.received,
   })
 
   if (
     request.method.toUpperCase() === 'POST' &&
-    request.url.path === '/graphql'
+    request.url.pathname === '/graphql'
   ) {
     logger.info({
       type: 'graphql-query',
-      query: request.payload.query,
-      variables: request.payload.variables,
+      query: (request.payload as any).query,
+      variables: (request.payload as any).variables,
     })
   }
-  if (request.response && request.response.statusCode >= 500) {
+  if (
+    request.response &&
+    (request.response as ResponseObject).statusCode >= 500
+  ) {
     logger.error({
       type: 'http500',
       request: {
@@ -237,11 +244,9 @@ server.events.on('response', function(request) {
         url: request.url,
         body: request.payload,
       },
-      string: `Error response (500) sent for request:  ${
-        request.id
-      } ${request.method.toUpperCase()} ${request.url.path} because:  ${
-        request.response._error.message
-      }`,
+      string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${
+        request.url.pathname
+      } because:  ${(request.response as any)._error.message}`,
     })
   }
 })
@@ -254,7 +259,6 @@ async function doWork() {
       debug: false,
       tracing: false,
       cacheControl: true,
-      cors: false,
       formatError: error => {
         logger.error({ type: 'graphql-error', error: error.toString() })
         return error
