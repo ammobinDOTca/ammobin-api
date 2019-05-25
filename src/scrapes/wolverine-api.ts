@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import throat = require('throat')
+import throat from 'throat'
 import * as helpers from '../helpers'
 
 /**

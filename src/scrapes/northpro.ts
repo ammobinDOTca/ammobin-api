@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 
 function work(type, page = 1) {
   console.log(`loading northpro ${type} ${page}`)
@@ -46,15 +46,15 @@ export function northpro(type) {
 
   switch (type) {
     case 'rimfire':
-      return work('1050', 1).then(helpers.classifyRimfire)
+      return work('1050', 1)
 
     case 'centerfire':
-      return Promise.all(['976', '964'].map(t => throttle(() => work(t, 1))))
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      return Promise.all(
+        ['976', '964'].map(t => throttle(() => work(t, 1)))
+      ).then(helpers.combineResults)
 
     case 'shotgun':
-      return work('863', 1).then(helpers.classifyShotgun)
+      return work('863', 1)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

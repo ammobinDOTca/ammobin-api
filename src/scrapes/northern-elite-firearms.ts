@@ -1,4 +1,4 @@
-import throat = require('throat')
+import throat from 'throat'
 import { scrape, Info, Selectors } from './common'
 import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'
@@ -28,7 +28,7 @@ export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
         p => `${BASE}/ammunition-rim-fire/page/${p}`,
         info,
         selectors
-      ).then(items => helpers.classifyRimfire(items))
+      )
 
     case 'centerfire':
       return Promise.all(
@@ -37,17 +37,14 @@ export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
             scrape(p => `${BASE}/ammunition-${t}/page/${p}`, info, selectors)
           )
         )
-      )
-        .then(helpers.combineResults)
-        .then(items => helpers.classifyCenterfire(items))
+      ).then(helpers.combineResults)
 
     case 'shotgun':
       return scrape(
         p => `${BASE}/ammunition-shot-gun/page/${p}`,
         info,
         selectors
-      ).then(items => helpers.classifyShotgun(items))
-
+      )
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

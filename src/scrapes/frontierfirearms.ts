@@ -1,5 +1,5 @@
 import helpers = require('../helpers')
-import throat = require('throat')
+import throat from 'throat'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 function work(type: string): Promise<IItemListing[]> {

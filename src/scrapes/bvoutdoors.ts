@@ -1,13 +1,7 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
-import {
-  delayScrape,
-  classifyRimfire,
-  classifyCenterfire,
-  classifyShotgun,
-  combineResults,
-} from '../helpers'
-import throat = require('throat')
+import { delayScrape, combineResults } from '../helpers'
+import throat from 'throat'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 async function work(type, page = 1): Promise<IItemListing[]> {
   await delayScrape('https://www.bvoutdoors.com')
@@ -47,16 +41,14 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
 
   switch (type) {
     case 'rimfire':
-      return work('Ammunition-Rimfire-2').then(classifyRimfire)
+      return work('Ammunition-Rimfire-2')
 
     case 'centerfire':
       return Promise.all(
         ['Ammunition-Rifle-1', 'Ammunition-Handgun-108'].map(t =>
           throttle(() => work(t, 1))
         )
-      )
-        .then(combineResults)
-        .then(classifyCenterfire)
+      ).then(combineResults)
 
     case 'shotgun':
       return Promise.all(
@@ -65,9 +57,7 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
           'Ammunition-Slugs-258',
           'Ammunition-Buckshot-257',
         ].map(t => throttle(() => work(t, 1)))
-      )
-        .then(combineResults)
-        .then(classifyShotgun)
+      ).then(combineResults)
     case ItemType.case:
       return work('reloading-unprimed-brass-341')
     case ItemType.shot:

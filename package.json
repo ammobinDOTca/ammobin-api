@@ -24,6 +24,7 @@
   "dependencies": {
     "ammobin-classifier": "0.0.35",
     "apollo-server": "^2.5.0",
+    "apollo-server-cache-redis": "^0.4.0",
     "apollo-server-hapi": "^2.5.0",
     "apollo-server-plugin-response-cache": "^0.1.0",
     "axios": "^0.18.0",
@@ -39,9 +40,8 @@
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
     "snyk": "^1.166.0",
-    "winston": "^3.2.1",
     "throat": "^5.0.0",
-    "snyk": "^1.166.0"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/boom": "^7.2.1",

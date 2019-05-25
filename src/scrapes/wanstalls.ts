@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 const SITE = 'https://www.wanstallsonline.com'
 
 async function getStuff(type) {

@@ -1,4 +1,4 @@
-import throat = require('throat')
+import throat from 'throat'
 import { scrape, Info, Selectors } from './common'
 import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
-import throat = require('throat')
+import throat from 'throat'
 import helpers = require('../helpers')
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { Info, Selectors, scrape } from './common'
@@ -135,7 +135,6 @@ async function makeCabelasCalibre(ammotype, subtype) {
 
 function makeCabelasReq(itemType) {
   return makeCabelasCalibre(itemType, null)
-  //    .then(classify);
 }
 
 function work(path: String): Promise<IItemListing[]> {
@@ -147,7 +146,7 @@ export function cabelas(type: ItemType): Promise<IItemListing[]> {
 
   switch (type) {
     case ItemType.rimfire:
-      return makeCabelasReq('936').then(helpers.classifyRimfire)
+      return makeCabelasReq('936')
     case ItemType.shotgun:
       return Promise.all([
         throttle(() => makeCabelasReq('928')),
@@ -155,9 +154,7 @@ export function cabelas(type: ItemType): Promise<IItemListing[]> {
         throttle(() => makeCabelasReq('923')),
         throttle(() => makeCabelasReq('924')),
         throttle(() => makeCabelasReq('926')),
-      ])
-        .then(helpers.combineResults)
-        .then(helpers.classifyShotgun)
+      ]).then(helpers.combineResults)
     case ItemType.centerfire:
       return Promise.all([
         throttle(() => makeCabelasReq('916')),
@@ -178,9 +175,7 @@ export function cabelas(type: ItemType): Promise<IItemListing[]> {
         throttle(() => makeCabelasCalibre('933', '20561')), // 7mm-08
         throttle(() => makeCabelasCalibre('933', '20552')), // 7mm rem mag
         throttle(() => makeCabelasCalibre('933', '20557')), // 7mm wm
-      ])
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire) // need to convert their calibres to ours
+      ]).then(helpers.combineResults)
     case ItemType.shot:
       return work('reloading-bullets/2552')
     case ItemType.case:

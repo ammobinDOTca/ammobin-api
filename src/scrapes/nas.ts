@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 
 async function work(type, page = 1) {
   await helpers.delayScrape('https://www.nasgunsandammo.com')
@@ -47,7 +47,7 @@ export function nas(type) {
 
   switch (type) {
     case 'rimfire':
-      return work('rimfire', 1).then(helpers.classifyRimfire)
+      return work('rimfire', 1)
 
     case 'centerfire':
       return Promise.all(
@@ -55,12 +55,10 @@ export function nas(type) {
           'centrefire', // look at these fancy fellows...
           'surplus-ammo',
         ].map(t => throttle(() => work(t, 1)))
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
 
     case 'shotgun':
-      return work('shotgun', 1).then(helpers.classifyShotgun)
+      return work('shotgun', 1)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

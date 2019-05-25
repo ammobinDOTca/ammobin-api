@@ -1,5 +1,5 @@
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 import axios from 'axios'
 import cheerio = require('cheerio')
 import { RENDERTRON_URL } from '../constants'
@@ -63,27 +63,21 @@ export function tenda(type) {
         ['rimfire-ammo', 'bulk-ammo'].map(t =>
           throttle(() => makeTendaRequest(t))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyRimfire)
+      ).then(helpers.combineResults)
 
     case 'centerfire':
       return Promise.all(
         ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map(t =>
           throttle(() => makeTendaRequest(t))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
 
     case 'shotgun':
       return Promise.all(
         ['shotgun-ammo', 'bulk-ammo'].map(t =>
           throttle(() => makeTendaRequest(t))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyShotgun)
+      ).then(helpers.combineResults)
 
     default:
       throw new Error(`unknown type: ${type}`)

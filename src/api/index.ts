@@ -7,6 +7,7 @@ import * as url from 'url'
 import * as helpers from '../helpers'
 import { ApolloServer } from 'apollo-server-hapi'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, resolvers } from './graphql'
 import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
@@ -259,6 +260,9 @@ async function doWork() {
       resolvers,
       debug: false,
       tracing: false,
+      cache: new RedisCache({
+        host: 'redis',
+      }),
       formatError: error => {
         logger.error({ type: 'graphql-error', error: error.toString() })
         return error

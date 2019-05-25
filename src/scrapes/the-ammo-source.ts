@@ -1,5 +1,5 @@
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
@@ -27,15 +27,13 @@ export function theAmmoSource(type: ItemType): Promise<IItemListing[]> {
         p => `${BASE}/rimfire-ammunition/?sort=featured&page=${p}`,
         info,
         selectors
-      ).then(helpers.classifyRimfire)
-
+      )
     case ItemType.shotgun:
       return scrape(
         p => `${BASE}/shotgun-ammunition/?sort=featured&page=${p}`,
         info,
         selectors
-      ).then(helpers.classifyShotgun)
-
+      )
     case ItemType.centerfire:
       return Promise.all(
         ['rifle-ammunition', 'pistol-ammunition', 'surplus-ammunition'].map(t =>
@@ -47,9 +45,7 @@ export function theAmmoSource(type: ItemType): Promise<IItemListing[]> {
             )
           )
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
-import throat = require('throat')
+import throat from 'throat'
 import { ItemType, IItemListing } from '../graphql-types'
 
 async function fn(section, type, page = 1): Promise<IItemListing[]> {

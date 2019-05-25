@@ -1,6 +1,6 @@
 import axios from 'axios'
 import cheerio = require('cheerio')
-import throat = require('throat')
+import throat from 'throat'
 import * as helpers from '../helpers'
 
 async function work(type, page = 1) {
@@ -45,7 +45,7 @@ export function solelyOutdoors(type) {
 
   switch (type) {
     case 'rimfire':
-      return work('rimfire', 1).then(helpers.classifyRimfire)
+      return work('rimfire', 1)
 
     case 'centerfire':
       return Promise.all(
@@ -54,12 +54,10 @@ export function solelyOutdoors(type) {
           // 'handgun-ammo',
           // 'rifle-ammo'
         ].map(t => throttle(() => work(t)))
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
 
     case 'shotgun':
-      return work('shotgun', 1).then(helpers.classifyShotgun)
+      return work('shotgun', 1)
 
     default:
       return Promise.reject(new Error('unknown type: ' + type))
