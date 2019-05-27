@@ -269,7 +269,7 @@ async function doWork() {
       },
       plugins: [responseCachePlugin()],
       cacheControl: {
-        defaultMaxAge: 4 * 60 * 60 * 1000, // 4hrs
+        defaultMaxAge: 4 * 60 * 60, // 4hrs in seconds
       },
     })
     await apolloServer.applyMiddleware({
