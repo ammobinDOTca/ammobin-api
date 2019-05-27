@@ -57,12 +57,15 @@ import { waspMunitions } from './wasp-munitions'
 import { greatNorthPercision as greatNorthPrecision } from './great-north-precision'
 import { tesro } from './tesro'
 import { xmetal } from './xmetal'
+import { triggerAndBows } from './trigger-and-bows'
 
 export function makeSearch(
   source: string,
   type: ItemType
 ): Promise<IItemListing[]> {
   switch (source) {
+    case 'triggersandbows.com':
+      return triggerAndBows(type)
     case 'xmetaltargets.com':
       return xmetal(type)
     case 'tesro.ca':
