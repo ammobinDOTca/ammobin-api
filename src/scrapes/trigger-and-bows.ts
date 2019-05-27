@@ -31,7 +31,7 @@ export function triggerAndBows(type: ItemType): Promise<IItemListing[]> {
       )
 
     if (page < pages) {
-      return results.concat(await work(type, reqPage + 1))
+      return results.concat(await work(pType, reqPage + 1))
     } else {
       return results
     }
