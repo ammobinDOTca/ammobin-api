@@ -1,35 +1,55 @@
 import * as helpers from '../helpers'
-import { IItemListing, ItemType } from '../graphql-types'
-
-function makeJoBrook(ammotype: string): Promise<IItemListing[]> {
-  return helpers
-    .makeWrapApiReq('jobrook', ammotype)
-    .then(d => d.items || [])
-    .then(d =>
-      d.map(i => {
-        i.vendor = 'Jo Brook Outdoors'
-        return i
-      })
-    )
-}
+import { Province, IItemListing, ItemType } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
+import throat from 'throat'
 
 export function jobrook(type: ItemType): Promise<IItemListing[]> {
+  const throttle = throat(1)
+
+  const info: Info = {
+    site: 'jobrookoutdoors.com',
+    vendor: `Jo Brook Outdoors`,
+    provinces: [Province.MB],
+  }
+
+  const selectors: Selectors = {
+    item: '.product ',
+    name: '.product-detail h3',
+    img: '.product-image img',
+    link: '.product-image a',
+    price: '.price',
+    nextPage: '.next',
+    outOfStock: '.out-of-stock',
+  }
+  function work(f) {
+    return scrape(
+      p => `http://www.${info.site}/shooting/${f}/page${p}.html`,
+      info,
+      selectors
+    )
+  }
+
   switch (type) {
     case ItemType.rimfire:
-      return makeJoBrook('rimfire').then(helpers.classifyRimfire)
+      return work('ammo/rimfire')
 
     case ItemType.centerfire:
-      return Promise.all([
-        makeJoBrook('rifle'),
-        makeJoBrook('pistol'),
-        makeJoBrook('bulk'),
-      ])
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      return Promise.all(
+        ['rifle', 'pistol' /*, 'bulk'*/].map(t =>
+          throttle(() => work('ammo/' + t))
+        )
+      ).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return makeJoBrook('shotgun').then(helpers.classifyShotgun)
-
+      return work('ammo/shotgun')
+    case ItemType.case:
+      return work('reloading/brass')
+    case ItemType.powder:
+      return work('reloading/powder')
+    case ItemType.shot:
+      return work('reloading/bullets')
+    case ItemType.primer:
+      return work('reloading/primers')
     default:
       throw new Error(`unknown type ${type}`)
   }
