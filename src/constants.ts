@@ -375,6 +375,7 @@ export const VENDORS = [
     logo: '/logos/triggers&bows-logo.png',
     provinces: [Province.ON],
     location: 'Burford',
+    background: true,
   },
 ]
 
