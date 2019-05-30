@@ -10,7 +10,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, resolvers } from './graphql'
-import { SOURCES, DATE_FORMAT, AMMO_TYPES } from '../constants'
+import { SOURCES, DATE_FORMAT, AMMO_TYPES, TYPES } from '../constants'
 import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
@@ -69,15 +69,13 @@ server.route({
     if (SOURCES.indexOf(host) === -1) {
       throw boom.badRequest('invalid target url')
     }
+    const types = body.itemType ? [body.itemType] : TYPES
 
     const date = moment.utc().format(DATE_FORMAT)
     try {
-      // todo update to include reloading and check if value is provided by the request body
       const results: any = await new Promise((resolve, reject) =>
-        client.mget(
-          AMMO_TYPES.map(type => `${date}_${host}_${type}`),
-          (err, res) =>
-            err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
+        client.mget(types.map(type => `${date}_${host}_${type}`), (err, res) =>
+          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
@@ -101,6 +99,7 @@ server.route({
   },
 })
 
+// old route. get rid of?
 server.route({
   method: 'GET',
   path: '/track-outbound-click',
