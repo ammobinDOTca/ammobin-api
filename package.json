@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "ammobin-classifier": "0.0.35",
-    "apollo-server": "^2.5.0",
+    "apollo-server": "^2.6.0",
     "apollo-server-cache-redis": "^1.0.0",
     "apollo-server-hapi": "^2.6.0",
     "apollo-server-plugin-response-cache": "^0.1.0",
