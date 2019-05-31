@@ -10,7 +10,13 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, resolvers } from './graphql'
-import { SOURCES, DATE_FORMAT, AMMO_TYPES, TYPES } from '../constants'
+import {
+  SOURCES,
+  DATE_FORMAT,
+  RELOAD_TYPES,
+  AMMO_TYPES,
+  TYPES,
+} from '../constants'
 import { ItemType } from '../graphql-types'
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
@@ -69,7 +75,19 @@ server.route({
     if (SOURCES.indexOf(host) === -1) {
       throw boom.badRequest('invalid target url')
     }
-    const types = body.itemType ? [body.itemType] : TYPES
+
+    let types: string[]
+    if (body.itemType) {
+      if (body.item === ItemType.reloading) {
+        types = RELOAD_TYPES
+      } else if (body.item === ItemType.ammo) {
+        types = AMMO_TYPES
+      } else {
+        types = [body.itemType]
+      }
+    } else {
+      types = TYPES
+    }
 
     const date = moment.utc().format(DATE_FORMAT)
     try {
