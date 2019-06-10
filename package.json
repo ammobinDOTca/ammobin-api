@@ -2,7 +2,7 @@
   "name": "ammobin-api",
   "version": "2.0.0",
   "description": "ammobin.ca api",
-  "main": "index.js",
+  "main": "./dist/api/index.js",
   "scripts": {
     "start": "node ./dist/api/index.js",
     "start:worker": "node ./dist/worker/index.js",
@@ -14,9 +14,7 @@
     "dev": "ts-node-dev ./src/api/index.ts",
     "dev:worker": "ts-node-dev ./src/worker/index.ts",
     "dev:refresher": "ts-node-dev ./src/refresher/index.ts",
-    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh"
   },
   "types": "dist/index.d.ts",
   "author": "Simon Ramsay",
@@ -26,20 +24,19 @@
     "apollo-server": "^2.6.2",
     "apollo-server-cache-redis": "^1.0.0",
     "apollo-server-hapi": "^2.6.2",
-    "apollo-server-plugin-response-cache": "^0.2.1",
+    "apollo-server-plugin-response-cache": "^0.2.2",
     "axios": "^0.19.0",
     "boom": "^7.3.0",
     "cheerio": "^1.0.0-rc.3",
     "delay": "^4.2.0",
     "fluent-logger": "^3.3.1",
-    "graphql": "^14.3.0",
+    "graphql": "^14.3.1",
     "hapi": "^18.1.0",
     "jsonp": "^0.2.1",
     "moment": "^2.24.0",
     "node-cron": "^2.0.3",
     "redis": "^2.7.1",
     "rsmq-worker": "^0.5.2",
-    "snyk": "^1.166.0",
     "throat": "^5.0.0",
     "winston": "^3.2.1"
   },
@@ -49,18 +46,17 @@
     "@types/hapi": "^18.0.2",
     "@types/moment": "^2.13.0",
     "gql2ts": "^1.10.1",
-    "husky": "^2.3.0",
-    "nodemon": "^1.19.0",
-    "prettier": "^1.17.1",
-    "pretty-quick": "^1.10.0",
+    "husky": "^2.4.0",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.0",
     "ts-node-dev": "^1.0.0-pre.39",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1"
   },
   "husky": {
     "hooks": {
       "pre-commit": " pretty-quick --staged && npm t"
     }
-  },
-  "snyk": true
+  }
 }
