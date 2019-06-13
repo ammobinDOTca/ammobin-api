@@ -42,6 +42,28 @@ server.route({
 
 server.route({
   method: 'POST',
+  path: '/track-preformance',
+  handler: function(request, h) {
+    const userAgent = request.headers['user-agent'] || 'unknown'
+    const { preformance, href } = JSON.parse(request.payload as string)
+
+    const connectTime = preformance.responseEnd - preformance.requestStart
+    const renderTime = preformance.domComplete - preformance.domLoading
+    const interactiveTime = preformance.domInteractive - preformance.domLoading
+    logger.info({
+      type: 'track-preformance',
+      userAgent,
+      preformance,
+      connectTime,
+      renderTime,
+      interactiveTime,
+      href,
+    })
+    return h.response('success')
+  },
+})
+server.route({
+  method: 'POST',
   path: '/track-view',
   handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
