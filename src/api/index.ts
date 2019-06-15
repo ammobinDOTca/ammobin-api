@@ -42,7 +42,7 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/track-preformance',
+  path: '/track-performance',
   handler: function(request, h) {
     const userAgent = request.headers['user-agent'] || 'unknown'
     const { preformance, href } = JSON.parse(request.payload as string)
