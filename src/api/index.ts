@@ -139,61 +139,6 @@ server.route({
   },
 })
 
-// old route. get rid of?
-server.route({
-  method: 'GET',
-  path: '/track-outbound-click',
-  handler: async function(request, h) {
-    if (!request.query.url) {
-      throw boom.badRequest('missing required param: url')
-    }
-
-    const targetUrl = url.parse(request.query.url as string)
-
-    const host = targetUrl.hostname
-      ? targetUrl.hostname.replace('www.', '')
-      : ''
-    if (SOURCES.indexOf(host) === -1) {
-      throw boom.badRequest('invalid target url')
-    }
-    const date = moment.utc().format(DATE_FORMAT)
-
-    try {
-      // TODO: have the client pass up the item type (as well so that we dont have to load in everything)
-      const results: any = await new Promise((resolve, reject) =>
-        client.mget(
-          AMMO_TYPES.map(type => `${date}_${host}_${type}`),
-          (err, res) =>
-            err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
-        )
-      ).then(helpers.combineResults)
-
-      const encoded = encodeURIComponent(request.query.url as string)
-      const record = results.find(
-        r => r && r.link && r.link.indexOf(encoded) >= 0
-      ) // !!({} && -1) === true
-
-      if (!record) {
-        console.warn(
-          'WARN: unable to find matching record for ' +
-            (request.query.url as string)
-        )
-      }
-
-      logger.info({
-        type: 'track-outbound-click',
-        url: request.query.url as string,
-        userAgent: request.headers['user-agent'],
-        record,
-      })
-    } catch (e) {
-      logger.error('ERROR: failed to track click: ' + e)
-    }
-
-    return h.redirect(request.query.url as string)
-  },
-})
-
 server.route({
   method: 'GET',
   path: '/dank',
