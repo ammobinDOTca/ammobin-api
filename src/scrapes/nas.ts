@@ -1,64 +1,55 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat from 'throat'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-async function work(type, page = 1) {
-  await helpers.delayScrape('https://www.nasgunsandammo.com')
-  console.log(`loading nasgunsandammo ${type} ${page}`)
-
-  return axios
-    .get(
-      `https://www.nasgunsandammo.com/product-category/ammo/${type}/page/${page}/`
-    )
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-
-        if (tha.prop('class').indexOf('outofstock') >= 0) {
-          return
-        }
-
-        result.link = tha.find('.woocommerce-LoopProduct-link').prop('href')
-        result.img = tha.find('.kw-prodimage-img').prop('src')
-        result.name = tha.find('.kw-details-title').text()
-        const priceTxt = tha.find('.price').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'NAS Guns & Ammo'
-        result.province = 'ON'
-
-        items.push(result)
-      })
-
-      if ($('.pagination-item-next-link').length) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1).then(results => items.concat(results))
-      } else {
-        return items
-      }
-    })
-}
-
-export function nas(type) {
+export function nas(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
+  const info: Info = {
+    site: 'nasgunsandammo.com',
+    vendor: `NAS Guns & Ammo`,
+    provinces: [Province.ON],
+  }
+
+  const selectors: Selectors = {
+    item: '.product',
+    name: '.kw-details-title',
+    img: '.kw-prodimage-img',
+    link: '.woocommerce-LoopProduct-link',
+    price: '.price',
+    nextPage: '.pagination-item-next-link',
+    outOfStock: '.outofstock',
+  }
+  const work = t =>
+    scrape(
+      p => `https://www.nasgunsandammo.com/product-category/${t}/page/${p}/`,
+
+      info,
+      selectors
+    )
 
   switch (type) {
-    case 'rimfire':
-      return work('rimfire', 1)
+    case ItemType.rimfire:
+      return work('ammo/rimfire')
 
-    case 'centerfire':
+    case ItemType.centerfire:
       return Promise.all(
         [
           'centrefire', // look at these fancy fellows...
           'surplus-ammo',
-        ].map(t => throttle(() => work(t, 1)))
+        ].map(t => throttle(() => work('ammo/' + t)))
       ).then(helpers.combineResults)
 
-    case 'shotgun':
-      return work('shotgun', 1)
+    case ItemType.shotgun:
+      return work('ammo/shotgun')
+    case ItemType.shot:
+      return work('reloading-supplies/bullets')
+    case ItemType.case:
+      return work('reloading-supplies/brass')
+    case ItemType.powder:
+      return work('reloading-supplies/gun-powder')
+    case ItemType.primer:
+      return work('reloading-supplies/primers')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
