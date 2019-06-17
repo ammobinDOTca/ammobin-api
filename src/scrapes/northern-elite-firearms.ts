@@ -45,6 +45,11 @@ export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
         info,
         selectors
       )
+    case ItemType.shot:
+    case ItemType.primer:
+    case ItemType.case:
+    case ItemType.powder:
+      return Promise.resolve([]) // 20190616 no reloading
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
