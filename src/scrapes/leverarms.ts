@@ -1,61 +1,53 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import * as helpers from '../helpers'
 import throat from 'throat'
 
-async function work(type, page = 1) {
-  await helpers.delayScrape('https://leverarms.com')
+import * as helpers from '../helpers'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-  console.log(`loading lever arms ${type} ${page}`)
-  return axios
-    .get(`https://leverarms.com/product-category/${type}/page/${page}`)
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product').each((index, row) => {
-        const tha = $(row)
-
-        if (tha.prop('class').indexOf('outofstock') >= 0) {
-          return
-        }
-
-        const result: any = {}
-        result.link = tha.find('.woocommerce-LoopProduct-link').prop('href')
-        result.img = tha.find('img').prop('src')
-        result.name = tha.find('.woocommerce-loop-product__title').text()
-        const priceTxt = tha.find('.woocommerce-Price-amount').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.vendor = 'Lever Arms'
-        result.province = 'BC'
-
-        items.push(result)
-      })
-
-      if ($('.nav-links .next').length) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1).then(results => items.concat(results))
-      } else {
-        return items
-      }
-    })
-}
-export function leverarms(type) {
+export function leverarms(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
+  const info: Info = {
+    site: 'leverarms.com',
+    vendor: `Lever Arms`,
+    provinces: [Province.BC],
+  }
+
+  const selectors: Selectors = {
+    item: '.product',
+    name: '.woocommerce-loop-product__title',
+    img: 'img',
+    link: '.woocommerce-LoopProduct-link',
+    price: '.woocommerce-Price-amount',
+    nextPage: '.nav-links .next',
+    outOfStock: '.outofstock',
+  }
+
+  const work = t =>
+    scrape(
+      p => `https://leverarms.com/product-category/${t}/page/${p}`,
+      info,
+      selectors
+    )
 
   switch (type) {
     case 'rimfire':
-      return work('rimfire-ammo', 1)
+      return work('rimfire-ammo')
 
     case 'centerfire':
       return Promise.all(
         [
           'rifle-ammunition',
           // 'pistol-ammunition',
-        ].map(t => throttle(() => work(t, 1)))
+        ].map(t => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case 'shotgun':
-      return work('shotgun-shells', 1)
+      return work('shotgun-shells')
+    case ItemType.shot:
+    case ItemType.primer:
+    case ItemType.case:
+    case ItemType.powder:
+      return Promise.resolve([]) // no reloading as of 20190616
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
