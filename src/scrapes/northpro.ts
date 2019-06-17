@@ -2,7 +2,7 @@ import axios from 'axios'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat from 'throat'
-
+import { ItemType } from '../graphql-types'
 function work(type, page = 1) {
   console.log(`loading northpro ${type} ${page}`)
   return axios
@@ -41,7 +41,7 @@ function work(type, page = 1) {
       // }
     })
 }
-export function northpro(type) {
+export function northpro(type: ItemType) {
   const throttle = throat(1)
 
   switch (type) {
@@ -55,6 +55,11 @@ export function northpro(type) {
 
     case 'shotgun':
       return work('863', 1)
+    case ItemType.shot:
+    case ItemType.powder:
+    case ItemType.case:
+    case ItemType.primer:
+      return Promise.resolve([]) // 20190616 no reloading
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
