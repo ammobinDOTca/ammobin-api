@@ -1,59 +1,57 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat from 'throat'
 
-async function work(type, page = 1) {
-  await helpers.delayScrape('http://www.lanzshootingsupplies.com')
-  console.log(`loading  lanz ${type} ${page}`)
+import { Province, IItemListing, ItemType } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-  return axios
-    .get(
-      `http://www.lanzshootingsupplies.com/shop/ammunition/${type}/page${page}.html?limit=50`
-    )
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product-block-inner').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
+async function work(type, page = 1): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'lanzshootingsupplies.com',
+    vendor: `Lanz Shooting Supplies`,
+    provinces: [Province.ON],
+  }
 
-        result.link = tha.find('a').prop('href')
-        result.img = tha.find('img').prop('src')
-        result.name = tha.find('h3 a').prop('title')
-        const priceTxt = tha.find('.price').text()
-        result.price = parseFloat(priceTxt.replace('C$', ''))
-        result.vendor = 'Lanz Shooting Supplies'
-        result.province = 'ON'
-
-        items.push(result)
-      })
-
-      if ($('.next a').length) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1).then(results => items.concat(results))
-      } else {
-        return items
-      }
-    })
+  const selectors: Selectors = {
+    item: '.product-block-inner',
+    name: 'h3 a',
+    img: '.product-image img',
+    link: 'a',
+    price: '.price',
+    nextPage: '.next a',
+    outOfStock: '.out-of-stock',
+  }
+  return scrape(
+    p =>
+      `http://www.lanzshootingsupplies.com/shop/${type}/page${p}.html?limit=50`,
+    info,
+    selectors
+  )
 }
 
-export function lanz(type) {
+export function lanz(type: ItemType) {
   const throttle = throat(1)
 
   switch (type) {
-    case 'rimfire':
-      return work('rimfire-ammunition', 1)
+    case ItemType.rimfire:
+      return work('ammunition/rimfire-ammunition', 1)
 
-    case 'centerfire':
+    case ItemType.centerfire:
       return Promise.all(
         ['handgun-ammunition', 'rifle-ammunition', 'bulk-ammunition'].map(t =>
-          throttle(() => work(t, 1))
+          throttle(() => work('ammunition/' + t, 1))
         )
       ).then(helpers.combineResults)
 
-    case 'shotgun':
-      return work('shotgun-ammunition', 1)
+    case ItemType.shotgun:
+      return work('ammounition/shotgun-ammunition', 1)
+    case ItemType.shot:
+      return work('reloading-supplies/projectiles', 1)
+    case ItemType.primer:
+      return work('reloading-supplies/primers')
+    case ItemType.powder:
+      return work('reloading-supplies/powder')
+    case ItemType.case:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
