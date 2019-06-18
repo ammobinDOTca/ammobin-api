@@ -1,4 +1,3 @@
-import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 
 import { scrape, Info, Selectors } from './common'
@@ -19,18 +18,22 @@ export function xmetal(type: ItemType): Promise<IItemListing[]> {
     nextPage: '.next',
     outOfStock: '.out-of-stock',
   }
-
+  const work = t =>
+    scrape(_ => `https://${info.site}/product-category/${t}/`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
     case ItemType.shotgun:
       return Promise.resolve([])
     case ItemType.centerfire:
-      return scrape(
-        _ => `https://xmetaltargets.com/product-category/ammunition/`,
-        info,
-        selectors
-      ).then(helpers.classifyCenterfire)
-
+      return work('ammunition')
+    case ItemType.primer:
+      return work('reloading-components/primers')
+    case ItemType.powder:
+      return work('hi-tek-supercoat')
+    case ItemType.case:
+      return work('brass-casings')
+    case ItemType.shot:
+      return work('bullets')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
