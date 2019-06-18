@@ -36,6 +36,11 @@ export function rustyWood(type: ItemType): Promise<IItemListing[]> {
         .then(helpers.combineResults)
         .then(helpers.classify(type))
     case ItemType.shotgun:
+    // 20190617: they have reloading but its single pages and hard to configure scrapes for. being lazy. todo: later
+    case ItemType.case:
+    case ItemType.shot:
+    case ItemType.powder:
+    case ItemType.primer:
       return Promise.resolve([])
 
     default:
