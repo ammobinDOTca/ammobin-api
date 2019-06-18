@@ -21,8 +21,7 @@ async function work(type, page = 1): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
   return scrape(
-    p =>
-      `http://www.lanzshootingsupplies.com/shop/${type}/page${p}.html?limit=50`,
+    p => `http://www.${info.site}/shop/${type}/page${p}.html?limit=50`,
     info,
     selectors
   )
@@ -43,7 +42,7 @@ export function lanz(type: ItemType) {
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return work('ammounition/shotgun-ammunition', 1)
+      return work('ammunition/shotgun-ammunition', 1)
     case ItemType.shot:
       return work('reloading-supplies/projectiles', 1)
     case ItemType.primer:
