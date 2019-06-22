@@ -1,54 +1,39 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import * as helpers from '../helpers'
-const SITE = 'https://theshootingedge.com'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-async function fn(section, type, page = 1) {
-  await helpers.delayScrape(SITE)
+export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'theshootingedge.com',
+    vendor: `The Shooting Edge`,
+    provinces: [Province.AB],
+  }
 
-  return axios.get(`${SITE}/collections/ammunition-1?page=${page}`).then(r => {
-    let $ = cheerio.load(r.data)
-    const items = []
-    $('.product-card').each((index, row) => {
-      const result: any = {}
-      const tha = $(row)
-      if (tha.find('.product-card__availability').length) {
-        return
-      }
+  const selectors: Selectors = {
+    item: '.main-content .grid__item',
+    name: '.product-card__name',
+    img: '.product-card__image',
+    link: '.product-card',
+    price: '.product-card__price',
+    nextPage: '.next',
+    outOfStock: '.product-card__availability',
+  }
+  const work = t =>
+    scrape(
+      p => `https://${info.site}/collections/${t}?page=${p}`,
+      info,
+      selectors
+    )
 
-      result.link = SITE + tha.prop('href')
-      result.img = 'https:' + tha.find('.product-card__image').prop('src')
-
-      result.name = tha.find('.product-card__name').text()
-      result.price = parseFloat(
-        tha
-          .find('.product-card__price')
-          .text()
-          .replace('$', '')
-      )
-      result.vendor = 'The Shooting Edge'
-      result.province = 'AB'
-      items.push(result)
-    })
-
-    if ($('.next').length > 0 && items.length > 0) {
-      // load next page
-      $ = null // dont hold onto current page
-      console.log('loading theshootingedge page', page + 1)
-      return fn(section, type, page + 1).then(ff => ff.concat(items))
-    } else {
-      return items
-    }
-  })
-}
-
-export function shootingEdge(type) {
   switch (type) {
-    case 'rimfire':
-    case 'centerfire':
-    case 'shotgun':
-      return fn(``, type).then(i => helpers.classifyBullets(i, type))
-
+    case ItemType.rimfire:
+    case ItemType.centerfire:
+    case ItemType.shotgun:
+      return work('ammunition-1')
+    case ItemType.powder:
+    case ItemType.case:
+    case ItemType.primer:
+    case ItemType.shot:
+      return work('reloading')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
