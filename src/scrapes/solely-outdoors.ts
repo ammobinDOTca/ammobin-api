@@ -1,64 +1,46 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import throat from 'throat'
-import * as helpers from '../helpers'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-async function work(type, page = 1) {
-  await helpers.delayScrape('https://www.solelyoutdoors.com')
-  console.log(`loading solely outdoors ${page}`)
+export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'solelyoutdoors.com',
+    vendor: `Soley Outdoors`,
+    provinces: [Province.ON],
+  }
 
-  return axios
-    .get(`https://www.solelyoutdoors.com/ammunition/${type}/page${page}.html`)
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
+  const selectors: Selectors = {
+    item: '.product ',
+    name: '.fulltitle',
+    img: '.image-wrap img',
+    link: '.image-wrap a',
+    price: '.price-new',
+    nextPage: '.next.enabled',
+    outOfStock: '.out-of-stock',
+  }
 
-        result.link = tha.find('.image-wrap a').prop('href')
-        result.img = tha.find('.image-wrap img').prop('src')
-        result.name = tha
-          .find('.image-wrap a')
-          .prop('title')
-          .trim()
-        const priceTxt = tha.find('.info .left').text()
-        result.price = parseFloat(priceTxt.replace('C$', ''))
-        result.vendor = 'Soley Outdoors'
-        result.province = 'ON'
-
-        items.push(result)
-      })
-
-      // having redirect problem, disabled pulling other pages for now
-      if (1 > 2 && $('.next.enabled').length) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1).then(results => items.concat(results))
-      } else {
-        return items
-      }
-    })
-}
-
-export function solelyOutdoors(type) {
-  const throttle = throat(1)
-
+  const work = t =>
+    scrape(
+      p => `https://www.solelyoutdoors.com/${t}/page${p}.html`,
+      info,
+      selectors
+    )
   switch (type) {
-    case 'rimfire':
-      return work('rimfire', 1)
+    case ItemType.rimfire:
+      return work('ammunition/rimfire')
 
-    case 'centerfire':
-      return Promise.all(
-        [
-          'centerfire',
-          // 'handgun-ammo',
-          // 'rifle-ammo'
-        ].map(t => throttle(() => work(t)))
-      ).then(helpers.combineResults)
+    case ItemType.centerfire:
+      return work('ammunition/centerfire')
 
-    case 'shotgun':
-      return work('shotgun', 1)
-
+    case ItemType.shotgun:
+      return work('ammunition/shotgun')
+    case ItemType.primer:
+      return work('reloading/primers')
+    case ItemType.case:
+      return work('reloading/brass')
+    case ItemType.shot:
+      return work('reloading/bullets-projectiles')
+    case ItemType.powder:
+      return work('reloading/powders')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
