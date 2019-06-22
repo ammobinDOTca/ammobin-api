@@ -48,7 +48,7 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
       return scrape(getUrl('ammunition/projectiles'), info, selectors)
     case ItemType.primer:
     case ItemType.case:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       throw new Error('unknown type: ' + type)
   }

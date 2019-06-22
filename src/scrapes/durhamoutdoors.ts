@@ -28,7 +28,7 @@ export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
     case ItemType.powder:
     case ItemType.shot:
     case ItemType.primer:
-      return Promise.resolve([]) // 20190519 TODO: check on this site later, they keep things too messy for now.
+      return Promise.resolve(null) // 20190519 TODO: check on this site later, they keep things too messy for now.
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

@@ -59,7 +59,7 @@ export function northpro(type: ItemType) {
     case ItemType.powder:
     case ItemType.case:
     case ItemType.primer:
-      return Promise.resolve([]) // 20190616 no reloading
+      return Promise.resolve(null) // 20190616 no reloading
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

@@ -23,7 +23,7 @@ export function xmetal(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
     case ItemType.shotgun:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     case ItemType.centerfire:
       return work('ammunition')
     case ItemType.primer:

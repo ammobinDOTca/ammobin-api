@@ -12,7 +12,7 @@ export function hirsch(type: ItemType): Promise<IItemListing[]> {
     case ItemType.rimfire:
       return fn('98_105')
     case ItemType.shotgun:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     case ItemType.centerfire:
       return fn('98_106')
     case ItemType.case:
@@ -22,7 +22,7 @@ export function hirsch(type: ItemType): Promise<IItemListing[]> {
     case ItemType.shot:
       return fn('100_280')
     case ItemType.primer:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

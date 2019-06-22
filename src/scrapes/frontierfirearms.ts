@@ -49,7 +49,7 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
       return work('hornady/bullets')
     case ItemType.primer:
     case ItemType.powder:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

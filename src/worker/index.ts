@@ -66,13 +66,19 @@ const appendGAParam = (items: IItemListing[]) =>
     return i
   })
 
-worker.on('message', (msg, next /* , id*/) => {
+worker.on('message', async (msg, next /* , id*/) => {
   const { source, type } = JSON.parse(msg)
 
   const searchStart = new Date()
   logger.info({ type: 'started-scrape', source, ItemType: type })
   try {
-    return makeSearch(source, type)
+    const searchRes = await makeSearch(source, type)
+    if (searchRes === null) {
+      // no scrape attempted
+      logger.info({ type: 'skipped-scrape', source, ItemType: type })
+      return next()
+    }
+    return Promise.resolve(searchRes)
       .then(items => items.filter(i => i.price && i.link && i.name))
       .then(items =>
         AMMO_TYPES.includes(type)

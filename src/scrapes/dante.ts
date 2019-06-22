@@ -21,9 +21,7 @@ function work(type: String): Promise<IItemListing[]> {
 
   return scrape(
     _ =>
-      `https://www.${
-        info.site
-      }/en/product-category/shop/${type}/?product_count=100`,
+      `https://www.${info.site}/en/product-category/shop/${type}/?product_count=100`,
     info,
     selectors
   )
@@ -43,7 +41,7 @@ export function dante(type: ItemType): Promise<IItemListing[]> {
     case ItemType.powder:
     case ItemType.case:
     case ItemType.primer:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

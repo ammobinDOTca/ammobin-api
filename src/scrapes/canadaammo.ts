@@ -19,9 +19,7 @@ function work(path: String) {
 
   return scrape(
     p =>
-      `https://www.${
-        info.site
-      }/product/byCategory/${path}/?page=${p}&status=instock&count=72`,
+      `https://www.${info.site}/product/byCategory/${path}/?page=${p}&status=instock&count=72`,
     info,
     selectors
   )
@@ -31,7 +29,7 @@ export function canadaammo(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
     case ItemType.case:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     case ItemType.centerfire:
       return Promise.all([work('rifle-ammo'), work('handgun-ammo')]).then(
         combineResults

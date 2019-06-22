@@ -25,9 +25,7 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
     case ItemType.rimfire:
       return scrape(
         _ =>
-          `https://www.${
-            info.site
-          }/ammunition-and-pellets/smallbore-ammunition.html?limit=all`,
+          `https://www.${info.site}/ammunition-and-pellets/smallbore-ammunition.html?limit=all`,
         info,
         selectors
       ).then(helpers.classifyRimfire)
@@ -36,9 +34,7 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
         ['centerfire-ammunition', 'pistol-ammunition'].map(s =>
           scrape(
             _ =>
-              `https://www.${
-                info.site
-              }/ammunition-and-pellets/${s}.html?limit=all`,
+              `https://www.${info.site}/ammunition-and-pellets/${s}.html?limit=all`,
             info,
             selectors
           )
@@ -47,7 +43,7 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
     case ItemType.shotgun:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

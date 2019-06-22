@@ -36,12 +36,12 @@ export function rampart(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.shotgun:
     case ItemType.rimfire:
-      return Promise.resolve([]) // 20190324: not selling rimfire or shotgun.
+      return Promise.resolve(null) // 20190324: not selling rimfire or shotgun.
     case ItemType.shot:
     case ItemType.primer:
     case ItemType.case:
     case ItemType.powder:
-      return Promise.resolve([]) // no reloading as of 20190616
+      return Promise.resolve(null) // no reloading as of 20190616
 
     default:
       return Promise.reject(new Error('unknown type: ' + type))

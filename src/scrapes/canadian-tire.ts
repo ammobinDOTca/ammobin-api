@@ -93,7 +93,7 @@ export function canadiantire(type: ItemType): Promise<IItemListing[]> {
     case ItemType.powder:
     case ItemType.case:
     case ItemType.primer:
-      return Promise.resolve([])
+      return Promise.resolve(null)
 
     default:
       throw new Error(`unknown type: ${type}`)

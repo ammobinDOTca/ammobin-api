@@ -32,18 +32,16 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
 
   switch (type) {
     case ItemType.rimfire:
-      return work('ammunition/rimfire').then(helpers.classifyRimfire)
+      return work('ammunition/rimfire')
 
     case ItemType.centerfire:
       return Promise.all(
         ['centerfire-pistol', 'centerfire-rifle', 'bulk-surplus'].map(t =>
           throttle(() => work('ammunition/' + t))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
     case ItemType.shotgun:
-      return work('ammunition/shotgun-ammunition').then(helpers.classifyShotgun)
+      return work('ammunition/shotgun-ammunition')
 
     case ItemType.shot:
       return work('reloading/bullets')
@@ -52,7 +50,7 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
     case ItemType.powder:
       return work('reloading/powder')
     case ItemType.primer:
-      return Promise.resolve([]) // no results as of 20190511
+      return Promise.resolve(null) // no results as of 20190511
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

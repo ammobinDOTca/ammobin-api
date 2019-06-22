@@ -45,7 +45,7 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
     case ItemType.shot:
     case ItemType.primer:
     case ItemType.powder:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

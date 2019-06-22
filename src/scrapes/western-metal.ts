@@ -56,7 +56,7 @@ export function westernMetal(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   switch (type) {
     case ItemType.rimfire:
-      return Promise.resolve([])
+      return Promise.resolve(null)
 
     case ItemType.centerfire:
       return Promise.all([

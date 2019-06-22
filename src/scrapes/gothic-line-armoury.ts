@@ -40,7 +40,7 @@ export function gothicLineArmoury(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.rimfire:
     case ItemType.shotgun:
-      return Promise.resolve([])
+      return Promise.resolve(null)
 
     case ItemType.centerfire:
       return work().then(helpers.classifyCenterfire)

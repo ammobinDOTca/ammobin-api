@@ -53,7 +53,7 @@ export async function magdump(type: ItemType): Promise<IItemListing[]> {
     case ItemType.primer:
     case ItemType.case:
     case ItemType.powder:
-      return Promise.resolve([]) // no reloading as of 20190616
+      return Promise.resolve(null) // no reloading as of 20190616
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

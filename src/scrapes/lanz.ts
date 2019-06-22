@@ -50,7 +50,7 @@ export function lanz(type: ItemType) {
     case ItemType.powder:
       return work('reloading-supplies/powder')
     case ItemType.case:
-      return Promise.resolve([])
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
