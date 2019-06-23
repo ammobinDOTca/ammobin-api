@@ -17,7 +17,7 @@ export async function tillsonburg(type: ItemType): Promise<IItemListing[]> {
   const getUrl = t => page => `https://tillsonburggunshop.com/${t}`
   switch (type) {
     case ItemType.rimfire:
-      return [] // no rimfire as of 20190208
+      return Promise.resolve(null) // no rimfire as of 20190208
     case ItemType.centerfire:
       return scrape(getUrl('Ammunition/Centerfire'), info, selectors).then(
         helpers.classifyCenterfire
