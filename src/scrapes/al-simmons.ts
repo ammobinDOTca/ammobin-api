@@ -1,4 +1,3 @@
-import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 
@@ -10,41 +9,31 @@ export function alSimmons(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product ',
-    name: '.product-title',
-    img: '.wp-post-image',
-    link: '.product-title a',
+    item: '.product',
+    name: '.woocommerce-loop-product__title',
+    img: 'img',
+    link: 'a',
     price: '.price',
     nextPage: '.next',
     outOfStock: '.out-of-stock',
   }
-
+  // todo: [itemprop='description'] -> item count
   switch (type) {
     case ItemType.rimfire:
     case ItemType.centerfire:
     case ItemType.shotgun:
       return scrape(
         p =>
-          `https://${
-            info.site
-          }/product-category/ammunition/page/${p}/?product_count=100`,
+          `https://${info.site}/product-category/ammunition/page/${p}/?product_count=100`,
         info,
         selectors
-      ).then(helpers.classify(type))
+      )
 
     case ItemType.shot:
     case ItemType.case:
     case ItemType.powder:
     case ItemType.primer:
-      return scrape(
-        p =>
-          `https://${
-            info.site
-          }/product-category/reloading/page/${p}/?product_count=100`,
-        info,
-        selectors
-      )
-
+      return Promise.resolve(null) // no reloading 20190635
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
