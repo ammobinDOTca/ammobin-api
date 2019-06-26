@@ -16,7 +16,7 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
     name: '.woocommerce-loop-product__title',
     img: '.wp-post-image',
     link: 'a',
-    price: '.ammount',
+    price: '.amount',
     nextPage: '.next',
     outOfStock: '.out-of-stock',
   }
