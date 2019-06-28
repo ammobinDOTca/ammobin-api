@@ -1,84 +1,67 @@
 import * as helpers from '../helpers'
 import throat from 'throat'
-import axios from 'axios'
-import cheerio = require('cheerio')
 import { RENDERTRON_URL } from '../constants'
-import { Province } from '../graphql-types'
-async function makeTendaRequest(ammotype, page = 1) {
-  await helpers.delayScrape(`https://www.gotenda.com`)
-  const f = await axios.get(
-    `${RENDERTRON_URL}/render/https://gotenda.com/product-category/ammunition/${ammotype}/${
-      page > 1 ? 'page/' + page : ''
-    }?number=48`
-  )
 
-  let $ = cheerio.load(f.data)
-  const items = []
-  $('.product-grid  .item-product').each((index, row) => {
-    const result: any = {}
-    const tha = $(row)
-    result.link = tha.find('.product-thumb-link').prop('href')
-    result.img = tha.find('.product-thumb-link img').prop('src')
-    result.name = tha
-      .find('.title-product')
-      .text()
-      .trim()
-    const priceTxt = tha
-      .find('.woocommerce-Price-amount')
-      .first()
-      .text() // sale price come first...
-    result.price = parseFloat(priceTxt.replace('$', ''))
-    if (isNaN(result.price)) {
-      return // dont include empty prices
-    }
-    result.vendor = 'Tenda'
-    result.provinces = [Province.ON]
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
-    items.push(result)
-  })
-
-  if (items.length > 0 && $('.product-pagi-nav .next').length > 0) {
-    $ = null // dont hold onto page for recursion
-    return makeTendaRequest(ammotype, page + 1)
-      .then(results => items.concat(results))
-      .catch(e => {
-        if (e.response && e.response.status !== 200) {
-          console.warn(
-            `went too far with tenda. got HTTP ${e.response.status} on page ${page} for ${ammotype}`
-          )
-          return items
-        }
-        throw e
-      })
-  } else {
-    return items
-  }
-}
-
-export function tenda(type) {
+export function tenda(type): Promise<IItemListing[]> {
   const throttle = throat(1)
+  const info: Info = {
+    site: 'gotenda.com',
+    vendor: `Tenda`,
+    provinces: [Province.ON],
+  }
+
+  const selectors: Selectors = {
+    item: '.product-grid  .item-product',
+    name: '.title-product',
+    img: '.product-thumb-link img',
+    link: '.product-thumb-link',
+    price: '.woocommerce-Price-amount',
+    nextPage: '.product-pagi-nav .next',
+    //outOfStock: '.out-of-stock',
+  }
+
+  function makeTendaRequest(t) {
+    return scrape(
+      page =>
+        `${RENDERTRON_URL}/render/https://gotenda.com/product-category/${t}/${
+          page > 1 ? 'page/' + page : ''
+        }?number=48`,
+      info,
+      selectors
+    )
+  }
   switch (type) {
-    case 'rimfire':
+    case ItemType.rimfire:
       return Promise.all(
         ['rimfire-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest(t))
+          throttle(() => makeTendaRequest('ammunition/' + t))
         )
       ).then(helpers.combineResults)
 
-    case 'centerfire':
+    case ItemType.centerfire:
       return Promise.all(
         ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest(t))
+          throttle(() => makeTendaRequest('ammunition/' + t))
         )
       ).then(helpers.combineResults)
 
-    case 'shotgun':
+    case ItemType.shotgun:
       return Promise.all(
         ['shotgun-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest(t))
+          throttle(() => makeTendaRequest('ammunition/' + t))
         )
       ).then(helpers.combineResults)
-
+    case ItemType.primer:
+      return makeTendaRequest('reloading/primers')
+    case ItemType.powder:
+      return makeTendaRequest('reloading/gun-powders')
+    case ItemType.case:
+      return Promise.resolve(null)
+    case ItemType.shot:
+      return makeTendaRequest('reloading/brass-bullet')
     default:
       throw new Error(`unknown type: ${type}`)
   }
