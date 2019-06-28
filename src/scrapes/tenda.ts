@@ -7,7 +7,9 @@ import { Province } from '../graphql-types'
 async function makeTendaRequest(ammotype, page = 1) {
   await helpers.delayScrape(`https://www.gotenda.com`)
   const f = await axios.get(
-    `${RENDERTRON_URL}/render/https://gotenda.com/product-category/ammunition/${ammotype}/page/${page}/?number=48`
+    `${RENDERTRON_URL}/render/https://gotenda.com/product-category/ammunition/${ammotype}/${
+      page > 1 ? 'page/' + page : ''
+    }?number=48`
   )
 
   let $ = cheerio.load(f.data)
@@ -42,9 +44,7 @@ async function makeTendaRequest(ammotype, page = 1) {
       .catch(e => {
         if (e.response && e.response.status !== 200) {
           console.warn(
-            `went too far with tenda. got HTTP ${
-              e.response.status
-            } on page ${page} for ${ammotype}`
+            `went too far with tenda. got HTTP ${e.response.status} on page ${page} for ${ammotype}`
           )
           return items
         }
