@@ -1,8 +1,8 @@
 import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'
-
+import throat from 'throat'
 import { scrape, Info, Selectors } from './common'
-
+const throttle = throat(1)
 export function tesro(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     site: 'tesro.ca',
@@ -21,29 +21,31 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
+  const work = t =>
+    scrape(_ => `https://www.${info.site}/${t}.html?limit=all`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
-      return scrape(
-        _ =>
-          `https://www.${info.site}/ammunition-and-pellets/smallbore-ammunition.html?limit=all`,
-        info,
-        selectors
-      ).then(helpers.classifyRimfire)
+      return work('ammunition-and-pellets/smallbore-ammunition')
     case ItemType.centerfire:
       return Promise.all(
         ['centerfire-ammunition', 'pistol-ammunition'].map(s =>
-          scrape(
-            _ =>
-              `https://www.${info.site}/ammunition-and-pellets/${s}.html?limit=all`,
-            info,
-            selectors
-          )
+          throttle(() => work('ammunition-and-pellets/' + s))
         )
-      )
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      ).then(helpers.combineResults)
     case ItemType.shotgun:
       return Promise.resolve(null)
+    case ItemType.case:
+      return work('reloading/brass')
+    case ItemType.shot:
+      return Promise.all(
+        ['bullets', 'pistol-bullets', 'lapua-hunting-bullets'].map(t =>
+          throttle(() => work('reloading/' + t))
+        )
+      ).then(helpers.combineResults)
+    case ItemType.primer:
+      return work('reloading/primers')
+    case ItemType.powder:
+      return work('reloading/powder')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
