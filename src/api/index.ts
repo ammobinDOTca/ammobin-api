@@ -58,6 +58,7 @@ server.route({
       renderTime,
       interactiveTime,
       href,
+      requestId: request.info.id,
     })
     return h.response('success')
   },
@@ -75,6 +76,7 @@ server.route({
       brand: body.brand,
       subType: body.subType,
       itemType: body.itemType,
+      requestId: request.info.id,
     })
     return h.response('success')
   },
@@ -130,6 +132,7 @@ server.route({
         url: body.link,
         userAgent: request.headers['user-agent'],
         record,
+        requestId: request.info.id,
       })
     } catch (e) {
       logger.error('ERROR: failed to track click: ' + e)
@@ -189,6 +192,8 @@ server.route({
     logger.info({
       type: 'content-security-report',
       body,
+
+      requestId: req.info.id,
     })
     return h.response('thanks for reporting')
   },
@@ -201,6 +206,7 @@ server.events.on('response', (request: Request) => {
   logger.info({
     type: 'api-req',
     remoteAddress: request.info.remoteAddress,
+    requestId: request.info.id,
     method: request.method.toUpperCase(),
     path: request.url.pathname,
     statusCode: request.response
@@ -215,6 +221,7 @@ server.events.on('response', (request: Request) => {
   ) {
     logger.info({
       type: 'graphql-query',
+      requestId: request.info.id,
       query: (request.payload as any).query,
       variables: (request.payload as any).variables,
     })
@@ -225,6 +232,7 @@ server.events.on('response', (request: Request) => {
   ) {
     logger.error({
       type: 'http500',
+      requestId: request.info.id,
       request: {
         method: request.method.toUpperCase(),
         url: request.url,
