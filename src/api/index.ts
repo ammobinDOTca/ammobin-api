@@ -45,7 +45,10 @@ server.route({
   path: '/track-performance',
   handler: function(request, h) {
     const userAgent = request.headers['user-agent'] || 'unknown'
-    const { preformance, href } = JSON.parse(request.payload as string)
+    const { preformance, href } =
+      typeof request.payload === 'string'
+        ? JSON.parse(request.payload)
+        : request.payload
 
     const connectTime = preformance.responseEnd - preformance.requestStart
     const renderTime = preformance.domComplete - preformance.domLoading
@@ -69,7 +72,10 @@ server.route({
   handler: function(request, h) {
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers['user-agent'] || 'unknown'
-    const body = JSON.parse(request.payload as string)
+    const body =
+      typeof request.payload === 'string'
+        ? JSON.parse(request.payload)
+        : request.payload
     logger.info({
       type: 'track-view',
       userAgent,
@@ -87,7 +93,10 @@ server.route({
   path: '/track-click',
   handler: async function(request, h) {
     // record user agent + calibre + brand that user opened up
-    const body = JSON.parse(request.payload as string)
+    const body =
+      typeof request.payload === 'string'
+        ? JSON.parse(request.payload)
+        : request.payload
     const targetUrl = url.parse(body.link, true)
 
     let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
