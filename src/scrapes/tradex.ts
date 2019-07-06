@@ -1,14 +1,17 @@
 import axios from 'axios'
-
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import throat from 'throat'
 import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 const SITE = 'https://www.tradeexcanada.com'
 // 0 based list
-async function work(page = 0) {
+//
+const throttle = throat(1)
+async function work(product: string, page = 0) {
   await helpers.delayScrape(SITE)
   console.log(`loading page ${page} for tradex`)
 
-  return axios.get(`${SITE}/produits/78?page=${page}`).then(r => {
+  return axios.get(`${SITE}/produits/${product}?page=${page}`).then(r => {
     let $ = cheerio.load(r.data)
     const items = []
     $(
@@ -23,7 +26,7 @@ async function work(page = 0) {
       const priceTxt = tha.find('.uc-price').text()
       result.price = parseFloat(priceTxt.replace('$', ''))
       result.vendor = 'Trade Ex Canada'
-      result.province = 'ON'
+      result.provinces = [Province.ON]
 
       // div always present, empty if actually in stock
       if (
@@ -40,19 +43,28 @@ async function work(page = 0) {
 
     if ($('.pager-last.last').length) {
       $ = null // dont hold onto page
-      return work(page + 1).then(res => items.concat(res))
+      return work(product, page + 1).then(res => items.concat(res))
     } else {
       return items
     }
   })
 }
 
-export function tradex(type) {
+export function tradex(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case 'centerfire':
-    case 'shotgun':
-    case 'rimfire':
-      return work().then(items => helpers.classifyBullets(items, type))
+    case ItemType.centerfire:
+    case ItemType.shotgun:
+    case ItemType.rimfire:
+      return work('78', 0)
+    case ItemType.shot:
+      return Promise.all(
+        ['87', '88'].map(t => throttle(() => work(t, 0)))
+      ).then(helpers.combineResults)
+    case ItemType.case:
+    case ItemType.primer:
+      return work('87', 0)
+    case ItemType.powder:
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
