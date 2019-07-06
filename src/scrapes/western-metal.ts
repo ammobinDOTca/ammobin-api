@@ -1,58 +1,41 @@
-import axios from 'axios'
-
-import cheerio = require('cheerio')
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { ItemType, IItemListing } from '../graphql-types'
+import { ItemType, IItemListing, Province } from '../graphql-types'
 
-async function fn(section, type, page = 1): Promise<IItemListing[]> {
-  await helpers.delayScrape('https://www.westernmetal.ca')
-
-  return axios
-    .get(
-      `https://www.westernmetal.ca/shooting-category/${section}?field_product_types_tid[]=${type}&sort_order=DESC&page=${page}`
-    )
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.view-content .views-row').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-        if (tha.find('.out-stock').length) {
-          return
-        }
-
-        result.link =
-          'https://www.westernmetal.ca' +
-          tha.find('.views-field-title a').prop('href')
-        result.img = tha
-          .find('.views-field-field-product-image img')
-          .prop('src')
-        const split = result.link.split('/')
-        result.name = split[split.length - 1].split('-').join(' ')
-        result.price = parseFloat(
-          tha
-            .find('.views-field-php')
-            .text()
-            .replace('$', '')
-        )
-        result.vendor = 'Western Metal'
-        result.province = 'AB'
-        items.push(result)
-      })
-
-      if ($('.next').length > 0 && items.length > 0) {
-        // load next page
-        $ = null // dont hold onto current page
-        console.log('loading WesternMetal page', page + 1)
-        return fn(section, type, page + 1).then(ff => ff.concat(items))
-      } else {
-        return items
-      }
-    })
-}
+import { scrape, Info, Selectors } from './common'
 
 export function westernMetal(type: ItemType): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'westernmetal.ca',
+    vendor: 'Western Metal',
+    provinces: [Province.AB],
+  }
+
+  const selectors: Selectors = {
+    item: '.view-content .views-row',
+    name: '',
+    link: '.views-field-title a',
+    price: '.views-field-php',
+    img: '.views-field-field-product-image img',
+    nextPage: '.next',
+    outOfStock: '.out-stock',
+  }
+  const remapName = (items: IItemListing[]) =>
+    items.map(result => {
+      const split = result.link.split('/')
+      result.name = split[split.length - 1].split('-').join(' ')
+      return result
+    })
+  const fn = (section, t?) =>
+    scrape(
+      page =>
+        `https://www.${info.site}/shooting-category/${section}?${
+          t ? 'field_product_types_tid[]=' + t + '&' : ''
+        }sort_order=DESC&page=${page}`,
+      info,
+      selectors
+    ).then(remapName)
+
   const throttle = throat(1)
   switch (type) {
     case ItemType.rimfire:
@@ -64,12 +47,24 @@ export function westernMetal(type: ItemType): Promise<IItemListing[]> {
         throttle(() => fn('new-ammunition', 81)),
         throttle(() => fn('remanufactured-ammunition', 80)),
         throttle(() => fn('remanufactured-ammunition', 81)),
-      ])
-        .then(helpers.combineResults)
-        .then(i => helpers.classifyBullets(i, type))
+      ]).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return fn('new-ammunition', 538).then(helpers.classifyShotgun)
+      return fn('new-ammunition', 538)
+
+    case ItemType.shot:
+      return Promise.all(
+        ['bullets-lead', 'bullets-plated', 'bullets-jacketed', 'lead-shot'].map(
+          f => throttle(() => fn(f))
+        )
+      ).then(helpers.combineResults)
+
+    case ItemType.primer:
+      return fn('primers')
+    case ItemType.case:
+      return fn('brass')
+    case ItemType.powder:
+      return fn('smokeless-powders')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
