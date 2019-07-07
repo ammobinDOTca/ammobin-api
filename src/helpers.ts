@@ -18,7 +18,8 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     return _siteToDelayMap[site]
   }
 
-  let delayMs = 1000 // default to 1s between requests
+  const defaultDelayMs = 5000 // default to 5s between requests
+  let delayMs = defaultDelayMs
   try {
     const robots = await axios.get(site + '/robots.txt').then(d => d.data)
 
@@ -30,7 +31,9 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
       .find(l => l[0].toLowerCase() === 'crawl-delay')
 
     if (f) {
-      delayMs = Math.min(parseInt(f[1], 10) * 1000, 10000) // up to 10s
+      // check that actual number and between 0 and 1 min
+      const parsed = parseInt(f[1], 10)
+      delayMs = parsed >= 0 ? Math.min(parsed * 1000, 60000) : defaultDelayMs
     } else {
       console.debug('no Crawl-delay found for ' + site)
     }

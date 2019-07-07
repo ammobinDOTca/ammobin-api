@@ -12,6 +12,7 @@ export interface Selectors {
   link: string
   price: string
   nextPage?: string
+  salePrice?: string
 }
 
 export interface Info {
