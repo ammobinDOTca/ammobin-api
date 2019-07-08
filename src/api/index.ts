@@ -209,15 +209,16 @@ server.route({
 } as ServerRoute)
 
 server.events.on('response', (request: Request) => {
-  if (request.url.pathname === '/ping') {
-    return // dont log ping requests
-  }
+  //if (request.url.pathname === '/ping') {
+  // return // dont log ping requests
+  //}
   logger.info({
     type: 'api-req',
     remoteAddress: request.info.remoteAddress,
     requestId: request.info.id,
     method: request.method.toUpperCase(),
     path: request.url.pathname,
+    headers: request.headers,
     statusCode: request.response
       ? (request.response as ResponseObject).statusCode
       : 0,
@@ -246,6 +247,7 @@ server.events.on('response', (request: Request) => {
         method: request.method.toUpperCase(),
         url: request.url,
         body: request.payload,
+        headers: request.headers,
       },
       string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${
         request.url.pathname
