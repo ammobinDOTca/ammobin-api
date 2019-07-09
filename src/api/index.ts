@@ -291,11 +291,12 @@ async function doWork() {
 }
 
 doWork()
-
-// listen on SIGINT signal and gracefully stop the server
-process.on('SIGINT', function() {
+function shutDown() {
   logger.info({ type: 'server-stopped', uri: server.info.uri })
   server
     .stop({ timeout: 10000 })
     .then(_ => process.exit(0), _ => process.exit(1))
-})
+}
+process.on('SIGTERM', shutDown)
+// listen on SIGINT signal and gracefully stop the server
+process.on('SIGINT', shutDown)
