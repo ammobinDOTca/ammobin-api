@@ -98,7 +98,11 @@ async function makeCabelasCalibre(ammotype, subtype) {
   await helpers.delayScrape(BASE)
 
   return axios
-    .get(`${BASE}/checkproductvariantavailability/${ammotype}?specs=${subtype}`)
+    .get(
+      `${BASE}/checkproductvariantavailability/${ammotype}?${
+        subtype ? 'specs=' + subtype : ''
+      }`
+    )
     .then(r => {
       const $ = cheerio.load(r.data)
 
