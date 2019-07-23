@@ -1,55 +1,43 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import * as helpers from '../helpers'
-import { ItemType, IItemListing } from '../graphql-types'
-
-const SITE = 'https://store.theshootingcentre.com'
-
-async function work(type: string, page = 1) {
-  await helpers.delayScrape(SITE)
-
-  console.log(`loading theShootingCenter ${page}`)
-  return axios.get(`${SITE}/ammunition/${type}?page=${page}`).then(r => {
-    let $ = cheerio.load(r.data)
-    const items = []
-    $('.product-item').each((index, row) => {
-      const result: any = {}
-      const tha = $(row)
-      result.link = SITE + tha.find('.product-item-link').prop('href')
-      result.img = tha.find('.product-image-photo').prop('src')
-      if (result.img && result.img.indexOf('no-image') >= 0) {
-        result.img = null
-      }
-      result.name = tha
-        .find('.product-item-link')
-        .text()
-        .trim()
-      const priceTxt = tha.find('.price').text()
-      result.price = parseFloat(priceTxt.replace('$', ''))
-
-      result.vendor = 'Calgary Shooting Center'
-      result.provinces = ['AB']
-
-      items.push(result)
-    })
-
-    if ($('pages-item-next').length > 0) {
-      $ = null // dont hold onto page for recursion
-      return work(type, page + 1).then(results => items.concat(results))
-    } else {
-      return items
-    }
-  })
-}
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { scrape, Info, Selectors } from './common'
 
 export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'store.theshootingcentre.com',
+    vendor: `Calgary Shooting Center`,
+    provinces: [Province.AB],
+  }
+
+  const selectors: Selectors = {
+    item: '.product-item',
+    name: '.product-item-link',
+    img: '.product-image-photo',
+    link: '.product-item-link',
+    price: '.price',
+    //nextPage: '.pages-item-next',
+    //outOfStock: '.out-of-stock',
+  }
+  const work = t =>
+    scrape(
+      _ => `https://${info.site}/${t}?product_list_limit=all`,
+      info,
+      selectors
+    )
+
   switch (type) {
     case ItemType.rimfire:
-      return work('rimfire').then(helpers.classifyRimfire)
+      return work('ammunition/rimfire')
     case ItemType.centerfire:
-      return work('centrefire').then(helpers.classifyCenterfire)
+      return work('ammunition/centrefire')
     case ItemType.shotgun:
-      return work('shotshell').then(helpers.classifyShotgun)
+      return work('ammunition/shotshell')
+    case ItemType.primer:
+      return work('reloading/primers')
+    case ItemType.powder:
+      return work('reloading/powder')
+    case ItemType.case:
+    case ItemType.shot:
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
