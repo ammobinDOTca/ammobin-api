@@ -1,62 +1,51 @@
-import axios from 'axios'
-import cheerio = require('cheerio')
-import { delayScrape, combineResults } from '../helpers'
-import throat from 'throat'
 import { ItemType, IItemListing, Province } from '../graphql-types'
-async function work(type, page = 1): Promise<IItemListing[]> {
-  await delayScrape('https://www.bvoutdoors.com')
+import { scrape, Info, Selectors } from './common'
+import { combineResults } from '../helpers'
+import throat from 'throat'
 
-  console.log(`loading bvoutdoors ${type} ${page}`)
-  return axios
-    .get(`https://www.bvoutdoors.com/${type}/?page=${page}&matchesperpage=80`)
-    .then(r => {
-      let $ = cheerio.load(r.data)
-      const items = []
-      $('.product-list-item').each((index, row) => {
-        const result: any = {}
-        const tha = $(row)
-        result.link = tha.find('.product-link').prop('href')
-        result.img = tha.find('.image-thumb').prop('src')
-        result.name = tha.find('.productnameTitle').text()
-        const priceTxt = tha.find('.text-price').text()
-        result.price = parseFloat(priceTxt.replace('$', ''))
-        result.brand = tha.find('.caption h6').text()
-        result.vendor = 'BV Outdoor Essentials'
-        result.province = 'BC'
-        result.provinces = [Province.BC]
-
-        items.push(result)
-      })
-
-      if ($('.button-small.next').length) {
-        $ = null // dont hold onto page for recursion
-        return work(type, page + 1).then(results => items.concat(results))
-      } else {
-        return items
-      }
-    })
-}
 export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
+  const info: Info = {
+    site: 'bvoutdoors.com',
+    vendor: `BV Outdoor Essentials`,
+    provinces: [Province.BC],
+  }
 
+  const selectors: Selectors = {
+    item: '.product-list-item',
+    name: '.productnameTitle',
+    img: '.image-thumb',
+    link: '.product-link',
+    price: '.text-price',
+    //brand: '.caption h6',
+    nextPage: '.button-small.next',
+    //    outOfStock: '.out-of-stock',
+  }
+
+  const work = t =>
+    scrape(
+      page => `https://www.${info.site}/${t}/?page=${page}&matchesperpage=80`,
+      info,
+      selectors
+    )
   switch (type) {
-    case 'rimfire':
+    case ItemType.rimfire:
       return work('Ammunition-Rimfire-2')
 
-    case 'centerfire':
+    case ItemType.centerfire:
       return Promise.all(
         ['Ammunition-Rifle-1', 'Ammunition-Handgun-108'].map(t =>
-          throttle(() => work(t, 1))
+          throttle(() => work(t))
         )
       ).then(combineResults)
 
-    case 'shotgun':
+    case ItemType.shotgun:
       return Promise.all(
         [
           'Ammunition-Shotshells-3',
           'Ammunition-Slugs-258',
           'Ammunition-Buckshot-257',
-        ].map(t => throttle(() => work(t, 1)))
+        ].map(t => throttle(() => work(t)))
       ).then(combineResults)
     case ItemType.case:
       return work('reloading-unprimed-brass-341')
