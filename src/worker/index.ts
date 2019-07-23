@@ -18,7 +18,7 @@ const client = redis.createClient({ host: 'redis' })
 
 function proxyImages(items) {
   return items.map(i => {
-    if (!i.img) {
+    if (!i.img || i.img === '') {
       return i
     }
 
