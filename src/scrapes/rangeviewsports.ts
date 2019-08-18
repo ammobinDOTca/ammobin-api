@@ -10,7 +10,7 @@ import throat from 'throat'
 export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'rangeviewcanada.com',
+    site: 'rangeviewsports.ca',
     vendor: `Rangeview Sports`,
     provinces: [Province.ON],
   }
@@ -28,7 +28,7 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
   const work = t =>
     scrape(
       p =>
-        `https://www.${info.site}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60`,
+        `https://${info.site}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60`,
       info,
       selectors
     )
