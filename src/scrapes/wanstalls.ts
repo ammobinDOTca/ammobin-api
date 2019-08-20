@@ -13,30 +13,29 @@ export function wanstalls(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product-box-1',
-    link: '.product-image',
-    name: '.product-name',
-    img: '.product-image img',
-    price: '.special-price .price , .price-box .price',
+    item: '.product',
+    link: 'a',
+    name: '.card-title',
+    img: 'img',
+    price: '.price--withoutTax',
+    nextPage: '.pagination-item--next',
   }
 
   const getStuff = t =>
-    scrape(
-      p => `https://www.${info.site}/ammunition/${t}.html?limit=all`,
-      info,
-      selectors
-    )
+    scrape(p => `https://${info.site}/${t}?page=${p}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
-      return getStuff('rimfire')
+      return getStuff('rimfire-ammunition')
 
     case ItemType.shotgun:
-      return getStuff('shot-gun')
+      return getStuff('shotgun-ammunition')
 
     case ItemType.centerfire:
       return Promise.all(
-        ['pistol', 'rifle', 'surplus'].map(t => throttle(() => getStuff(t)))
+        ['rifle-ammunition', 'handgun-ammunition'].map(t =>
+          throttle(() => getStuff(t))
+        )
       ).then(helpers.combineResults)
     case ItemType.case:
     case ItemType.powder:
