@@ -8,6 +8,10 @@ import * as helpers from '../helpers'
 import { ApolloServer } from 'apollo-server-hapi'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
+import crypto from 'crypto'
+
+// used to encrypt request ip
+const secret = process.env.HASH_SECRET || Math.random().toString()
 
 import { typeDefs, resolvers } from './graphql'
 import {
@@ -212,10 +216,23 @@ server.events.on('response', (request: Request) => {
   //if (request.url.pathname === '/ping') {
   // return // dont log ping requests
   //}
+  const ip =
+    request.headers['x-forwarded-for'] ||
+    request.headers['x-real-ip'] ||
+    request.info.remoteAddress
+  const sessionId = ip
+    ? crypto
+        .createHmac('sha256', secret)
+        .update(ip)
+        .digest('hex')
+    : 'unknown_ip'
+  delete request.headers['x-forwarded-for']
+  delete request.headers['x-real-ip']
+  const requestId = request.info.id
   logger.info({
     type: 'api-req',
-    remoteAddress: request.info.remoteAddress,
-    requestId: request.info.id,
+    requestId,
+    sessionId,
     method: request.method.toUpperCase(),
     path: request.url.pathname,
     headers: request.headers,
@@ -231,7 +248,8 @@ server.events.on('response', (request: Request) => {
   ) {
     logger.info({
       type: 'graphql-query',
-      requestId: request.info.id,
+      sessionId,
+      requestId,
       query: (request.payload as any).query,
       variables: (request.payload as any).variables,
     })
@@ -242,7 +260,8 @@ server.events.on('response', (request: Request) => {
   ) {
     logger.error({
       type: 'http500',
-      requestId: request.info.id,
+      requestId,
+      sessionId,
       request: {
         method: request.method.toUpperCase(),
         url: request.url,
