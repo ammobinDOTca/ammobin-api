@@ -6,7 +6,7 @@ axios.defaults.headers.common[
   'User-Agent'
 ] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}` // be a
 axios.defaults.headers.common.Referer = `ammobin.ca`
-axios.defaults.timeout = 10000 // 10s request timeout
+axios.defaults.timeout = 20000 // 20s request timeout
 
 import { cabelas } from './cabelas-api'
 import { canadiantire } from './canadian-tire'
