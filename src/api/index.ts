@@ -57,7 +57,7 @@ server.route({
     const connectTime = preformance.responseEnd - preformance.requestStart
     const renderTime = preformance.domComplete - preformance.domLoading
     const interactiveTime = preformance.domInteractive - preformance.domLoading
-    logger.info({
+    request.log('info', {
       type: 'track-preformance',
       userAgent,
       preformance,
@@ -80,7 +80,7 @@ server.route({
       typeof request.payload === 'string'
         ? JSON.parse(request.payload)
         : request.payload
-    logger.info({
+    request.log('info', {
       type: 'track-view',
       userAgent,
       brand: body.brand,
@@ -140,7 +140,7 @@ server.route({
         console.warn('WARN: unable to find matching record for ' + body.link)
       }
 
-      logger.info({
+      request.log('info', {
         type: 'track-outbound-click',
         url: body.link,
         userAgent: request.headers['user-agent'],
@@ -148,7 +148,7 @@ server.route({
         requestId: request.info.id,
       })
     } catch (e) {
-      logger.error('ERROR: failed to track click: ' + e)
+      server.log('error', 'ERROR: failed to track click: ' + e)
     }
 
     return h.response('success')
@@ -202,7 +202,7 @@ server.route({
         typeof req.payload
       )
     }
-    logger.info({
+    req.log('info', {
       type: 'content-security-report',
       body,
 
@@ -213,26 +213,8 @@ server.route({
 } as ServerRoute)
 
 server.events.on('response', (request: Request) => {
-  //if (request.url.pathname === '/ping') {
-  // return // dont log ping requests
-  //}
-  const ip =
-    request.headers['x-forwarded-for'] ||
-    request.headers['x-real-ip'] ||
-    request.info.remoteAddress
-  const sessionId = ip
-    ? crypto
-        .createHmac('sha256', secret)
-        .update(ip)
-        .digest('hex')
-    : 'unknown_ip'
-  delete request.headers['x-forwarded-for']
-  delete request.headers['x-real-ip']
-  const requestId = request.info.id
-  logger.info({
+  request.log('info', {
     type: 'api-req',
-    requestId,
-    sessionId,
     method: request.method.toUpperCase(),
     path: request.url.pathname,
     headers: request.headers,
@@ -246,10 +228,8 @@ server.events.on('response', (request: Request) => {
     request.method.toUpperCase() === 'POST' &&
     request.url.pathname === '/graphql'
   ) {
-    logger.info({
+    request.log('info', {
       type: 'graphql-query',
-      sessionId,
-      requestId,
       query: (request.payload as any).query,
       variables: (request.payload as any).variables,
     })
@@ -258,10 +238,8 @@ server.events.on('response', (request: Request) => {
     request.response &&
     (request.response as ResponseObject).statusCode >= 500
   ) {
-    logger.error({
+    request.log('error', {
       type: 'http500',
-      requestId,
-      sessionId,
       request: {
         method: request.method.toUpperCase(),
         url: request.url,
@@ -275,6 +253,28 @@ server.events.on('response', (request: Request) => {
   }
 })
 
+server.events.on('log', (event, tag) => {
+  logger.log(event.tags[0], event.data)
+})
+
+server.events.on('request', (request, event) => {
+  const ip =
+    request.headers['x-forwarded-for'] ||
+    request.headers['x-real-ip'] ||
+    request.info.remoteAddress
+  const sessionId = ip
+    ? crypto
+        .createHmac('sha256', secret)
+        .update(ip)
+        .digest('hex')
+    : 'unknown_ip'
+  delete request.headers['x-forwarded-for']
+  delete request.headers['x-real-ip']
+  const requestId = request.info.id
+  console.log('.....', event.tags, '.....')
+  logger.log(event.tags.pop(), { ...event.data, sessionId, requestId })
+})
+
 async function doWork() {
   try {
     const apolloServer = new ApolloServer({
@@ -286,7 +286,7 @@ async function doWork() {
         host: 'redis',
       }),
       formatError: error => {
-        logger.error({ type: 'graphql-error', error: error.toString() })
+        logger.log('error', { type: 'graphql-error', error: error.toString() })
         return error
       },
       plugins: [responseCachePlugin()],
@@ -301,17 +301,17 @@ async function doWork() {
     await apolloServer.installSubscriptionHandlers(server.listener)
 
     await server.start()
-    logger.info({ type: 'server-started', uri: server.info.uri })
+    server.log('info', { type: 'server-started', uri: server.info.uri })
   } catch (e) {
     console.error(e)
-    logger.error({ type: 'failed-to-start-server', error: e.toString() })
+    server.log('error', { type: 'failed-to-start-server', error: e.toString() })
     process.exit(1)
   }
 }
 
 doWork()
 function shutDown() {
-  logger.info({ type: 'server-stopped', uri: server.info.uri })
+  server.log('info', { type: 'server-stopped', uri: server.info.uri })
   server
     .stop({ timeout: 10000 })
     .then(_ => process.exit(0), _ => process.exit(1))
