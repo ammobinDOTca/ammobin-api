@@ -254,7 +254,7 @@ server.events.on('response', (request: Request) => {
 })
 
 server.events.on('log', (event, tag) => {
-  logger.log(event.tags[0], event.data)
+  logger.info(event.data)
 })
 
 server.events.on('request', (request, event) => {
@@ -271,8 +271,7 @@ server.events.on('request', (request, event) => {
   delete request.headers['x-forwarded-for']
   delete request.headers['x-real-ip']
   const requestId = request.info.id
-  console.log('.....', event.tags, '.....')
-  logger.log(event.tags.pop(), { ...event.data, sessionId, requestId })
+  logger.info({ ...event.data, sessionId, requestId })
 })
 
 async function doWork() {
@@ -286,7 +285,7 @@ async function doWork() {
         host: 'redis',
       }),
       formatError: error => {
-        logger.log('error', { type: 'graphql-error', error: error.toString() })
+        server.log('error', { type: 'graphql-error', error: error.toString() })
         return error
       },
       plugins: [responseCachePlugin()],
