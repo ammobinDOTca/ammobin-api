@@ -8,5 +8,4 @@ RUN npm run build
 #VOLUME /build
 
 USER node
-# need to support old sites like canada ammo (till chrome drops support)
-CMD ["node","--tls-min-v1.0","dist/worker/index.js"]
+CMD ["node","dist/worker/index.js"]
