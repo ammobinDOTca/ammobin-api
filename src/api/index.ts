@@ -94,6 +94,24 @@ server.route({
 
 server.route({
   method: 'POST',
+  path: '/errors',
+  handler: async (request, h) => {
+    const body =
+      typeof request.payload === 'string'
+        ? JSON.parse(request.payload)
+        : request.payload
+
+    request.log('info', {
+      type: 'client-side-error',
+      userAgent: request.headers['user-agent'],
+      body,
+    })
+    return h.response('success')
+  },
+})
+
+server.route({
+  method: 'POST',
   path: '/track-click',
   handler: async function(request, h) {
     // record user agent + calibre + brand that user opened up
