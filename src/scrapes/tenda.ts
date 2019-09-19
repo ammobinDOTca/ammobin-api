@@ -26,7 +26,7 @@ export function tenda(type): Promise<IItemListing[]> {
   function makeTendaRequest(t) {
     return scrape(
       page =>
-        `${RENDERTRON_URL}/render/https://gotenda.com/product-category/${t}/${
+        `${RENDERTRON_URL}/render/https://www.gotenda.com/product-category/${t}/${
           page > 1 ? 'page/' + page : ''
         }?number=48`,
       info,
