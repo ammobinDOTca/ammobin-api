@@ -20,11 +20,7 @@ function work(path: String) {
     nextPage: '.pages-item-next',
   }
   const BASE = 'https://' + info.site
-  return scrape(
-    p => `${BASE}/index.php/${path}.html?product_list_limit=30&p=${p}`,
-    info,
-    selectors
-  )
+  return scrape(p => `${BASE}/index.php/${path}.html?p=${p}`, info, selectors)
 }
 
 export function barton(type: ItemType): Promise<IItemListing[]> {
