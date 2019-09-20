@@ -54,11 +54,10 @@ export function tenda(type): Promise<IItemListing[]> {
           throttle(() => makeTendaRequest('ammunition/' + t))
         )
       ).then(helpers.combineResults)
-    case ItemType.primer:
-      return makeTendaRequest('reloading/primers')
     case ItemType.powder:
       return makeTendaRequest('reloading/gun-powders')
     case ItemType.case:
+    case ItemType.primer:
       return Promise.resolve(null)
     case ItemType.shot:
       return makeTendaRequest('reloading/brass-bullet')
