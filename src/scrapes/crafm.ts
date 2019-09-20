@@ -35,9 +35,10 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
         )
       ).then(helpers.combineResults)
     case ItemType.shotgun:
-      return scrape(getUrl('ammunition/shotgun'), info, selectors).then(
+      return Promise.resolve(null)
+    /*return scrape(getUrl('ammunition/shotgun'), info, selectors).then(
         helpers.classifyShotgun
-      )
+      )*/
     case ItemType.powder:
       return scrape(
         getUrl('reloading-equipment/powder-primers'),
@@ -45,7 +46,7 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
         selectors
       )
     case ItemType.shot:
-      return scrape(getUrl('ammunition/projectiles'), info, selectors)
+    //return scrape(getUrl('ammunition/projectiles'), info, selectors)
     case ItemType.primer:
     case ItemType.case:
       return Promise.resolve(null)

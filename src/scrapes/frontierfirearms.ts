@@ -46,7 +46,7 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
     case ItemType.case:
       return work('hornady/hornady-brass')
     case ItemType.shot:
-      return work('hornady/bullets')
+    //return work('hornady/bullets')
     case ItemType.primer:
     case ItemType.powder:
       return Promise.resolve(null)
