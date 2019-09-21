@@ -41,7 +41,8 @@ export function faoc(type: ItemType): Promise<IItemListing[]> {
       ]).then(helpers.combineResults)
 
     case ItemType.case:
-      return makeFaocReq('reloading/brass')
+      //return makeFaocReq('reloading/brass')
+      return Promise.resolve([])
     case ItemType.powder:
       return makeFaocReq('reloading/powders')
     case ItemType.shot:
