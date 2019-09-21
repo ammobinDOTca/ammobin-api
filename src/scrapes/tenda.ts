@@ -27,7 +27,7 @@ export function tenda(type): Promise<IItemListing[]> {
     return scrape(
       page =>
         `${RENDERTRON_URL}/render/https://www.gotenda.com/product-category/${t}/${
-          page > 1 ? 'page/' + page : ''
+          page > 1 ? 'page/' + page + '/' : ''
         }?number=48`,
       info,
       selectors
