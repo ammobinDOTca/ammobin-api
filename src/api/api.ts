@@ -43,7 +43,7 @@ server.route({
 server.route({
   method: 'POST',
   path: '/track-performance',
-  handler: function(request, h) {
+  handler: function (request, h) {
     const userAgent = request.headers['user-agent'] || 'unknown'
     const { performance, href } =
       typeof request.payload === 'string'
@@ -69,7 +69,7 @@ server.route({
 server.route({
   method: 'POST',
   path: '/track-view',
-  handler: function(request, h) {
+  handler: function (request, h) {
     // record user agent + calibre + brand that user opened up
     const userAgent = request.headers['user-agent'] || 'unknown'
     const body =
@@ -111,7 +111,7 @@ server.route({
 server.route({
   method: 'POST',
   path: '/track-click',
-  handler: async function(request, h) {
+  handler: async function (request, h) {
     // record user agent + calibre + brand that user opened up
     const body =
       typeof request.payload === 'string'
@@ -185,7 +185,7 @@ server.route({
     },
   },
   path: '/content-security-report-uri',
-  handler: function(req, h) {
+  handler: function (req, h) {
     let body = {}
     try {
       body =
@@ -244,7 +244,7 @@ server.events.on('response', (request: Request) => {
       },
       string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${
         request.url.pathname
-      } because:  ${(request.response as any)._error.message}`,
+        } because:  ${(request.response as any)._error.message}`,
     })
   }
 })
@@ -260,9 +260,9 @@ server.events.on('request', (request, event) => {
     request.info.remoteAddress
   const sessionId = ip
     ? crypto
-        .createHmac('sha256', secret)
-        .update(ip)
-        .digest('hex')
+      .createHmac('sha256', secret)
+      .update(ip)
+      .digest('hex')
     : 'unknown_ip'
   delete request.headers['x-forwarded-for']
   delete request.headers['x-real-ip']
@@ -279,8 +279,8 @@ async function doWork() {
       tracing: DEV,
       cache: !DEV
         ? new RedisCache({
-            host: 'redis',
-          })
+          host: 'redis',
+        })
         : undefined,
       formatError: error => {
         server.log('error', { type: 'graphql-error', error: error.toString() })

@@ -32,8 +32,8 @@ export const resolvers: any = {
         }
       })
     },
-    bestPrices: async (_, args) => getBestPrices(args),
-    itemsListings: async (_, args) => getScrapeResponses(args),
-    itemsFlatListings: (_, args) => getItemsFlatListings(args),
+    bestPrices: (_, args) => getBestPrices(args),
+    itemsListings: (_, args) => getScrapeResponses(args, 'dynamo'),
+    itemsFlatListings: (_, args) => getItemsFlatListings(args, 'dynamo'),
   },
 }

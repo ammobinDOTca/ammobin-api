@@ -1,6 +1,6 @@
 import { SOURCES, AMMO_TYPES, RELOAD_TYPES, VENDORS } from '../constants'
 import * as helpers from '../helpers'
-import * as redis from 'redis'
+
 import {
   IItemsListingsOnQueryArguments,
   IItemListings,
@@ -13,59 +13,65 @@ import {
   IBestPrice,
 } from '../graphql-types'
 import { URL } from 'url'
-const client = redis.createClient({ host: 'redis' })
+
+import { getRedisItems } from './redis-getter'
+import { getDyanmoItems } from './dynamo-getter'
+
 
 export async function getBestPrices(
   params: IBestPricesOnQueryArguments
 ): Promise<IBestPrice[]> {
-  const type = params.type || ItemType.centerfire
-  const { calibres } = params
+  return Promise.resolve(null)
+  // TODO: not used
+  // const type = params.type || ItemType.centerfire
+  // const { calibres } = params
 
-  const keys: string[] = SOURCES.map(s =>
-    calibres.map(subType => helpers.getKey(s, type, subType))
-  ).flat<string>(Infinity)
+  // const keys: string[] = SOURCES.map(s =>
+  //   calibres.map(subType => helpers.getKey(s, type, subType))
+  // ).flat<string>(Infinity)
 
-  const res: any = await new Promise((resolve, reject) =>
-    client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
-  )
-  const results: IItemListing[][] = res.map(r => (r ? JSON.parse(r) : null))
-  const result = results
-    .reduce((final, result2) => {
-      return result2 && result2.length ? final.concat(result2) : final
-    }, [])
-    .reduce((response, item) => {
-      if (
-        !item ||
-        !item.subType ||
-        !item.unitCost ||
-        item.subType === 'UNKNOWN' ||
-        (calibres && !calibres.includes(item.subType))
-      ) {
-        return response
-      }
+  // const res: any = await new Promise((resolve, reject) =>
+  //   client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
+  // )
+  // const results: IItemListing[][] = res.map(r => (r ? JSON.parse(r) : null))
+  // const result = results
+  //   .reduce((final, result2) => {
+  //     return result2 && result2.length ? final.concat(result2) : final
+  //   }, [])
+  //   .reduce((response, item) => {
+  //     if (
+  //       !item ||
+  //       !item.subType ||
+  //       !item.unitCost ||
+  //       item.subType === 'UNKNOWN' ||
+  //       (calibres && !calibres.includes(item.subType))
+  //     ) {
+  //       return response
+  //     }
 
-      if (!response[item.subType]) {
-        response[item.subType] = {
-          unitCost: Number.MAX_SAFE_INTEGER,
-          calibre: item.subType,
-          subType: item.subType,
-          type,
-        }
-      }
+  //     if (!response[item.subType]) {
+  //       response[item.subType] = {
+  //         unitCost: Number.MAX_SAFE_INTEGER,
+  //         calibre: item.subType,
+  //         subType: item.subType,
+  //         type,
+  //       }
+  //     }
 
-      response[item.subType].unitCost = Math.min(
-        response[item.subType].unitCost,
-        item.unitCost
-      )
+  //     response[item.subType].unitCost = Math.min(
+  //       response[item.subType].unitCost,
+  //       item.unitCost
+  //     )
 
-      return response
-    }, {})
+  //     return response
+  //   }, {})
 
-  return Object.values(result)
+  // return Object.values(result)
 }
 
 export async function getScrapeResponses(
-  params: IItemsListingsOnQueryArguments
+  params: IItemsListingsOnQueryArguments,
+  mode: 'redis' | 'dynamo'
 ): Promise<IItemListings> {
   let {
     itemType,
@@ -124,25 +130,37 @@ export async function getScrapeResponses(
     )
   }
 
-  const keys: string[] = types
-    .map(t =>
-      vendors.map(s =>
-        (subType ? [subType] : helpers.itemTypeToStubTypes(t)).map(st =>
-          helpers.getKey(s, t, st)
+
+  const subTypes = (subType ? [subType] : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), []))
+  let results: IItemListing[]
+
+  if (mode === 'redis') {
+    const keys: string[] = types
+      .map(t =>
+        vendors.map(s =>
+          subTypes.map(st =>
+            helpers.getKey(s, t, st)
+          )
         )
       )
+      .flat<string>(Infinity)
+    results = await getRedisItems(keys)
+  } else {
+    const keys: string[] = types.reduce(
+      (ll, type) =>
+        ll.concat(
+          subTypes.reduce(
+            (lll, _subType) => lll.concat(`${type}_${_subType}`),
+            [] as string[]
+          )
+        ),
+      [] as string[]
     )
-    .flat<string>(Infinity)
 
-  const results: IItemListing[][] = await new Promise((resolve, reject) =>
-    client.mget(keys, (err, rres: string[]) =>
-      err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
-    )
-  )
+    results = await getDyanmoItems(vendors, keys)
+  }
 
-  // only filters out ammo without subType set (not setup for reloading yet)
   const result: IItemListing[] = results
-    .reduce((final, r) => (r ? final.concat(r) : final), [])
     .filter(
       r =>
         r &&
@@ -160,7 +178,6 @@ export async function getScrapeResponses(
         return 0
       }
     })
-
   const itemsGrouped = result.reduce(
     (r, item) => {
       // if provided, filter out items that DONT match

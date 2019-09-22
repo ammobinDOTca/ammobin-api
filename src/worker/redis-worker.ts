@@ -96,9 +96,9 @@ worker.on('message', async (msg, next /* , id*/) => {
         AMMO_TYPES.includes(type)
           ? classifyBullets(items, type)
           : items.map(i => {
-              i.subType = type // dont have way to classify subType for reloading items, so just duplicate field
-              return i
-            })
+            i.subType = type // dont have way to classify subType for reloading items, so just duplicate field
+            return i
+          })
       )
       .then(classifyBrand)
       .then(proxyImages)

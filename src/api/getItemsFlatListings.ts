@@ -8,12 +8,12 @@ import {
 } from '../graphql-types'
 import { RELOAD_TYPES, AMMO_TYPES, SOURCES, VENDORS } from '../constants'
 import * as helpers from '../helpers'
-import * as redis from 'redis'
-
-const client = redis.createClient({ host: 'redis' })
+import { getRedisItems } from './redis-getter'
+import { getDyanmoItems } from './dynamo-getter'
 
 export async function getItemsFlatListings(
-  args: IItemsFlatListingsOnQueryArguments
+  args: IItemsFlatListingsOnQueryArguments,
+  mode: 'redis' | 'dynamo'
 ): Promise<IItemFlatListings> {
   let {
     itemType,
@@ -71,36 +71,43 @@ export async function getItemsFlatListings(
       new URL(v.link).hostname.replace('www.', '')
     )
   }
-
-  const keys: string[] = types
-    .map(t =>
-      vendors.map(s =>
-        (subType ? [subType] : helpers.itemTypeToStubTypes(t)).map(st =>
-          helpers.getKey(s, t, st)
+  let results: IItemListing[]
+  if (mode === 'redis') {
+    const keys: string[] = types
+      .map(t =>
+        vendors.map(s =>
+          (subType ? [subType] : helpers.itemTypeToStubTypes(t)).map(st =>
+            helpers.getKey(s, t, st)
+          )
         )
       )
-    )
-    .flat<string>(Infinity)
+      .flat<string>(Infinity)
 
-  const results: IItemListing[][] = await new Promise((resolve, reject) =>
-    client.mget(keys, (err, rres: string[]) =>
-      err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
+    results = await getRedisItems(keys)
+  } else if (mode === 'dynamo') {
+    // TODO: this can be improved to make use of filters + pagination
+    const keys: string[] = types.reduce(
+      (ll, type) =>
+        ll.concat(
+          (subType ? [subType] : helpers.itemTypeToStubTypes(type)).reduce(
+            (lll, _subType) => lll.concat(`${type}_${_subType}`),
+            [] as string[]
+          )
+        ),
+      [] as string[]
     )
-  )
-
+    results = await getDyanmoItems(vendors, keys)
+  }
   // only filters out ammo without subType set (not setup for reloading yet)
-  const result: IItemListing[] = results
-    .reduce((final, r) => (r ? final.concat(r) : final), [])
-    .filter(
-      r =>
-        r &&
-        r.price > 0 &&
-        (!AMMO_TYPES.includes(itemType) ||
-          (r.subType && r.subType !== 'UNKNOWN')) &&
-        (!brand ||
-          (r.brand && r.brand.toLowerCase() === brand.toLowerCase())) &&
-        (!query || r.name.toLowerCase().includes(query.toLowerCase()))
-    )
+  const result: IItemListing[] = results.filter(
+    r =>
+      r &&
+      r.price > 0 &&
+      (!AMMO_TYPES.includes(itemType) ||
+        (r.subType && r.subType !== 'UNKNOWN')) &&
+      (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase())) &&
+      (!query || r.name.toLowerCase().includes(query.toLowerCase()))
+  )
 
   // flatten map and sort groups by sortField + sortKey
   let res = result.sort((a, b) => {
