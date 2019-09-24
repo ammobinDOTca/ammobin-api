@@ -42,7 +42,7 @@ export function faoc(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.case:
       //return makeFaocReq('reloading/brass')
-      return Promise.resolve([])
+      return Promise.resolve(null)
     case ItemType.powder:
       return makeFaocReq('reloading/powders')
     case ItemType.shot:
