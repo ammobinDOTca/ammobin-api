@@ -59,12 +59,14 @@ import { greatNorthPercision as greatNorthPrecision } from './great-north-precis
 import { tesro } from './tesro'
 import { xmetal } from './xmetal'
 import { triggerAndBows } from './trigger-and-bows'
-
+import { g4c } from './g4c'
 export function makeSearch(
   source: string,
   type: ItemType
 ): Promise<IItemListing[]> {
   switch (source) {
+    case 'g4cgunstore.com':
+      return g4c(type)
     case 'triggersandbows.com':
       return triggerAndBows(type)
     case 'xmetaltargets.com':

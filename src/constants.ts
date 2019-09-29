@@ -377,6 +377,13 @@ export const VENDORS = [
     location: 'Burford',
     background: true,
   },
+  {
+    name: 'G4C',
+    link: 'https://g4cgunstore.com',
+    logo: '/logos/g4c-logo.png',
+    provinces: [Province.ON],
+    location: `Markham`,
+  },
 ]
 
 export const SOURCES = VENDORS.map(v =>
