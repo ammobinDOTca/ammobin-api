@@ -16,6 +16,8 @@ function work(path: String) {
     img: '.product-image-link img',
     link: '.product-image-link',
     price: '.price',
+    outOfStock: '.outOfStock',
+    salePrice: '.price ins .amount',
 
     nextPage: '.next',
   }
