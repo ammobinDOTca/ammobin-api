@@ -15,7 +15,7 @@ function work(path: String) {
     name: '.product-title',
     img: '.product-image-link img',
     link: '.product-image-link',
-    price: '.price',
+    price: '.price .ammount',
     outOfStock: '.outOfStock',
     salePrice: '.price ins .amount',
 
