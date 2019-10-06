@@ -1,4 +1,4 @@
-import { SOURCES, AMMO_TYPES, RELOAD_TYPES } from '../constants'
+import { SOURCES, AMMO_TYPES, RELOAD_TYPES, VENDORS } from '../constants'
 import * as helpers from '../helpers'
 import * as redis from 'redis'
 import {
@@ -7,12 +7,12 @@ import {
   ItemType,
   IItemGroup,
   IItemListing,
-  Province,
   SortOrder,
   SortField,
   IBestPricesOnQueryArguments,
   IBestPrice,
 } from '../graphql-types'
+import { URL } from 'url'
 const client = redis.createClient({ host: 'redis' })
 
 export async function getBestPrices(
@@ -58,20 +58,6 @@ export async function getBestPrices(
     }, {})
 
   return Object.values(result)
-}
-
-function doesItemContainProvince(
-  item: IItemListing | any,
-  province: Province
-): boolean {
-  // does the ammo listing contain the given promise
-  // need to check 2 properties since have not fully migrated scrapes to return list of provinces instead of
-  // of comma separated string
-  // TODO: fix this
-  return (
-    (item.province && item.province.includes(province)) ||
-    (item.provinces && item.provinces.includes(province))
-  )
 }
 
 export async function getScrapeResponses(
@@ -122,8 +108,18 @@ export async function getScrapeResponses(
       types = [itemType]
   }
 
+  // figure out subset of keys to get (keys are stored by vendor)
+  let vendors: string[] = SOURCES
+  if (vendor) {
+    vendors = [vendor]
+  } else if (province) {
+    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(v =>
+      new URL(v.link).hostname.replace('www.', '')
+    )
+  }
+
   const keys: string[] = types.reduce(
-    (lst, t) => lst.concat(SOURCES.map(s => helpers.getKey(s, t))),
+    (lst, t) => lst.concat(vendors.map(s => helpers.getKey(s, t))),
     []
   )
 
@@ -157,8 +153,6 @@ export async function getScrapeResponses(
       // if provided, filter out items that DONT match
       if (
         (subType && item.subType !== subType) ||
-        (vendor && item.vendor !== vendor) ||
-        (province && !doesItemContainProvince(item, province)) ||
         (query && !item.name.toLowerCase().includes(query.toLowerCase()))
       ) {
         return r
