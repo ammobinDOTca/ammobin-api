@@ -83,6 +83,7 @@ server.route({
     request.log('info', {
       type: 'track-view',
       userAgent,
+      query: body.query,
       brand: body.brand,
       subType: body.subType,
       itemType: body.itemType,
@@ -161,6 +162,7 @@ server.route({
       request.log('info', {
         type: 'track-outbound-click',
         url: body.link,
+        query: body.query,
         userAgent: request.headers['user-agent'],
         record,
         requestId: request.info.id,
