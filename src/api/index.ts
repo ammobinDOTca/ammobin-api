@@ -84,7 +84,7 @@ server.route({
       type: 'track-view',
       userAgent,
       href: body.href,
-      query: body.query,
+      queryParams: body.query,
       brand: body.brand,
       subType: body.subType,
       itemType: body.itemType,
@@ -124,10 +124,6 @@ server.route({
     const targetUrl = url.parse(body.link, true)
 
     let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
-    if (host === 'ammobin.ca' || host === 'api.ammobin.ca') {
-      // received old redirect link. let redirect endpoint handle logging the click
-      return h.response('success')
-    }
 
     if (SOURCES.indexOf(host) === -1) {
       throw boom.badRequest('invalid target url')
@@ -145,7 +141,8 @@ server.route({
     } else {
       types = TYPES
     }
-
+    //todo: look at query params, see if can reduce keys by vendor/province
+    // OR UPDATE client to send this info....
     const date = moment.utc().format(DATE_FORMAT)
     try {
       const results: any = await new Promise((resolve, reject) =>
@@ -164,7 +161,7 @@ server.route({
         type: 'track-outbound-click',
         url: body.link,
         href: body.href,
-        query: body.query,
+        queryParams: body.query,
         userAgent: request.headers['user-agent'],
         record,
         requestId: request.info.id,
