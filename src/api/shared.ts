@@ -19,11 +19,15 @@ export async function getBestPrices(
   params: IBestPricesOnQueryArguments
 ): Promise<IBestPrice[]> {
   const type = params.type || ItemType.centerfire
-  const keys = SOURCES.map(s => helpers.getKey(s, type))
+  const { calibres } = params
+
+  const keys: string[] = SOURCES.map(s =>
+    calibres.map(subType => helpers.getKey(s, type, subType))
+  ).flat<string>(Infinity)
+
   const res: any = await new Promise((resolve, reject) =>
     client.mget(keys, (err, res2) => (err ? reject(err) : resolve(res2)))
   )
-  const { calibres } = params
   const results: IItemListing[][] = res.map(r => (r ? JSON.parse(r) : null))
   const result = results
     .reduce((final, result2) => {
@@ -119,16 +123,22 @@ export async function getScrapeResponses(
     )
   }
 
-  const keys: string[] = types.reduce(
-    (lst, t) => lst.concat(vendors.map(s => helpers.getKey(s, t))),
-    []
-  )
+  const keys: string[] = types
+    .map(t =>
+      vendors.map(s =>
+        (subType ? [subType] : helpers.itemTypeToStubTypes(t)).map(st =>
+          helpers.getKey(s, t, st)
+        )
+      )
+    )
+    .flat<string>(Infinity)
 
   const results: IItemListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres: string[]) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))
     )
   )
+
   // only filters out ammo without subType set (not setup for reloading yet)
   const result: IItemListing[] = results
     .reduce((final, r) => (r ? final.concat(r) : final), [])

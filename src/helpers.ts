@@ -1,4 +1,7 @@
 import * as classifier from 'ammobin-classifier'
+import { centerFireCalibres } from 'ammobin-classifier/build/centerfire-calibres'
+import { rimfireCalibres } from 'ammobin-classifier/build/rimfire-calibres'
+import { shotgunGauges } from 'ammobin-classifier/build/shotgun-gauges'
 import axios from 'axios'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants'
@@ -46,8 +49,10 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
   return delayMs
 }
 
-export const getKey = (source: string, type: ItemType) => {
-  return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}`
+export const getKey = (source: string, type: ItemType, subType: string) => {
+  return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType
+    .split(' ')
+    .join('')}`
 }
 
 export function combineResults(results: IItemListing[][]): IItemListing[] {
@@ -131,4 +136,22 @@ export function makeWrapApiReq(
 export async function delayScrape(site: string) {
   const ms = await getCrawlDelayMS(site)
   return delay(ms)
+}
+
+export function itemTypeToStubTypes(itemType: ItemType): string[] {
+  function ass() {
+    switch (itemType) {
+      case ItemType.centerfire:
+        return centerFireCalibres
+      case ItemType.shotgun:
+        return shotgunGauges
+      case ItemType.rimfire:
+        return rimfireCalibres
+
+      default:
+        return [['all']]
+    }
+  }
+
+  return ass().map(i => i[0])
 }

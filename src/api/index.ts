@@ -22,6 +22,9 @@ import {
   TYPES,
 } from '../constants'
 import { ItemType } from '../graphql-types'
+
+const DEV = process.env.DEV === 'true'
+
 const client = redis.createClient({ host: 'redis' })
 const logger = require('../logger').apiLogger
 
@@ -175,32 +178,6 @@ server.route({
 })
 
 server.route({
-  method: 'GET',
-  path: '/dank',
-  handler: async () => {
-    const keys = SOURCES.map(s => helpers.getKey(s, ItemType.centerfire))
-    const results: any = await new Promise((resolve, reject) => {
-      client.mget(keys, (err, res) =>
-        err ? reject(err) : resolve(res.map(r => (r ? JSON.parse(r) : null)))
-      )
-    })
-
-    return results
-      .reduce((final, result) => final.concat(result || []), [])
-      .filter(r => r && r.price > 0 && r.calibre === 'UNKNOWN')
-      .sort((a, b) => {
-        if (a.price > b.price) {
-          return 1
-        } else if (a.price < b.price) {
-          return -1
-        } else {
-          return 0
-        }
-      })
-  },
-})
-
-server.route({
   method: 'POST',
   config: {
     payload: {
@@ -298,16 +275,18 @@ async function doWork() {
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
-      debug: false,
-      tracing: false,
-      cache: new RedisCache({
-        host: 'redis',
-      }),
+      debug: DEV,
+      tracing: DEV,
+      cache: !DEV
+        ? new RedisCache({
+            host: 'redis',
+          })
+        : undefined,
       formatError: error => {
         server.log('error', { type: 'graphql-error', error: error.toString() })
         return error
       },
-      plugins: [responseCachePlugin()],
+      plugins: !DEV ? [responseCachePlugin()] : undefined,
       cacheControl: {
         defaultMaxAge: 4 * 60 * 60, // 4hrs in seconds
       },

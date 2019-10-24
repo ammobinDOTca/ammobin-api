@@ -66,6 +66,18 @@ const appendGAParam = (items: IItemListing[]) =>
     return i
   })
 
+function groupItemsBySubType(items: IItemListing[]): [string, ItemType[]][] {
+  return Object.entries(
+    items.reduce((m, item) => {
+      if (!m[item.subType]) {
+        m[item.subType] = []
+      }
+      m[item.subType].push(item)
+      return m
+    }, {})
+  )
+}
+
 worker.on('message', async (msg, next /* , id*/) => {
   const { source, type } = JSON.parse(msg)
 
@@ -93,24 +105,32 @@ worker.on('message', async (msg, next /* , id*/) => {
       .then(getCounts)
       .then(setItemType(type))
       .then(appendGAParam)
-      .then(items => {
+      .then(groupItemsBySubType)
+      .then(itemsGrouped => {
+        // TODO: do something about items not getting classified
+
+        let items = 0 // total found items
+        const mut = client.multi()
+        itemsGrouped.forEach(ig => {
+          items += ig[1].length
+
+          mut.set(
+            getKey(source, type, ig[0]),
+            JSON.stringify(ig[1]),
+            'EX',
+            172800 /*seconds => 48hrs*/
+          )
+        })
         logger.info({
           type: 'finished-scrape',
           source,
           ItemType: type,
-          items: items.length,
+          items,
           duration: new Date().valueOf() - searchStart.valueOf(),
         })
-        const key = getKey(source, type)
 
         return new Promise((resolve, reject) =>
-          client.set(
-            key,
-            JSON.stringify(items),
-            'EX',
-            172800 /*seconds => 48hrs*/,
-            err => (err ? reject(err) : resolve(items))
-          )
+          mut.exec((err, _) => (err ? reject(err) : resolve(0)))
         )
       })
       .then(() => next())
