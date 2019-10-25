@@ -52,7 +52,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
 export const getKey = (source: string, type: ItemType, subType: string) => {
   return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType
     .split(' ')
-    .join('')}`
+    .join('')}`.toLowerCase()
 }
 
 export function combineResults(results: IItemListing[][]): IItemListing[] {
@@ -149,9 +149,13 @@ export function itemTypeToStubTypes(itemType: ItemType): string[] {
         return rimfireCalibres
 
       default:
-        return [['all']]
+        return [[itemType]]
     }
   }
-
-  return ass().map(i => i[0])
+  const cals = ass()
+  if (!cals) {
+    return [itemType]
+  } else {
+    return cals.map(i => i[0])
+  }
 }
