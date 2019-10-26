@@ -1,7 +1,6 @@
 import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
 
 import * as redis from 'redis'
-import * as moment from 'moment'
 import boom from 'boom'
 import * as url from 'url'
 import * as helpers from '../helpers'
@@ -14,13 +13,7 @@ import crypto from 'crypto'
 const secret = process.env.HASH_SECRET || Math.random().toString()
 
 import { typeDefs, resolvers } from './graphql'
-import {
-  SOURCES,
-  DATE_FORMAT,
-  RELOAD_TYPES,
-  AMMO_TYPES,
-  TYPES,
-} from '../constants'
+import { SOURCES, RELOAD_TYPES, AMMO_TYPES, TYPES } from '../constants'
 import { ItemType } from '../graphql-types'
 
 const DEV = process.env.DEV === 'true'
@@ -132,7 +125,7 @@ server.route({
       throw boom.badRequest('invalid target url')
     }
 
-    let types: string[]
+    let types: ItemType[]
     if (body.itemType) {
       if (body.item === ItemType.reloading) {
         types = RELOAD_TYPES
@@ -146,11 +139,18 @@ server.route({
     }
     //todo: look at query params, see if can reduce keys by vendor/province
     // OR UPDATE client to send this info....
-    const date = moment.utc().format(DATE_FORMAT)
+    const subTypes = body.subType
+      ? [body.subType]
+      : types.map(t => helpers.itemTypeToStubTypes(t).flat(1))
+
     try {
       const results: any = await new Promise((resolve, reject) =>
-        client.mget(types.map(type => `${date}_${host}_${type}`), (err, res) =>
-          err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
+        client.mget(
+          types
+            .map(t => subTypes.map(subType => helpers.getKey(host, t, subType)))
+            .flat(1),
+          (err, res) =>
+            err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
         )
       ).then(helpers.combineResults)
 
