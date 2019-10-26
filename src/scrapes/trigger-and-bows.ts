@@ -46,17 +46,10 @@ export function triggerAndBows(type: ItemType): Promise<IItemListing[]> {
       return work('ammunition/shotgun-shells')
 
     case ItemType.shot:
-      return work('ammunition/reloading-supplies/bullets')
-
     case ItemType.case:
-      return work('ammunition/reloading-supplies/brass')
-
-    case ItemType.powder:
-      return work('ammunition/reloading-supplies/powder')
-
     case ItemType.primer:
-      return work('ammunition/reloading-supplies/primers')
-
+    case ItemType.powder:
+      return Promise.resolve(null)
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

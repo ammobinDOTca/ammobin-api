@@ -1,5 +1,9 @@
+import throat from 'throat'
+
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
+import { combineResults } from '../helpers'
+const throttle = throat(1)
 
 export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
@@ -9,31 +13,37 @@ export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.main-content .grid__item',
-    name: '.product-card__name',
-    img: '.product-card__image',
-    link: '.product-card',
-    price: '.product-card__price',
-    nextPage: '.next',
+    item: '.productListing',
+    name: '.name',
+    img: 'img',
+    link: 'a',
+    price: '.itemPrice',
+    nextPage: '.next-only',
     outOfStock: '.product-card__availability',
   }
   const work = t =>
-    scrape(
-      p => `https://${info.site}/collections/${t}?page=${p}`,
-      info,
-      selectors
-    )
+    scrape(p => `https://${info.site}/custom/${t}/page/${p}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
+      return work('ammunition-and-reloading-ammunition-rimfire-ammo')
     case ItemType.centerfire:
+      return Promise.all(
+        [
+          'ammunition-and-reloading-ammunition-centrefire-handgun-ammo',
+          'ammunition-and-reloading-ammunition-centrefire-rifle-ammo',
+        ].map(t => throttle(() => work(t)))
+      ).then(combineResults)
     case ItemType.shotgun:
-      return work('ammunition-1')
+      return work('ammunition-and-reloading-ammunition-shotgun-ammo')
     case ItemType.powder:
+      return work('ammunition-and-reloading-reloading-powder')
     case ItemType.case:
+      return work('ammunition-and-reloading-reloading-cases')
     case ItemType.primer:
+      return work('ammunition-and-reloading-reloading-primers')
     case ItemType.shot:
-      return work('reloading')
+      return work('ammunition-and-reloading-reloading-bullets')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
