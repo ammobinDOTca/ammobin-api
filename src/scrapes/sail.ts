@@ -1,32 +1,58 @@
+import axios from 'axios'
+import { ItemType, IItemListing, Province } from '../graphql-types'
+import { Info } from './common'
 import * as helpers from '../helpers'
 
-async function makeSailReq(ammotype, page = 1) {
-  await helpers.delayScrape('https://www.sail.ca')
+export function sail(type: ItemType): Promise<IItemListing[]> {
+  const info: Info = {
+    site: 'sail.ca',
+    vendor: `Sail`,
+    provinces: [Province.ON, Province.QC],
+  }
 
-  return helpers.makeWrapApiReq('sail', ammotype, page).then(d => {
-    console.log(`sail:  loaded ${ammotype} page${d.page} of ${d.lastPage}`)
-    if (
-      !isNaN(d.lastPage) &&
-      d.page < d.lastPage &&
-      d.items &&
-      d.items.length > 0 &&
-      false // todo: FIX this
-    ) {
-      return makeSailReq(ammotype, page + 1).then(dd => d.items.concat(dd))
+  async function work(t: string, page = 1) {
+    await helpers.delayScrape(info.site)
+
+    const {
+      data: { pagination, results },
+    } = await axios.get(
+      `https://api.searchspring.net/api/search/search.json?resultsFormat=native&siteId=s8zq1c&domain=https%3A%2F%2Fwww.sail.ca%2Fen%2Fhunting%2Ffirearms%2Fammunition%2F${t.toLowerCase()}&bgfilter.category_hierarchy=Hunting>Firearms>Ammunition>${t}&q=&page=${page}`
+    )
+
+    const items: IItemListing[] = results.map(r => {
+      return {
+        brand: r.brand,
+        img: r.thumbnailImageUrl,
+        itemType: type,
+        link: r.url,
+        name: r.name,
+        price: r.price,
+        provinces: info.provinces,
+        vendor: info.vendor,
+      } as IItemListing
+    })
+
+    if (pagination.currentPage === pagination.totalPages) {
+      return items
     } else {
-      return d.items
+      return (await work(t, page + 1)).concat(items)
     }
-  })
-}
+  }
 
-export function sail(type) {
-  if (type === 'rimfire') {
-    return makeSailReq('rimfire').then(helpers.classifyRimfire)
-  } else if (type === 'centerfire') {
-    return makeSailReq('centerfire').then(helpers.classifyCenterfire)
-  } else if (type === 'shotgun') {
-    return makeSailReq('shotguns').then(helpers.classifyShotgun)
-  } else {
-    throw new Error(`Unknown type: ${type}`)
+  switch (type) {
+    case ItemType.rimfire:
+      return work('Rimfire')
+    case ItemType.centerfire:
+      return work('Centerfire')
+    case ItemType.shotgun:
+      return work('Shotgun')
+
+    case ItemType.shot:
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+      return Promise.resolve(null) // no reloading 20190635
+    default:
+      return Promise.reject(new Error('unknown type: ' + type))
   }
 }
