@@ -2,11 +2,7 @@ const { gql } = require('apollo-server')
 import { VENDORS } from '../constants'
 import fs from 'fs'
 import { getScrapeResponses, getBestPrices } from './shared'
-import {
-  IItemListings,
-  IItemsListingsOnQueryArguments,
-  IBestPricesOnQueryArguments,
-} from '../graphql-types'
+import { getItemsFlatListings } from './getItemsFlatListings'
 const schema = fs.readFileSync(process.cwd() + '/graphql.gql')
 
 /**
@@ -36,15 +32,8 @@ export const resolvers: any = {
         }
       })
     },
-    bestPrices: async (parent, args: IBestPricesOnQueryArguments) =>
-      getBestPrices(args),
-    itemsListings: async (
-      parent,
-      args: IItemsListingsOnQueryArguments
-    ): Promise<IItemListings> => {
-      let res = await getScrapeResponses(args)
-
-      return res
-    },
+    bestPrices: async (_, args) => getBestPrices(args),
+    itemsListings: async (_, args) => getScrapeResponses(args),
+    itemsFlatListings: (_, args) => getItemsFlatListings(args),
   },
 }

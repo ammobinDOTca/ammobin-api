@@ -77,6 +77,7 @@ export async function getScrapeResponses(
     query,
     sortField,
     sortOrder,
+    brand,
   } = params
 
   if (!sortOrder) {
@@ -147,7 +148,8 @@ export async function getScrapeResponses(
         r &&
         r.price > 0 &&
         (!AMMO_TYPES.includes(itemType) ||
-          (r.subType && r.subType !== 'UNKNOWN'))
+          (r.subType && r.subType !== 'UNKNOWN')) &&
+        (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase()))
     )
     .sort((a, b) => {
       if (a.price > b.price) {

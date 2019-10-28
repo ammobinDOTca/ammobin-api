@@ -71,6 +71,14 @@ type ItemListings {
   pageSize: Int!
   items: [ItemGroup!]!
 }
+
+type ItemFlatListings {
+  page: Int!
+  pages: Int!
+  pageSize: Int!
+  items: [ItemListing!]!
+}
+
 type Vendor {
   name: String!
   provinces: [Province!]!
@@ -100,5 +108,19 @@ type Query {
     sortOrder: SortOrder
     sortField: SortField
     query: String
+    brand: String
   ): ItemListings
+
+  itemsFlatListings(
+    page: Int
+    pageSize: Int
+    itemType: ItemType
+    subType: String
+    province: Province
+    vendor: String
+    sortOrder: SortOrder
+    sortField: SortField
+    query: String
+    brand: String
+  ): ItemFlatListings
 }
