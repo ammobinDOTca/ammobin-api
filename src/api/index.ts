@@ -239,7 +239,7 @@ server.events.on('response', (request: Request) => {
       request: {
         method: request.method.toUpperCase(),
         url: request.url,
-        body: request.payload,
+        body: JSON.stringify(request.payload),
         headers: request.headers,
       },
       string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${
