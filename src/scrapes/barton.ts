@@ -17,10 +17,15 @@ function work(path: String) {
     link: '.product-item-link',
     price: '.price',
 
-    nextPage: '.pages-item-next',
+    // pagination not working as expected...
+    // nextPage: '.pages-item-next',
   }
   const BASE = 'https://' + info.site
-  return scrape(p => `${BASE}/index.php/${path}.html?p=${p}`, info, selectors)
+  return scrape(
+    p => `${BASE}/index.php/${path}.html?p=${p}&product_list_limit=30`,
+    info,
+    selectors
+  )
 }
 
 export function barton(type: ItemType): Promise<IItemListing[]> {
