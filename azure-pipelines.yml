@@ -18,6 +18,7 @@ steps:
 - script: |
     npm install
     npm run test
+    rm -rf node_modules dist
   displayName: 'npm install and test'
 - task: PublishBuildArtifacts@1
   inputs:
