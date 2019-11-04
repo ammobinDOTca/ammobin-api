@@ -1,27 +1,18 @@
 import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
 
-// import * as redis from 'redis'
-// import * as moment from 'moment'
 import boom from 'boom'
 import * as url from 'url'
-// import * as helpers from '../helpers'
 import { ApolloServer } from 'apollo-server-hapi'
-// import responseCachePlugin from 'apollo-server-plugin-response-cache'
-// import { RedisCache } from 'apollo-server-cache-redis'
 import crypto from 'crypto'
 
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
 
-import { typeDefs, resolvers } from './graphql'
-import {
-  SOURCES,
-  // DATE_FORMAT,
-  // RELOAD_TYPES,
-  // AMMO_TYPES,
-  // TYPES,
-} from '../constants'
-// import { ItemType } from '../graphql-types'
+import { typeDefs, vendors, bestPrices } from './graphql'
+import { SOURCES } from '../constants'
+import { getDyanmoItems } from './dynamo-getter'
+import { getScrapeResponses, getItemsFlatListings } from './shared'
+
 const BASE = '/api'
 export async function init() {
   const logger = {
@@ -183,33 +174,6 @@ export async function init() {
   })
 
   server.route({
-    method: 'GET',
-    path: BASE + '/dank',
-    handler: async () => {
-      // const keys = SOURCES.map(s => helpers.getKey(s, ItemType.centerfire))
-      const results = []
-      // const results: any = await new Promise((resolve, reject) => {
-      //   client.mget(keys, (err, res) =>
-      //     err ? reject(err) : resolve(res.map(r => (r ? JSON.parse(r) : null)))
-      //   )
-      // })
-
-      return results
-        .reduce((final, result) => final.concat(result || []), [])
-        .filter(r => r && r.price > 0 && r.calibre === 'UNKNOWN')
-        .sort((a, b) => {
-          if (a.price > b.price) {
-            return 1
-          } else if (a.price < b.price) {
-            return -1
-          } else {
-            return 0
-          }
-        })
-    },
-  })
-
-  server.route({
     method: 'POST',
     config: {
       payload: {
@@ -307,7 +271,16 @@ export async function init() {
   try {
     const apolloServer = new ApolloServer({
       typeDefs,
-      resolvers,
+      resolvers: {
+        Query: {
+          vendors,
+          bestPrices,
+          itemsListings: (_, params) =>
+            getScrapeResponses(params, getDyanmoItems),
+          itemsFlatListings: (_, params) =>
+            getItemsFlatListings(params, getDyanmoItems),
+        },
+      },
       debug: false,
       tracing: false,
 

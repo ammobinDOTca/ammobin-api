@@ -1,12 +1,24 @@
-import { IItemListing } from '../graphql-types'
+import { IItemListing, ItemType } from '../graphql-types'
 
 import { DynamoDB } from 'aws-sdk'
 const docClient = new DynamoDB.DocumentClient({ region: 'ca-central-1' })
 
 export async function getDyanmoItems(
-  vendors: string[],
-  keys: string[]
+  types: ItemType[],
+  subTypes: string[],
+  vendors: string[]
 ): Promise<IItemListing[]> {
+  const keys: string[] = types.reduce(
+    (ll, type) =>
+      ll.concat(
+        subTypes.reduce(
+          (lll, _subType) => lll.concat(`${type}_${_subType}`),
+          [] as string[]
+        )
+      ),
+    [] as string[]
+  )
+
   const docs = await docClient
     .batchGet({
       RequestItems: {
