@@ -11,9 +11,9 @@
     "test": "npm run test:lint && npm run build",
     "format": "pretty-quick",
     "build": "tsc",
-    "dev": "DEV=true ts-node-dev ./src/api/index.ts",
-    "dev:worker": "DEV=true ts-node-dev ./src/worker/index.ts",
-    "dev:refresher": "DEV=true ts-node-dev ./src/refresher/index.ts",
+    "dev": "DEV=true ts-node-dev ./src/api/api.ts",
+    "dev:worker": "DEV=true ts-node-dev ./src/worker/redis-worker.ts",
+    "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-worker.ts",
     "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh"
   },
   "types": "dist/index.d.ts",
