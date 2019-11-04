@@ -1,18 +1,23 @@
-var winston = require('winston')
-var config = {
-  host: 'fluent',
+let winston = require('winston')
+let config = {
+  host: process.env.FLUNET || 'fluent',
   port: 24224,
   timeout: 3.0,
   requireAckResponse: true, // Add this option to wait response from Fluentd certainly
 }
-var fluentTransport = require('fluent-logger').support.winstonTransport()
+let fluentTransport = require('fluent-logger').support.winstonTransport()
 
 function createLogger(tag) {
+  const transports = []
+  // TODO: re-enable this check if not using fluent with aws
+  //if (process.env.FLUENT) {
+  transports.push(new fluentTransport(tag, config))
+  //}
+  if (!process.env.DONT_LOG_CONSOLE) {
+    transports.push(new winston.transports.Console())
+  }
   return winston.createLogger({
-    transports: [
-      new fluentTransport(tag, config),
-      new winston.transports.Console(),
-    ],
+    transports,
   })
 }
 
