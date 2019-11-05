@@ -2,16 +2,16 @@ import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
 
 import boom from 'boom'
 import * as url from 'url'
-import { ApolloServer } from 'apollo-server-hapi'
+// import { ApolloServer } from 'apollo-server-hapi'
 import crypto from 'crypto'
 
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
 
-import { typeDefs, vendors, bestPrices } from './graphql'
+// import { typeDefs, vendors, bestPrices } from './graphql'
 import { SOURCES } from '../constants'
-import { getDyanmoItems } from './dynamo-getter'
-import { getScrapeResponses, getItemsFlatListings } from './shared'
+// import { getDyanmoItems } from './dynamo-getter'
+// import { getScrapeResponses, getItemsFlatListings } from './shared'
 
 const BASE = '/api'
 export async function init() {
@@ -269,35 +269,35 @@ export async function init() {
   })
 
   try {
-    const apolloServer = new ApolloServer({
-      typeDefs,
-      resolvers: {
-        Query: {
-          vendors,
-          bestPrices,
-          itemsListings: (_, params) =>
-            getScrapeResponses(params, getDyanmoItems),
-          itemsFlatListings: (_, params) =>
-            getItemsFlatListings(params, getDyanmoItems),
-        },
-      },
-      debug: false,
-      tracing: false,
+    // const apolloServer = new ApolloServer({
+    //   typeDefs,
+    //   resolvers: {
+    //     Query: {
+    //       vendors,
+    //       bestPrices,
+    //       itemsListings: (_, params) =>
+    //         getScrapeResponses(params, getDyanmoItems),
+    //       itemsFlatListings: (_, params) =>
+    //         getItemsFlatListings(params, getDyanmoItems),
+    //     },
+    //   },
+    //   debug: false,
+    //   tracing: false,
 
-      formatError: error => {
-        server.log('error', {
-          type: 'graphql-error',
-          error: error.toString(),
-        })
-        return error
-      },
-    })
-    await apolloServer.applyMiddleware({
-      app: server,
-      path: '/api/graphql',
-    })
+    //   formatError: error => {
+    //     server.log('error', {
+    //       type: 'graphql-error',
+    //       error: error.toString(),
+    //     })
+    //     return error
+    //   },
+    // })
+    // await apolloServer.applyMiddleware({
+    //   app: server,
+    //   path: '/api/graphql',
+    // })
 
-    await apolloServer.installSubscriptionHandlers(server.listener)
+    // await apolloServer.installSubscriptionHandlers(server.listener)
 
     // await server.start()
     server.log('info', { type: 'server-started', uri: server.info.uri })
