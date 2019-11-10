@@ -1,7 +1,7 @@
 import { IItemListing, ItemType } from '../graphql-types'
 
 import { DynamoDB } from 'aws-sdk'
-const docClient = new DynamoDB.DocumentClient({ region: 'ca-central-1' })
+const docClient = new DynamoDB.DocumentClient({ region: 'ca-central-1' }) // todo: this should be a param
 
 export async function getDyanmoItems(
   types: ItemType[],
@@ -47,7 +47,7 @@ export async function getDyanmoItems(
     },
     []
   )
-  if (docs.UnprocessedKeys) {
+  if (docs.UnprocessedKeys && Object.keys(docs.UnprocessedKeys).length > 0) {
     console.log('UNPROCESSED KEYS', docs.UnprocessedKeys)
   }
 
