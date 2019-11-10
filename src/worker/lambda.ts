@@ -1,13 +1,13 @@
 import * as classifier from 'ammobin-classifier'
 import { DynamoDB } from 'aws-sdk'
+import { SQSEvent } from 'aws-lambda'
+
 import { AMMO_TYPES, PROXY_URL } from '../constants'
 import { makeSearch } from '../scrapes'
 import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
+import { workerLogger as logger } from '../logger'
 const docClient = new DynamoDB.DocumentClient()
-const logger = {
-  info: e => console.log(e),
-}
 
 function proxyImages(items) {
   return items.map(i => {
@@ -74,41 +74,14 @@ const appendGAParam = (items: IItemListing[]) =>
 
 function removeDuplicates(items: IItemListing[]): IItemListing[] {
   return Object.values(
-    items.reduce(
-      (map, i) => {
-        map[i.link] = i
-        return map
-      },
-      {} as { [k: string]: IItemListing }
-    )
+    items.reduce((map, i) => {
+      map[i.link] = i
+      return map
+    }, {} as { [k: string]: IItemListing })
   )
 }
 
-// https://github.com/alixaxel/chrome-aws-lambda
-/**
-   * {
-  "Records": [
-    {
-      "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
-      "receiptHandle": "MessageReceiptHandle",
-      "body": "Hello from SQS!",
-      "attributes": {
-        "ApproximateReceiveCount": "1",
-        "SentTimestamp": "1523232000000",
-        "SenderId": "123456789012",
-        "ApproximateFirstReceiveTimestamp": "1523232000001"
-      },
-      "messageAttributes": {},
-      "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
-      "eventSource": "aws:sqs",
-      "eventSourceARN": "arn:aws:sqs:ca-central-1:123456789012:MyQueue",
-      "awsRegion": "ca-central-1"
-    }
-  ]
-}
-   * @param event
-   */
-export async function handler(event) {
+export async function handler(event: SQSEvent) {
   // want all promises to resolve (failed scrapes should be logged and moved onto the next one)
   await Promise.all(
     event.Records.map(async r => {
@@ -148,18 +121,15 @@ export async function handler(event) {
               items: items.length,
               duration: new Date().valueOf() - searchStart.valueOf(),
             })
-            const ass = items.reduce(
-              (map, item) => {
-                const id = item.itemType + '_' + item.subType //+ '_' + item.vendor
-                if (map[id]) {
-                  map[id].push(item)
-                } else {
-                  map[id] = [item]
-                }
-                return map
-              },
-              {} as { [key: string]: IItemListing[] }
-            )
+            const ass = items.reduce((map, item) => {
+              const id = item.itemType + '_' + item.subType //+ '_' + item.vendor
+              if (map[id]) {
+                map[id].push(item)
+              } else {
+                map[id] = [item]
+              }
+              return map
+            }, {} as { [key: string]: IItemListing[] })
             Object.entries(ass).forEach(a => console.log(a))
             // throattle?
             return Promise.all(

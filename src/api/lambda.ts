@@ -2,23 +2,16 @@ import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
 
 import boom from 'boom'
 import * as url from 'url'
-// import { ApolloServer } from 'apollo-server-hapi'
 import crypto from 'crypto'
 
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
-
-// import { typeDefs, vendors, bestPrices } from './graphql'
+import { apiLogger } from '../logger'
 import { SOURCES } from '../constants'
-// import { getDyanmoItems } from './dynamo-getter'
-// import { getScrapeResponses, getItemsFlatListings } from './shared'
-
+import { transformRequest, transformResponse } from 'hapi-lambda'
+import { APIGatewayEvent } from 'aws-lambda'
 const BASE = '/api'
 export async function init() {
-  const logger = {
-    info: e => console.log(e),
-  } //require('../logger').apiLogger
-
   const server = new Server({
     routes: { cors: true },
     // host: '0.0.0.0',
@@ -248,7 +241,7 @@ export async function init() {
   })
 
   server.events.on('log', (event, tag) => {
-    logger.info(event.data)
+    apiLogger.info(event.data)
   })
 
   server.events.on('request', (request, event) => {
@@ -265,70 +258,27 @@ export async function init() {
     delete request.headers['x-forwarded-for']
     delete request.headers['x-real-ip']
     const requestId = request.info.id
-    logger.info({ ...event.data, sessionId, requestId })
+    apiLogger.info({ ...event.data, sessionId, requestId })
   })
-
-  try {
-    // const apolloServer = new ApolloServer({
-    //   typeDefs,
-    //   resolvers: {
-    //     Query: {
-    //       vendors,
-    //       bestPrices,
-    //       itemsListings: (_, params) =>
-    //         getScrapeResponses(params, getDyanmoItems),
-    //       itemsFlatListings: (_, params) =>
-    //         getItemsFlatListings(params, getDyanmoItems),
-    //     },
-    //   },
-    //   debug: false,
-    //   tracing: false,
-
-    //   formatError: error => {
-    //     server.log('error', {
-    //       type: 'graphql-error',
-    //       error: error.toString(),
-    //     })
-    //     return error
-    //   },
-    // })
-    // await apolloServer.applyMiddleware({
-    //   app: server,
-    //   path: '/api/graphql',
-    // })
-
-    // await apolloServer.installSubscriptionHandlers(server.listener)
-
-    // await server.start()
-    server.log('info', { type: 'server-started', uri: server.info.uri })
-  } catch (e) {
-    console.error(e)
-    server.log('error', {
-      type: 'failed-to-start-server',
-      error: e.toString(),
-    })
-  }
 
   return server
 }
 
-const { transformRequest, transformResponse } = require('hapi-lambda')
+// TODO: remove hapi part, and convert to pure function with shared code with normal server?
 
-// TODO: cache the server for better peformance
-// let server
+let _server // cached server instance
 
-export async function handler(event) {
-  console.log(event)
-
-  const server = await init()
+export async function handler(event: APIGatewayEvent) {
+  if (!_server) {
+    _server = await init()
+  }
 
   const request = transformRequest(event)
 
   // handle cors here if needed
   request.headers['Access-Control-Allow-Origin'] = '*'
-  request.headers['Access-Control-Allow-Credentials'] = true
 
-  const response = await server.inject(request)
+  const response = await _server.inject(request)
 
   return transformResponse(response)
 }

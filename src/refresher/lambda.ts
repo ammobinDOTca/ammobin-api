@@ -2,7 +2,9 @@
  * queues rounds of scrapes every 6 hrs
  */
 import { SQS } from 'aws-sdk'
-import { SOURCES } from '../constants'
+import { ScheduledEvent } from 'aws-lambda'
+import { SOURCES, TYPES } from '../constants'
+import { workerLogger as logger } from '../logger'
 /**
  * {
     "version": "0",
@@ -20,17 +22,24 @@ import { SOURCES } from '../constants'
  */
 
 const sqs = new SQS()
-export async function handler(e) {
+export async function handler(e: ScheduledEvent) {
   const { type } = e.detail // something
-
+  logger.info({
+    type: 'refresh-cache',
+    roundType: type,
+  })
   return Promise.all(
-    SOURCES.map(source =>
-      sqs
-        .sendMessage({
-          QueueUrl: process.env.QueueUrl || 'SHIT',
-          MessageBody: JSON.stringify({ source, type }),
-        })
-        .promise()
-    )
+    (type ? [type] : TYPES)
+      .map(t =>
+        SOURCES.map(source =>
+          sqs
+            .sendMessage({
+              QueueUrl: process.env.QueueUrl || 'SHIT',
+              MessageBody: JSON.stringify({ source, type: t }),
+            })
+            .promise()
+        )
+      )
+      .flat(1)
   )
 }
