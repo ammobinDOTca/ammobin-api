@@ -23,23 +23,20 @@ import { workerLogger as logger } from '../logger'
 
 const sqs = new SQS()
 export async function handler(e: ScheduledEvent) {
-  const { type } = e.detail // something
   logger.info({
     type: 'refresh-cache',
-    roundType: type,
+    roundType: 'all',
   })
   return Promise.all(
-    (type ? [type] : TYPES)
-      .map(t =>
-        SOURCES.map(source =>
-          sqs
-            .sendMessage({
-              QueueUrl: process.env.QueueUrl || 'SHIT',
-              MessageBody: JSON.stringify({ source, type: t }),
-            })
-            .promise()
-        )
+    TYPES.map(t =>
+      SOURCES.map(source =>
+        sqs
+          .sendMessage({
+            QueueUrl: process.env.QueueUrl || 'SHIT',
+            MessageBody: JSON.stringify({ source, type: t }),
+          })
+          .promise()
       )
-      .flat(1)
+    ).flat(1)
   )
 }

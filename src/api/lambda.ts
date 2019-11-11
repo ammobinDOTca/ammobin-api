@@ -36,19 +36,19 @@ export async function init() {
     path: BASE + '/track-performance',
     handler: function(request, h) {
       const userAgent = request.headers['user-agent'] || 'unknown'
-      const { preformance, href } =
+      const { performance, href } =
         typeof request.payload === 'string'
           ? JSON.parse(request.payload)
           : request.payload
 
-      const connectTime = preformance.responseEnd - preformance.requestStart
-      const renderTime = preformance.domComplete - preformance.domLoading
+      const connectTime = performance.responseEnd - performance.requestStart
+      const renderTime = performance.domComplete - performance.domLoading
       const interactiveTime =
-        preformance.domInteractive - preformance.domLoading
+        performance.domInteractive - performance.domLoading
       request.log('info', {
-        type: 'track-preformance',
+        type: 'track-performance',
         userAgent,
-        preformance,
+        performance,
         connectTime,
         renderTime,
         interactiveTime,
