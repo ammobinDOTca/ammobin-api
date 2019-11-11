@@ -12,7 +12,7 @@ function createLogger(tag: string) {
     let fluentTransport = require('fluent-logger').support.winstonTransport()
     transports.push(new fluentTransport(tag, config))
   }
-  if (!process.env.DONT_LOG_CONSOLE) {
+  if (process.env.DONT_LOG_CONSOLE !== 'true') {
     transports.push(new winston.transports.Console())
   }
 
