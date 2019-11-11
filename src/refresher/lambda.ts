@@ -28,15 +28,19 @@ export async function handler(e: ScheduledEvent) {
     roundType: 'all',
   })
   return Promise.all(
-    TYPES.map(t =>
-      SOURCES.map(source =>
-        sqs
-          .sendMessage({
-            QueueUrl: process.env.QueueUrl || 'SHIT',
-            MessageBody: JSON.stringify({ source, type: t }),
-          })
-          .promise()
-      )
-    ).flat(1)
+    TYPES.reduce(
+      (lst, t) =>
+        lst.concat(
+          SOURCES.map(source =>
+            sqs
+              .sendMessage({
+                QueueUrl: process.env.QueueUrl || 'SHIT',
+                MessageBody: JSON.stringify({ source, type: t }),
+              })
+              .promise()
+          )
+        ),
+      [] as Promise<any>[]
+    )
   )
 }

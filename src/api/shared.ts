@@ -157,56 +157,53 @@ export async function getScrapeResponses(
         return 0
       }
     })
-  const itemsGrouped = result.reduce(
-    (r, item) => {
-      // if provided, filter out items that DONT match
-      if (
-        (subType && item.subType !== subType) ||
-        (query && !item.name.toLowerCase().includes(query.toLowerCase()))
-      ) {
-        return r
-      }
-
-      const key = item.subType + '_' + item.brand
-      if (!r[key]) {
-        r[key] = {
-          name: `${item.brand} ${item.subType}`,
-          subType: item.subType,
-          brand: item.brand,
-          minPrice: item.price,
-          maxPrice: item.price,
-          itemType: item.itemType,
-          minUnitCost: item.unitCost || 0,
-          maxUnitCost: item.unitCost || 0,
-          img: item.img,
-          vendors: [item],
-        } as IItemGroup
-      } else {
-        const val = r[key]
-        val.minPrice = Math.min(item.price, val.minPrice)
-        val.maxPrice = Math.max(item.price, val.maxPrice)
-
-        if (item.unitCost) {
-          if (val.minUnitCost === 0) {
-            val.minUnitCost = item.unitCost
-          }
-          val.minUnitCost = Math.min(item.unitCost, val.minUnitCost)
-          val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost)
-        }
-
-        if (val.img) {
-          // randomly pick group image
-          val.img = Math.random() > 0.5 ? item.img : val.img
-        } else {
-          val.img = item.img
-        }
-
-        val.vendors.push(item)
-      }
+  const itemsGrouped = result.reduce((r, item) => {
+    // if provided, filter out items that DONT match
+    if (
+      (subType && item.subType !== subType) ||
+      (query && !item.name.toLowerCase().includes(query.toLowerCase()))
+    ) {
       return r
-    },
-    <{ [key: string]: IItemGroup }>{}
-  )
+    }
+
+    const key = item.subType + '_' + item.brand
+    if (!r[key]) {
+      r[key] = {
+        name: `${item.brand} ${item.subType}`,
+        subType: item.subType,
+        brand: item.brand,
+        minPrice: item.price,
+        maxPrice: item.price,
+        itemType: item.itemType,
+        minUnitCost: item.unitCost || 0,
+        maxUnitCost: item.unitCost || 0,
+        img: item.img,
+        vendors: [item],
+      } as IItemGroup
+    } else {
+      const val = r[key]
+      val.minPrice = Math.min(item.price, val.minPrice)
+      val.maxPrice = Math.max(item.price, val.maxPrice)
+
+      if (item.unitCost) {
+        if (val.minUnitCost === 0) {
+          val.minUnitCost = item.unitCost
+        }
+        val.minUnitCost = Math.min(item.unitCost, val.minUnitCost)
+        val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost)
+      }
+
+      if (val.img) {
+        // randomly pick group image
+        val.img = Math.random() > 0.5 ? item.img : val.img
+      } else {
+        val.img = item.img
+      }
+
+      val.vendors.push(item)
+    }
+    return r
+  }, <{ [key: string]: IItemGroup }>{})
 
   // flatten map and sort groups by sortField + sortKey
   let res = Object.keys(itemsGrouped)
@@ -339,13 +336,13 @@ export async function getItemsFlatListings(
   }
 
   // figure out subset of keys to get (keys are stored by vendor)
-  let vendors: string[] = SOURCES
+  let vendors: string[] = VENDORS.map(v => v.name)
   if (vendor) {
     const vv = VENDORS.find(v => v.name === vendor)
-    vendors = vv ? [new URL(vv.link).hostname.replace('www.', '')] : []
+    vendors = vv ? [vv.name] : []
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(v =>
-      new URL(v.link).hostname.replace('www.', '')
+    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(
+      v => v.name
     )
   }
   const subTypes = subType
