@@ -24,5 +24,5 @@ function createLogger(tag: string) {
   })
 }
 
-export const apiLogger = createLogger('ammobin.api')
-export const workerLogger = createLogger('ammobin.api')
+export const apiLogger = createLogger('api')
+export const workerLogger = createLogger('api')
