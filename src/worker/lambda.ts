@@ -130,7 +130,7 @@ export async function handler(event: SQSEvent) {
               }
               return map
             }, {} as { [key: string]: IItemListing[] })
-            Object.entries(ass).forEach(a => console.log(a))
+
             // throattle?
             return Promise.all(
               Object.entries(ass).map(e => {
