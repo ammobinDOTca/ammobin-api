@@ -7,16 +7,18 @@ import crypto from 'crypto'
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
 import { apiLogger } from '../logger'
-import { SOURCES } from '../constants'
+import { VENDORS } from '../constants'
 import { transformRequest, transformResponse } from 'hapi-lambda'
 import { APIGatewayEvent } from 'aws-lambda'
+
+import { DynamoDB } from 'aws-sdk'
+import { IItemListing } from '../graphql-types'
+
+const docClient = new DynamoDB.DocumentClient({ region: 'ca-central-1' }) // todo: this should be a param
+
 const BASE = '/api'
 export async function init() {
-  const server = new Server({
-    routes: { cors: true },
-    // host: '0.0.0.0',
-    // port: process.env.PORT || 8080,
-  })
+  const server = new Server({})
 
   // Add the route
   server.route({
@@ -58,6 +60,7 @@ export async function init() {
       return h.response('success')
     },
   })
+  // todo: rm this once new UI is locked in?
   server.route({
     method: 'POST',
     path: BASE + '/track-view',
@@ -112,56 +115,56 @@ export async function init() {
       let host = targetUrl.hostname
         ? targetUrl.hostname.replace('www.', '')
         : ''
-      if (host === 'ammobin.ca' || host === 'api.ammobin.ca') {
-        // received old redirect link. let redirect endpoint handle logging the click
-        return h.response('success')
-      }
 
-      if (SOURCES.indexOf(host) === -1) {
+      // lazy comp.....
+      const vendor = VENDORS.find(v => v.link.includes(host))
+      if (!vendor) {
         throw boom.badRequest('invalid target url')
       }
 
-      // let types: string[]
-      // if (body.itemType) {
-      //   if (body.item === ItemType.reloading) {
-      //     types = RELOAD_TYPES
-      //   } else if (body.item === ItemType.ammo) {
-      //     types = AMMO_TYPES
-      //   } else {
-      //     types = [body.itemType]
-      //   }
-      // } else {
-      //   types = TYPES
-      // }
-
-      // const date = moment.utc().format(DATE_FORMAT)
-      try {
-        const results: any = []
-        //   await new Promise((resolve, reject) =>
-        //   client.mget(
-        //     types.map(type => `${date}_${host}_${type}`),
-        //     (err, res) =>
-        //       err ? reject(err) : resolve(res.filter(f => !!f).map(JSON.parse))
-        //   )
-        // ).then(helpers.combineResults)
-
-        const record = results.find(r => r && r.link === body.link)
-
-        if (!record) {
-          console.warn('WARN: unable to find matching record for ' + body.link)
-        }
-
-        request.log('info', {
-          type: 'track-outbound-click',
-          url: body.link,
-          userAgent: request.headers['user-agent'],
-          record,
-          requestId: request.info.id,
+      const itemType = body.itemType
+      const subType = body.subType
+      const docs = await docClient
+        .batchGet({
+          RequestItems: {
+            ammobinItems: {
+              ExpressionAttributeNames: {
+                '#1': vendor.name,
+              },
+              ProjectionExpression: '#1',
+              Keys: [{ id: `${itemType}_${subType}` }],
+            },
+          },
         })
-      } catch (e) {
-        server.log('error', 'ERROR: failed to track click: ' + e)
+        .promise()
+
+      let record: IItemListing
+      if (
+        !docs.Responses[`ammobinItems`] ||
+        !docs.Responses[`ammobinItems`][0] ||
+        !docs.Responses[`ammobinItems`][0][vendor.name]
+      ) {
+        console.warn('no dynamodb record found')
+      } else {
+        record = docs.Responses[`ammobinItems`][0][vendor.name].filter(
+          (r: IItemListing) => r.link === body.link
+        )
       }
 
+      if (!record) {
+        console.warn('WARN: unable to find matching record for ' + body.link)
+      }
+
+      request.log('info', {
+        type: 'track-outbound-click',
+        url: body.link,
+        query: body.query,
+        userAgent: request.headers['user-agent'],
+        record,
+        requestId: request.info.id,
+        index: body.index,
+        page: body.query.page || 1,
+      })
       return h.response('success')
     },
   })
@@ -240,7 +243,7 @@ export async function init() {
     }
   })
 
-  server.events.on('log', (event, tag) => {
+  server.events.on('log', event => {
     apiLogger.info(event.data)
   })
 
