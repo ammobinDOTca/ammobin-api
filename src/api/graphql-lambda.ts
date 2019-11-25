@@ -33,8 +33,8 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
 
   const ip =
-    event.headers.headers['x-forwarded-for'] ||
-    event.headers.headers['x-real-ip'] ||
+    event.headers['x-forwarded-for'] ||
+    event.headers['x-real-ip'] ||
     event.requestContext.identity.sourceIp
   const sessionId = ip
     ? crypto
@@ -42,8 +42,8 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
         .update(ip)
         .digest('hex')
     : 'unknown_ip'
-  delete event.headers.headers['x-forwarded-for']
-  delete event.headers.headers['x-real-ip']
+  delete event.headers['x-forwarded-for']
+  delete event.headers['x-real-ip']
   const startTime = new Date().getTime()
   let query, variables
   try {
