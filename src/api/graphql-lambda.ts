@@ -46,10 +46,17 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   delete event.headers['x-real-ip']
   const startTime = new Date().getTime()
   let query, variables
+  const method = event.httpMethod
   try {
-    const r = JSON.parse(event.body)
-    query = r.query
-    variables = r.variables
+    if (method === 'POST') {
+      const r = JSON.parse(event.body)
+      query = r.query
+      variables = r.variables
+    } else if (method === 'GET') {
+      query = event.queryStringParameters.query
+      variables = event.queryStringParameters.variables
+    }
+    // lol wut?
   } catch (e) {
     console.error(e)
   }
@@ -58,6 +65,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     query,
     variables,
     requestId,
+    method,
   })
 
   server.createHandler({
