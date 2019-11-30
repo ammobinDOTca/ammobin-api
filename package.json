@@ -4,6 +4,7 @@
   "description": "ammobin.ca api",
   "main": "./dist/api/index.js",
   "scripts": {
+    "clean": "rm -rf dist lambda",
     "start": "node ./dist/api/api.js",
     "start:worker": "node --tls-min-v1.0 ./dist/worker/redis-worker.js",
     "start:refresher": "node ./dist/refresher/index.js",
@@ -11,6 +12,7 @@
     "test": "npm run test:lint && npm run build",
     "format": "pretty-quick",
     "build": "tsc",
+    "build-lambda": "mkdir -p lambda/src && tsc --outDir lambda/src && cp package.json lambda && cp graphql.gql lambda && cd lambda && npm install --production && cd ..",
     "dev": "DEV=true ts-node-dev ./src/api/api.ts",
     "dev:worker": "DEV=true ts-node-dev ./src/worker/redis-worker.ts",
     "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-worker.ts",

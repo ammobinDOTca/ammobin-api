@@ -33,28 +33,30 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
 
   const ip =
-    event.headers['x-forwarded-for'] ||
-    event.headers['x-real-ip'] ||
-    event.requestContext.identity.sourceIp
+    event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
   const sessionId = ip
     ? crypto
         .createHmac('sha256', secret)
         .update(ip)
         .digest('hex')
     : 'unknown_ip'
-  delete event.headers['x-forwarded-for']
-  delete event.headers['x-real-ip']
+  delete event.headers['X-Forwarded-For']
+
   const startTime = new Date().getTime()
   let query, variables
   const method = event.httpMethod
   try {
-    if (method === 'POST') {
+    if (method === 'POST' && event.body) {
       const r = JSON.parse(event.body)
       query = r.query
       variables = r.variables
-    } else if (method === 'GET') {
+    } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
       variables = event.queryStringParameters.variables
+    } else {
+      console.warn(
+        `invalid request ${event.httpMethod} ${event.path}?${event.queryStringParameters} with body=${event.body}`
+      )
     }
     // lol wut?
   } catch (e) {
