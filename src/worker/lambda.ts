@@ -2,7 +2,7 @@ import * as classifier from 'ammobin-classifier'
 import { DynamoDB } from 'aws-sdk'
 import { SQSEvent } from 'aws-lambda'
 
-import { AMMO_TYPES, PROXY_URL } from '../constants'
+import { AMMO_TYPES /*PROXY_URL*/ } from '../constants'
 import { makeSearch } from '../scrapes'
 import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
@@ -18,7 +18,8 @@ function proxyImages(items) {
     if (i.img.indexOf('//') === 0) {
       i.img = 'http://' + i.img
     }
-    i.img = PROXY_URL + '/x160/' + i.img
+    // todo: change back to PROXY_URL once ready
+    i.img = 'https://aws.ammobin.ca/images' + '/x160/' + i.img
     return i
   })
 }
