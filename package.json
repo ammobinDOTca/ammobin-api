@@ -12,7 +12,7 @@
     "test": "npm run test:lint && npm run build",
     "format": "pretty-quick",
     "build": "tsc",
-    "build-lambda": "mkdir -p lambda/src && tsc --outDir lambda/src && cp package.json lambda && cp graphql.gql lambda && cd lambda && npm install --production && cd ..",
+    "build-lambda": "webpack --progress && cp graphql.gql lambda/graphql",
     "dev": "DEV=true ts-node-dev ./src/api/api.ts",
     "dev:worker": "DEV=true ts-node-dev ./src/worker/redis-worker.ts",
     "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-worker.ts",
@@ -48,6 +48,11 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "ts-loader": "^6.2.1",
+    "json-loader": "^0.5.7",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2",
     "@types/boom": "^7.3.0",
     "@types/graphql": "^14.5.0",
     "@types/hapi": "^18.0.3",
