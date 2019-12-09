@@ -4,6 +4,7 @@
  * and a lot in zip size (all zips are under 4MB total instead of 87MB before)
  */
 
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 const path = require('path')
 module.exports = {
   mode: 'production',
@@ -24,7 +25,18 @@ module.exports = {
   },
   externals: {
     'aws-sdk': 'aws-sdk', // dont build in aws-sdk since it is already provided by lambda env
+    'chrome-aws-lambda': 'chrome-aws-lambda',
+    lambdafs: 'lambdafs',
   },
+  plugins: [
+    new CopyWebpackPlugin([
+      {
+        from: 'node_modules/chrome-aws-lambda',
+        to: 'worker/node_modules/chrome-aws-lambda',
+      },
+      { from: 'node_modules/lambdafs', to: 'worker/node_modules/lambdafs' },
+    ]),
+  ],
   module: {
     // configuration regarding modules
     rules: [
