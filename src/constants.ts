@@ -387,6 +387,14 @@ export const VENDORS = [
 ]
 
 // list of domain names of all vendors (with www omitted)
+/**
+ * name of vendors (as shown to user)
+ */
+export const VENDOR_NAMES = VENDORS.map(v => v.name)
+
+/**
+ * domains of all vendors
+ */
 export const SOURCES = VENDORS.map(v =>
   url.parse(v.link).hostname.replace('www.', '')
 )
