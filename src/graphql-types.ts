@@ -116,8 +116,6 @@ export const enum SortOrder {
 export const enum SortField {
   name = 'name',
   link = 'link',
-  price = 'price',
-  unitCost = 'unitCost',
   minPrice = 'minPrice',
   minUnitCost = 'minUnitCost',
 }

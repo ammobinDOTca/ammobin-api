@@ -12,11 +12,10 @@ import crypto from 'crypto'
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
 
-import { typeDefs, vendors, bestPrices } from './graphql'
+import { typeDefs, resolvers } from './graphql'
 import { SOURCES, RELOAD_TYPES, AMMO_TYPES, TYPES } from '../constants'
 import { ItemType } from '../graphql-types'
-import { getItemsFlatListings, getScrapeResponses } from './shared'
-import { getRedisItems } from './redis-getter'
+
 const DEV = process.env.DEV === 'true'
 
 const client = redis.createClient({ host: 'redis' })
@@ -275,16 +274,7 @@ async function doWork() {
   try {
     const apolloServer = new ApolloServer({
       typeDefs,
-      resolvers: {
-        Query: {
-          vendors,
-          bestPrices,
-          itemsListings: (_, params) =>
-            getScrapeResponses(params, getRedisItems),
-          itemsFlatListings: (_, params) =>
-            getItemsFlatListings(params, getRedisItems),
-        },
-      },
+      resolvers,
       debug: DEV,
       tracing: DEV,
       cache: !DEV

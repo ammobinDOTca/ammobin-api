@@ -6,7 +6,4 @@ influx-data
 redis-data
 logs/*
 *~
-# where normal builds go
 dist
-# where slim lambda builds go
-lambda
