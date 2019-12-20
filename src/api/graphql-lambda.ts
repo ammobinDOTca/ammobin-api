@@ -13,7 +13,7 @@ import { getDyanmoItems } from './dynamo-getter'
 import { getScrapeResponses, getItemsFlatListings } from './shared'
 import { typeDefs, vendors, bestPrices } from './graphql'
 import { apiLogger } from '../logger'
-import crypto from 'crypto'
+import { createHmac } from 'crypto'
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
@@ -35,21 +35,22 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const ip =
     event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
   const sessionId = ip
-    ? crypto
-        .createHmac('sha256', secret)
+    ? createHmac('sha256', secret)
         .update(ip)
         .digest('hex')
     : 'unknown_ip'
   delete event.headers['X-Forwarded-For']
 
   const startTime = new Date().getTime()
-  let query, variables
+  let query, variables, operationName
   const method = event.httpMethod
   try {
+    //todo: handle list of queries...
     if (method === 'POST' && event.body) {
       const r = JSON.parse(event.body)
       query = r.query
       variables = r.variables
+      operationName = r.operationName
     } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
       variables = event.queryStringParameters.variables
@@ -68,11 +69,16 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     variables,
     requestId,
     method,
+    operationName,
   })
 
-  server.createHandler({
-    // apigateway handles cors for us
-  })(event, context, (err, result: APIGatewayProxyResult) => {
+  const h = server.createHandler({
+    cors: {
+      maxAge: 999999999,
+      origin: true,
+    },
+  })
+  h(event, context, (err, result: APIGatewayProxyResult) => {
     apiLogger.info({
       type: 'api-req',
       statusCode: result.statusCode,

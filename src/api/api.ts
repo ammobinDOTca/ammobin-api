@@ -225,12 +225,38 @@ server.events.on('response', (request: Request) => {
     request.method.toUpperCase() === 'POST' &&
     request.url.pathname === '/graphql'
   ) {
+    if (Array.isArray(request.payload)) {
+      request.payload.forEach(({ query, variables, operationName }) => {
+        request.log('info', {
+          type: 'graphql-query',
+          query,
+          variables,
+          operationName,
+          method: 'POST',
+        })
+      })
+    } else {
+      request.log('info', {
+        type: 'graphql-query',
+        query: (request.payload as any).query,
+        variables: (request.payload as any).variables,
+        operationName: (request.payload as any).operationName,
+        method: 'POST',
+      })
+    }
+  } else if (
+    request.method.toUpperCase() === 'GET' &&
+    request.url.pathname === '/graphql'
+  ) {
     request.log('info', {
       type: 'graphql-query',
-      query: (request.payload as any).query,
-      variables: (request.payload as any).variables,
+      query: (request.query as any).query,
+      variables: (request.query as any).variables,
+      operationName: (request.query as any).operationName,
+      method: 'GET',
     })
   }
+
   if (
     request.response &&
     (request.response as ResponseObject).statusCode >= 500
@@ -319,9 +345,10 @@ async function doWork() {
 doWork()
 function shutDown() {
   server.log('info', { type: 'server-stopped', uri: server.info.uri })
-  server
-    .stop({ timeout: 10000 })
-    .then(_ => process.exit(0), _ => process.exit(1))
+  server.stop({ timeout: 10000 }).then(
+    _ => process.exit(0),
+    _ => process.exit(1)
+  )
 }
 process.on('SIGTERM', shutDown)
 // listen on SIGINT signal and gracefully stop the server

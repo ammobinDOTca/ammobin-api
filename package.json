@@ -7,7 +7,7 @@
     "clean": "rm -rf dist lambda",
     "start": "node ./dist/api/api.js",
     "start:worker": "node --tls-min-v1.0 ./dist/worker/redis-worker.js",
-    "start:refresher": "node ./dist/refresher/index.js",
+    "start:refresher": "node ./dist/refresher/redis-refresher.js",
     "test:lint": "tslint ./src/**/*.ts",
     "test": "npm run test:lint && npm run build",
     "format": "pretty-quick",
