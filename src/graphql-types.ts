@@ -57,7 +57,7 @@ export interface IItemsFlatListingsOnQueryArguments {
   province?: Province | null
   vendor?: string | null
   sortOrder?: SortOrder | null
-  sortField?: SortField | null
+  sortField?: FlatSortField | null
   query?: string | null
   brand?: string | null
 }
@@ -155,6 +155,13 @@ export interface IItemListing {
   count: number | null
   unitCost: number | null
   itemType: ItemType
+}
+
+export const enum FlatSortField {
+  name = 'name',
+  link = 'link',
+  price = 'price',
+  unitCost = 'unitCost',
 }
 
 export interface IItemFlatListings {

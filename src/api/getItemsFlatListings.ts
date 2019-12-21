@@ -2,7 +2,7 @@ import {
   IItemsFlatListingsOnQueryArguments,
   IItemFlatListings,
   SortOrder,
-  SortField,
+  FlatSortField,
   ItemType,
   IItemListing,
 } from '../graphql-types'
@@ -33,7 +33,7 @@ export async function getItemsFlatListings(
   }
 
   if (!sortField) {
-    sortField = SortField.minUnitCost
+    sortField = FlatSortField.unitCost
   }
 
   if (isNaN(page) || page < 1) {
@@ -107,7 +107,7 @@ export async function getItemsFlatListings(
     let aa = a[sortField]
     let bb = b[sortField]
     // put unknown unit costs at the bottom of the sort order
-    if (sortField === SortField.minUnitCost) {
+    if (sortField === FlatSortField.unitCost) {
       if (aa <= 0) {
         aa = Number.MAX_SAFE_INTEGER
       }
