@@ -44,6 +44,13 @@ enum SortField {
   minUnitCost
 }
 
+enum FlatSortField {
+  name
+  link
+  price
+  unitCost
+}
+
 type ItemListing {
   img: String
   price: Float!
@@ -123,7 +130,7 @@ type Query {
     province: Province
     vendor: String
     sortOrder: SortOrder
-    sortField: SortField
+    sortField: FlatSortField
     query: String
     brand: String
   ): ItemFlatListings
