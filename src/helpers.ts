@@ -52,6 +52,12 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
   return delayMs
 }
 
+/**
+ * generate redis key for get/set scrape results in redis
+ * @param source retailer website
+ * @param type
+ * @param subType
+ */
 export const getKey = (source: string, type: ItemType, subType: string) => {
   return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType
     .split(' ')
@@ -102,7 +108,7 @@ export function classifyBullets(
       const f = classifier.classifyAmmo(i.name || '')
 
       if (f.type === ammo) {
-        i.subType = f.calibre.toUpperCase()
+        i.subType = f.calibre.toUpperCase() || 'UNKNOWN'
       }
 
       return i

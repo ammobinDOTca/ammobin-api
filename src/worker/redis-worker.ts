@@ -79,7 +79,16 @@ function groupItemsBySubType(items: IItemListing[]): [string, ItemType[]][] {
 }
 
 worker.on('message', async (msg, next /* , id*/) => {
-  const { source, type } = JSON.parse(msg)
+  const {
+    /**
+     * retailer website
+     */
+    source,
+    /**
+     * item type
+     */
+    type,
+  } = JSON.parse(msg)
 
   const searchStart = new Date()
   logger.info({ type: 'started-scrape', source, ItemType: type })

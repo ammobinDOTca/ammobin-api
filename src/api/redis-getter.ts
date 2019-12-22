@@ -1,17 +1,23 @@
 import * as redis from 'redis'
-import { IItemListing, ItemType } from '../graphql-types'
+import { IItemListing, ItemType, IVendor } from '../graphql-types'
 import { getKey } from '../helpers'
+import url from 'url'
 const client = redis.createClient({ host: 'redis' })
 
 export async function getRedisItems(
   types: ItemType[],
   subTypes: string[],
-  vendors: string[]
+  vendors: IVendor[]
 ): Promise<IItemListing[]> {
   const keys: string[] = types
-    .map(t => vendors.map(s => subTypes.map(st => getKey(s, t, st))))
+    .map(t =>
+      vendors.map(s =>
+        subTypes.map(st =>
+          getKey(url.parse(s.link).hostname.replace('www.', ''), t, st)
+        )
+      )
+    )
     .flat<string>(Infinity)
-
   const results: IItemListing[][] = await new Promise((resolve, reject) =>
     client.mget(keys, (err, rres: string[]) =>
       err ? reject(err) : resolve(rres.map(r => (r ? JSON.parse(r) : null)))

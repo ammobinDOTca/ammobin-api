@@ -1,9 +1,10 @@
-import { SOURCES, AMMO_TYPES, RELOAD_TYPES, VENDORS } from '../constants'
+import { AMMO_TYPES, RELOAD_TYPES, VENDORS } from '../constants'
 import * as helpers from '../helpers'
 
 import {
   IItemsFlatListingsOnQueryArguments,
   IItemFlatListings,
+  IVendor,
 } from '../graphql-types'
 import {
   IItemsListingsOnQueryArguments,
@@ -16,7 +17,7 @@ import {
   FlatSortField,
   IBestPrice,
 } from '../graphql-types'
-import { URL } from 'url'
+import { valueGetterFn } from './types'
 
 export async function getBestPrices(): Promise<IBestPrice[]> {
   return Promise.resolve(null)
@@ -72,7 +73,7 @@ export async function getScrapeResponses(
   valueGetter: (
     types: ItemType[],
     subTypes: string[],
-    vendors: string[]
+    vendors: IVendor[]
   ) => Promise<IItemListing[]>
 ): Promise<IItemListings> {
   let {
@@ -122,14 +123,11 @@ export async function getScrapeResponses(
   }
 
   // figure out subset of keys to get (keys are stored by vendor)
-  let vendors: string[] = SOURCES
+  let vendors: IVendor[] = VENDORS
   if (vendor) {
-    const vv = VENDORS.find(v => v.name === vendor)
-    vendors = vv ? [new URL(vv.link).hostname.replace('www.', '')] : []
+    vendors = VENDORS.filter(v => v.name === vendor)
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(v =>
-      new URL(v.link).hostname.replace('www.', '')
-    )
+    vendors = VENDORS.filter(v => v.provinces.includes(province))
   }
 
   const subTypes = subType
@@ -284,11 +282,7 @@ export async function getScrapeResponses(
 
 export async function getItemsFlatListings(
   args: IItemsFlatListingsOnQueryArguments,
-  valueGetter: (
-    types: ItemType[],
-    subTypes: string[],
-    vendors: string[]
-  ) => Promise<IItemListing[]>
+  valueGetter: valueGetterFn
 ): Promise<IItemFlatListings> {
   let {
     itemType,
@@ -337,14 +331,11 @@ export async function getItemsFlatListings(
   }
 
   // figure out subset of keys to get (keys are stored by vendor)
-  let vendors: string[] = VENDORS.map(v => v.name)
+  let vendors: IVendor[] = VENDORS
   if (vendor) {
-    const vv = VENDORS.find(v => v.name === vendor)
-    vendors = vv ? [vv.name] : []
+    vendors = VENDORS.filter(v => v.name === vendor)
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(
-      v => v.name
-    )
+    vendors = VENDORS.filter(v => v.provinces.includes(province))
   }
   const subTypes = subType
     ? [subType]

@@ -1,12 +1,14 @@
-import { IItemListing, ItemType } from '../graphql-types'
+import { IItemListing, ItemType, IVendor } from '../graphql-types'
 
 import { DynamoDB } from 'aws-sdk'
-const docClient = new DynamoDB.DocumentClient({ region: 'ca-central-1' }) // todo: this should be a param
+const docClient = new DynamoDB.DocumentClient({
+  region: process.env.AWS_REGION || 'ca-central-1',
+})
 
 export async function getDyanmoItems(
   types: ItemType[],
   subTypes: string[],
-  vendors: string[]
+  vendors: IVendor[]
 ): Promise<IItemListing[]> {
   const keys: string[] = types.reduce(
     (ll, type) =>
@@ -24,7 +26,7 @@ export async function getDyanmoItems(
       RequestItems: {
         ammobinItems: {
           ExpressionAttributeNames: vendors.reduce((m, v, i) => {
-            m['#' + i] = v
+            m['#' + i] = v.name
             return m
           }, {}),
           ProjectionExpression: vendors.map((_, i) => '#' + i).join(','),
@@ -39,8 +41,8 @@ export async function getDyanmoItems(
   const results = docs.Responses[`ammobinItems`].reduce<IItemListing[]>(
     (_res, doc) => {
       vendors.forEach(v => {
-        if (doc[v]) {
-          _res = _res.concat(doc[v])
+        if (doc[v.name]) {
+          _res = _res.concat(doc[v.name])
         }
       })
       return _res
