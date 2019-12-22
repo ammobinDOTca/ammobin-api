@@ -42,7 +42,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   delete event.headers['X-Forwarded-For']
 
   const startTime = new Date().getTime()
-  let query, variables, operationName
+  let query, variables, opName
   const method = event.httpMethod
   try {
     //todo: handle list of queries...
@@ -50,10 +50,11 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       const r = JSON.parse(event.body)
       query = r.query
       variables = r.variables
-      operationName = r.operationName
+      opName = r.opName
     } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
       variables = event.queryStringParameters.variables
+      opName = event.queryStringParameters.opName
     } else {
       console.warn(
         `invalid request ${event.httpMethod} ${event.path}?${event.queryStringParameters} with body=${event.body}`
@@ -69,7 +70,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     variables,
     requestId,
     method,
-    operationName,
+    opName,
   })
 
   const h = server.createHandler({

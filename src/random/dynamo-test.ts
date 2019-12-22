@@ -2,7 +2,7 @@ import { getDyanmoItems } from '../api/dynamo-getter'
 // import { ItemType } from "../graphql-types";
 // import { VENDORS } from "../constants";
 import { getItemsFlatListings } from '../api/shared'
-import { ItemType, SortOrder, SortField } from '../graphql-types'
+import { ItemType, SortOrder, FlatSortField } from '../graphql-types'
 
 async function foo() {
   const result = await getItemsFlatListings(
@@ -11,7 +11,7 @@ async function foo() {
       subType: '.22-250 REMINGTON',
       pageSize: 2,
       sortOrder: SortOrder.DES,
-      sortField: SortField.minPrice,
+      sortField: FlatSortField.price,
     },
     getDyanmoItems
   )

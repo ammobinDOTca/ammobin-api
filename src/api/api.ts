@@ -226,12 +226,12 @@ server.events.on('response', (request: Request) => {
     request.url.pathname === '/graphql'
   ) {
     if (Array.isArray(request.payload)) {
-      request.payload.forEach(({ query, variables, operationName }) => {
+      request.payload.forEach(({ query, variables, opName }) => {
         request.log('info', {
           type: 'graphql-query',
           query,
           variables,
-          operationName,
+          opName,
           method: 'POST',
         })
       })
@@ -240,7 +240,7 @@ server.events.on('response', (request: Request) => {
         type: 'graphql-query',
         query: (request.payload as any).query,
         variables: (request.payload as any).variables,
-        operationName: (request.payload as any).operationName,
+        opName: (request.payload as any).opName,
         method: 'POST',
       })
     }
@@ -252,7 +252,7 @@ server.events.on('response', (request: Request) => {
       type: 'graphql-query',
       query: (request.query as any).query,
       variables: (request.query as any).variables,
-      operationName: (request.query as any).operationName,
+      opName: (request.query as any).opName,
       method: 'GET',
     })
   }
