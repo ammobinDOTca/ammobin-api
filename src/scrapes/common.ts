@@ -41,8 +41,8 @@ function correctUrl(baseUrl: string, url: string): string {
 }
 
 async function getPage(url: string) {
-  // ELSE consider using the herkou hosted version... (see secret manager)
-  if (url.startsWith(RENDERTRON_URL)) {
+  // only do internal chrome stuff on lambda (since it is loaded on the layer)
+  if (process.env.AWS_EXECUTION_ENV && url.startsWith(RENDERTRON_URL)) {
     // remove rendertron part...
     // todo: cleaner alternative should be considered in the future
     url = url.replace(RENDERTRON_URL + '/render/', '')
