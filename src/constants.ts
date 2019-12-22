@@ -2,7 +2,7 @@ import { IVendor, Province, ItemType } from './graphql-types'
 import url from 'url'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
-export const VENDORS = [
+export const VENDORS: IVendor[] = [
   {
     name: `Cabela's`,
     link: 'http://www.cabelas.ca/',
@@ -15,7 +15,8 @@ export const VENDORS = [
       Province.ON,
     ],
     location: 'all over the place',
-  } as IVendor,
+    hasReloadingItems: true,
+  },
   {
     name: 'Sail',
     link: 'https://www.sail.ca/',
@@ -384,9 +385,21 @@ export const VENDORS = [
     provinces: [Province.ON],
     location: `Markham`,
   },
-]
+].map(i => {
+  i.background = i.background || false
+  i.hasReloadingItems = i.hasReloadingItems || false
+  return i as IVendor
+})
 
 // list of domain names of all vendors (with www omitted)
+/**
+ * name of vendors (as shown to user)
+ */
+export const VENDOR_NAMES = VENDORS.map(v => v.name)
+
+/**
+ * domains of all vendors
+ */
 export const SOURCES = VENDORS.map(v =>
   url.parse(v.link).hostname.replace('www.', '')
 )

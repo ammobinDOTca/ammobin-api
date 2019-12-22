@@ -30,10 +30,11 @@ to /etc/hosts (server + worker expect redis to be available at the host 'redis')
 make redis url configurable
 make logging more configurable
 crash server when unable to access fluentd
-move cron task into separate docker container
 add a few unit tests
-complete graphql impl
 add stricter types + move into common package for use with client ?
+refactor vendor info into single location
+clean up vendor urls
+refactor lambda and docker stuff into shared logic
 
 ### docker hub
 

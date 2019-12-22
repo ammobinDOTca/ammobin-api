@@ -36,6 +36,7 @@ enum SortOrder {
 enum SortField {
   name
   link
+  # old table filters
   minPrice
   minUnitCost
 }

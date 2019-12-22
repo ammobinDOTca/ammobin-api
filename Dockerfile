@@ -12,4 +12,4 @@ EXPOSE 8080
 USER node
 HEALTHCHECK --interval=30s --timeout=1s CMD wget localhost:8080/ping -q -O/dev/null || exit 1
 VOLUME [ "/build/logs" ]
-CMD ["node","dist/api/index.js"]
+CMD ["node","dist/api/api.js"]

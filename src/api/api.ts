@@ -12,10 +12,11 @@ import crypto from 'crypto'
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
 
-import { typeDefs, resolvers } from './graphql'
+import { typeDefs, vendors, bestPrices } from './graphql'
 import { SOURCES, RELOAD_TYPES, AMMO_TYPES, TYPES } from '../constants'
 import { ItemType } from '../graphql-types'
-
+import { getItemsFlatListings, getScrapeResponses } from './shared'
+import { getRedisItems } from './redis-getter'
 const DEV = process.env.DEV === 'true'
 
 const client = redis.createClient({ host: 'redis' })
@@ -224,12 +225,38 @@ server.events.on('response', (request: Request) => {
     request.method.toUpperCase() === 'POST' &&
     request.url.pathname === '/graphql'
   ) {
+    if (Array.isArray(request.payload)) {
+      request.payload.forEach(({ query, variables, opName }) => {
+        request.log('info', {
+          type: 'graphql-query',
+          query,
+          variables,
+          opName,
+          method: 'POST',
+        })
+      })
+    } else {
+      request.log('info', {
+        type: 'graphql-query',
+        query: (request.payload as any).query,
+        variables: (request.payload as any).variables,
+        opName: (request.payload as any).opName,
+        method: 'POST',
+      })
+    }
+  } else if (
+    request.method.toUpperCase() === 'GET' &&
+    request.url.pathname === '/graphql'
+  ) {
     request.log('info', {
       type: 'graphql-query',
-      query: (request.payload as any).query,
-      variables: (request.payload as any).variables,
+      query: (request.query as any).query,
+      variables: (request.query as any).variables,
+      opName: (request.query as any).opName,
+      method: 'GET',
     })
   }
+
   if (
     request.response &&
     (request.response as ResponseObject).statusCode >= 500
@@ -274,7 +301,16 @@ async function doWork() {
   try {
     const apolloServer = new ApolloServer({
       typeDefs,
-      resolvers,
+      resolvers: {
+        Query: {
+          vendors,
+          bestPrices,
+          itemsListings: (_, params) =>
+            getScrapeResponses(params, getRedisItems),
+          itemsFlatListings: (_, params) =>
+            getItemsFlatListings(params, getRedisItems),
+        },
+      },
       debug: DEV,
       tracing: DEV,
       cache: !DEV
@@ -309,9 +345,10 @@ async function doWork() {
 doWork()
 function shutDown() {
   server.log('info', { type: 'server-stopped', uri: server.info.uri })
-  server
-    .stop({ timeout: 10000 })
-    .then(_ => process.exit(0), _ => process.exit(1))
+  server.stop({ timeout: 10000 }).then(
+    _ => process.exit(0),
+    _ => process.exit(1)
+  )
 }
 process.on('SIGTERM', shutDown)
 // listen on SIGINT signal and gracefully stop the server
