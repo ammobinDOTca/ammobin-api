@@ -64,11 +64,10 @@ export async function getItemsFlatListings(
   // figure out subset of keys to get (keys are stored by vendor)
   let vendors: string[] = SOURCES
   if (vendor) {
-    const vv = VENDORS.find(v => v.name === vendor)
-    vendors = vv ? [new URL(vv.link).hostname.replace('www.', '')] : []
+    vendors = VENDORS.filter(v => v.name === vendor).map(v => v.link)
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(v =>
-      new URL(v.link).hostname.replace('www.', '')
+    vendors = VENDORS.filter(v => v.provinces.includes(province)).map(
+      v => v.link
     )
   }
 
