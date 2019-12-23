@@ -4,6 +4,7 @@ import { AMMO_TYPES, PROXY_URL, QUEUE_NAME } from '../constants'
 import { makeSearch } from '../scrapes'
 import { getKey, classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
+import { logger } from '../logger'
 const worker = new RSMQWorker(QUEUE_NAME, {
   host: 'redis',
   autostart: true,
@@ -11,7 +12,6 @@ const worker = new RSMQWorker(QUEUE_NAME, {
   defaultDelay: 10,
   maxReceiveCount: 1,
 })
-const logger = require('../logger').workerLogger
 
 const redis = require('redis')
 const client = redis.createClient({ host: 'redis' })

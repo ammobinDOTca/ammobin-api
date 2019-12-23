@@ -12,7 +12,7 @@ import { ApolloServer } from 'apollo-server-lambda'
 import { getDyanmoItems } from './dynamo-getter'
 import { getScrapeResponses, getItemsFlatListings } from './shared'
 import { typeDefs, vendors, bestPrices } from './graphql'
-import { apiLogger } from '../logger'
+import { logger } from '../logger'
 import { createHmac } from 'crypto'
 // Provide resolver functions for your schema fields
 const resolvers = {
@@ -64,7 +64,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   } catch (e) {
     console.error(e)
   }
-  apiLogger.info({
+  logger.info({
     type: 'graphql-query',
     query,
     variables,
@@ -80,7 +80,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     },
   })
   h(event, context, (err, result: APIGatewayProxyResult) => {
-    apiLogger.info({
+    logger.info({
       type: 'api-req',
       statusCode: result.statusCode,
       path: event.path,

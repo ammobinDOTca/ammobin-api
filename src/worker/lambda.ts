@@ -6,7 +6,7 @@ import { AMMO_TYPES /*PROXY_URL*/ } from '../constants'
 import { makeSearch } from '../scrapes'
 import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
-import { workerLogger as logger } from '../logger'
+import { logger } from '../logger'
 const docClient = new DynamoDB.DocumentClient()
 
 function proxyImages(items) {

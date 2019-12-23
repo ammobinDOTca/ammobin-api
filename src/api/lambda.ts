@@ -6,7 +6,7 @@ import crypto from 'crypto'
 
 // used to encrypt request ip
 const secret = process.env.HASH_SECRET || Math.random().toString()
-import { apiLogger } from '../logger'
+import { logger } from '../logger'
 import { VENDORS } from '../constants'
 import { transformRequest, transformResponse } from 'hapi-lambda'
 import { APIGatewayEvent } from 'aws-lambda'
@@ -244,7 +244,7 @@ export async function init() {
   })
 
   server.events.on('log', event => {
-    apiLogger.info(event.data)
+    logger.info(event.data)
   })
 
   server.events.on('request', (request, event) => {
@@ -261,7 +261,7 @@ export async function init() {
     delete request.headers['x-forwarded-for']
     delete request.headers['x-real-ip']
     const requestId = request.info.id
-    apiLogger.info({ ...event.data, sessionId, requestId })
+    logger.info({ ...event.data, sessionId, requestId })
   })
 
   return server

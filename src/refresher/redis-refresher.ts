@@ -6,7 +6,7 @@ import cron = require('node-cron')
 import RedisSMQ from 'rsmq'
 
 import { SOURCES, CACHE_REFRESH_HOURS, QUEUE_NAME, TYPES } from '../constants'
-import { workerLogger as logger } from '../logger'
+import { logger } from '../logger'
 
 const rsmq = new RedisSMQ({ host: 'redis' })
 

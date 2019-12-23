@@ -4,7 +4,7 @@
 import { SQS } from 'aws-sdk'
 import { ScheduledEvent } from 'aws-lambda'
 import { SOURCES, TYPES } from '../constants'
-import { workerLogger as logger } from '../logger'
+import { logger } from '../logger'
 /**
  * {
     "version": "0",

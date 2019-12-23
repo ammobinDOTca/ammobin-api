@@ -17,10 +17,10 @@ import { SOURCES, RELOAD_TYPES, AMMO_TYPES, TYPES } from '../constants'
 import { ItemType } from '../graphql-types'
 import { getItemsFlatListings, getScrapeResponses } from './shared'
 import { getRedisItems } from './redis-getter'
+import { logger } from '../logger'
 const DEV = process.env.DEV === 'true'
 
 const client = redis.createClient({ host: 'redis' })
-const logger = require('../logger').apiLogger
 
 const server = new Server({
   routes: { cors: true },
