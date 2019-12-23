@@ -28,7 +28,12 @@ export function waspMunitions(type: ItemType): Promise<IItemListing[]> {
         info,
         selectors
       ).then(helpers.classify(type))
-
+    // todo: there is actual reloading
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+    case ItemType.shot:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

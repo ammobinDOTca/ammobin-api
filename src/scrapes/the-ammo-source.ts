@@ -46,6 +46,12 @@ export function theAmmoSource(type: ItemType): Promise<IItemListing[]> {
           )
         )
       ).then(helpers.combineResults)
+    // todo: there is actual reloading
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+    case ItemType.shot:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

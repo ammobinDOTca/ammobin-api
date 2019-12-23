@@ -14,7 +14,7 @@ export async function tillsonburg(type: ItemType): Promise<IItemListing[]> {
     img: '.image img',
     price: '.price',
   }
-  const getUrl = t => page => `https://tillsonburggunshop.com/${t}`
+  const getUrl = t => page => `https://${info.site}/${t}`
   switch (type) {
     case ItemType.rimfire:
       return Promise.resolve(null) // no rimfire as of 20190208
@@ -28,6 +28,12 @@ export async function tillsonburg(type: ItemType): Promise<IItemListing[]> {
         info,
         selectors
       ).then(helpers.classifyShotgun)
+    // todo: there is actual reloading
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+    case ItemType.shot:
+      return Promise.resolve([])
     default:
       throw new Error('unknown type: ' + type)
   }

@@ -42,7 +42,12 @@ export function theGunDealer(type: ItemType): Promise<IItemListing[]> {
       return scrape(p => `${BASE}/rimfire/page/${p}`, info, selectors).then(
         helpers.classifyRimfire
       )
-
+    // todo: there is actual reloading
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+    case ItemType.shot:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

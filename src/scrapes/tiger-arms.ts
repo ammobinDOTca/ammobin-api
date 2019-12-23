@@ -21,7 +21,7 @@ export function tigerArms(type: ItemType): Promise<IItemListing[]> {
     price: '.amount',
     outOfStock: '.gema75_soldout_badge_new_2327',
   }
-  const BASE = 'https://tigerarms.ca/product-category/ammunition'
+  const BASE = `https://${info.site}/product-category/ammunition`
 
   switch (type) {
     case ItemType.rimfire:
@@ -48,6 +48,12 @@ export function tigerArms(type: ItemType): Promise<IItemListing[]> {
         info,
         selectors
       ).then(items => helpers.classifyBullets(items, type))
+    // todo: there is actual reloading
+    case ItemType.case:
+    case ItemType.powder:
+    case ItemType.primer:
+    case ItemType.shot:
+      return Promise.resolve([])
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
