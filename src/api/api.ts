@@ -165,6 +165,7 @@ server.route({
         type: 'track-outbound-click',
         url: body.link,
         href: body.href,
+        index: body.index,
         queryParams: body.query,
         userAgent: request.headers['user-agent'],
         record,
