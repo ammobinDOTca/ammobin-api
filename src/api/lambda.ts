@@ -34,7 +34,7 @@ export async function init() {
     } else {
       record = docs.Responses[`ammobinItems`][0][vendor.name].filter(
         (r: IItemListing) => r.link === link
-      )
+      )[0]
     }
     return record
   }
