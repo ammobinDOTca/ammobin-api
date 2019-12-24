@@ -45,16 +45,35 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   let query, variables, opName
   const method = event.httpMethod
   try {
-    //todo: handle list of queries...
     if (method === 'POST' && event.body) {
       const r = JSON.parse(event.body)
-      query = r.query
-      variables = r.variables
-      opName = r.opName
+      const queries = Array.isArray(r) ? r : [r]
+      queries.forEach(rr => {
+        query = rr.query
+        variables = rr.variables
+        opName = rr.opName
+        logger.info({
+          type: 'graphql-query',
+          query,
+          variables,
+          requestId,
+          method,
+          opName,
+        })
+      })
     } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
       variables = event.queryStringParameters.variables
       opName = event.queryStringParameters.opName
+
+      logger.info({
+        type: 'graphql-query',
+        query,
+        variables,
+        requestId,
+        method,
+        opName,
+      })
     } else {
       console.warn(
         `invalid request ${event.httpMethod} ${event.path}?${event.queryStringParameters} with body=${event.body}`
@@ -64,14 +83,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   } catch (e) {
     console.error(e)
   }
-  logger.info({
-    type: 'graphql-query',
-    query,
-    variables,
-    requestId,
-    method,
-    opName,
-  })
 
   const h = server.createHandler({
     cors: {
