@@ -133,7 +133,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       request.log('info', {
         type: 'track-outbound-click',
         url: link,
-        query,
+        userQuery: query,
         userAgent: request.headers['user-agent'],
         record,
         foundRecord: !!record,
