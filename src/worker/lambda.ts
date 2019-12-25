@@ -135,6 +135,10 @@ export async function handler(event: SQSEvent) {
             // throattle?
             return Promise.all(
               Object.entries(ass).map(e => {
+                const names = e[1][0].vendor
+                const values = e[1].slice(0, 99)
+                // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-expression-parameters
+                // size limits The maximum length of all substitution variables in an expression is 2 MB. This is the sum of the lengths of all ExpressionAttributeNames and ExpressionAttributeValues.
                 return docClient
                   .update({
                     TableName: 'ammobinItems', // todo: make this env
@@ -143,10 +147,10 @@ export async function handler(event: SQSEvent) {
                     },
                     UpdateExpression: 'set #vendor = :val',
                     ExpressionAttributeNames: {
-                      '#vendor': e[1][0].vendor,
+                      '#vendor': names,
                     },
                     ExpressionAttributeValues: {
-                      ':val': e[1],
+                      ':val': values,
                     },
                   })
                   .promise()
