@@ -75,6 +75,7 @@ async function doWork() {
     })
     await apolloServer.applyMiddleware({
       app: server,
+      path: '/api/graphql',
     })
 
     await apolloServer.installSubscriptionHandlers(server.listener)
