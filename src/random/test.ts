@@ -1,12 +1,18 @@
 import { makeSearch } from '../scrapes'
-import { AxiosError } from 'axios'
+
 async function work() {
-  await makeSearch(
-    process.env.URL || 'siwashsports.ca',
-    process.env.TYPE || ('shotgun' as any)
-  )
-    .then(f => console.log(f))
-    .catch((e: AxiosError) => console.error(e.request, e.code, e.message))
+  // tslint:disable: no-console
+  console.time('makeSearch')
+  try {
+    const f = await makeSearch(
+      process.env.URL || 'siwashsports.ca',
+      process.env.TYPE || ('shotgun' as any)
+    )
+    console.log(f)
+  } catch (e) {
+    console.error(e.request, e.code, e.message)
+  }
+  console.timeEnd('makeSearch')
 }
 
 work()
