@@ -60,6 +60,26 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       return h.response('success')
     },
   })
+
+  server.route({
+    method: 'POST',
+    path: BASE + '/track-pageview',
+    handler: function(request, h) {
+      const userAgent = request.headers['user-agent'] || 'unknown'
+      const body =
+        typeof request.payload === 'string'
+          ? JSON.parse(request.payload)
+          : request.payload
+      request.log('info', {
+        type: 'track-pageview',
+        userAgent,
+        body,
+        requestId: request.info.id,
+      })
+      return h.response('success')
+    },
+  })
+
   // todo: rm this once new UI is locked in?
   server.route({
     method: 'POST',
