@@ -16,7 +16,7 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
     name: '.product-info h6',
     link: '.top-product-section a',
     img: '.attachment-woocommerce_thumbnail',
-    price: '.woocommerce-Price-amount',
+    price: '.price',
     nextPage: '.next',
   }
   const getUrl = t => page =>
