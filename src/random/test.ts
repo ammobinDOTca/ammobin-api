@@ -8,7 +8,7 @@ async function work() {
       process.env.URL || 'siwashsports.ca',
       process.env.TYPE || ('shotgun' as any)
     )
-    console.log(f)
+    console.log(f, f.length)
   } catch (e) {
     console.error(e.request, e.code, e.message)
   }

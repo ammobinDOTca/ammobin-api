@@ -17,12 +17,16 @@ export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
     name: '.name',
     img: 'img',
     link: 'a',
-    price: '.itemPrice',
+    price: '.pricing',
     nextPage: '.next-only',
     outOfStock: '.product-card__availability',
   }
   const work = t =>
-    scrape(p => `https://${info.site}/custom/${t}/page/${p}`, info, selectors)
+    scrape(
+      p => `https://www.${info.site}/custom/${t}/page/${p}`,
+      info,
+      selectors
+    )
 
   switch (type) {
     case ItemType.rimfire:
