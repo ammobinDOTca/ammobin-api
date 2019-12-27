@@ -2,7 +2,7 @@ import * as classifier from 'ammobin-classifier'
 import { DynamoDB } from 'aws-sdk'
 import { SQSEvent } from 'aws-lambda'
 
-import { AMMO_TYPES /*PROXY_URL*/ } from '../constants'
+import { AMMO_TYPES, PROXY_URL } from '../constants'
 import { makeSearch } from '../scrapes'
 import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
@@ -19,7 +19,7 @@ function proxyImages(items) {
       i.img = 'http://' + i.img
     }
     // todo: change back to PROXY_URL once ready
-    i.img = 'https://aws.ammobin.ca/images' + '/x160/' + i.img
+    i.img = PROXY_URL + '/x160/' + i.img
     return i
   })
 }
@@ -136,7 +136,7 @@ export async function handler(event: SQSEvent) {
             return Promise.all(
               Object.entries(ass).map(e => {
                 const names = e[1][0].vendor
-                const values = e[1].slice(0, 99)
+                const values = e[1].slice(0, 50)
                 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-expression-parameters
                 // size limits The maximum length of all substitution variables in an expression is 2 MB. This is the sum of the lengths of all ExpressionAttributeNames and ExpressionAttributeValues.
                 return docClient
