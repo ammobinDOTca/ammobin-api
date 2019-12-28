@@ -18,3 +18,11 @@ export const SYLVESTRE_SPORTING_GOODS: Vendor = {
   provinces: [Province.AB],
   logo: 'sylvestresportinggoods-logo.png',
 }
+
+export const LONDEROS_SPORTS: Vendor = {
+  name: 'Londeros Sports',
+  link: 'londerosports.com',
+  location: 'Saint-Jean-sur-Richelieu',
+  provinces: [Province.QC],
+  logo: 'londerosports-logo.png',
+}
