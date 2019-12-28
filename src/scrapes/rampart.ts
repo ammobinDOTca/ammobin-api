@@ -6,8 +6,8 @@ import { scrape, Info, Selectors } from './common'
 export function rampart(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'rampartcorp.com',
-    vendor: 'Rampart',
+    link: 'rampartcorp.com',
+    name: 'Rampart',
     provinces: [Province.ON],
   }
   const selectors: Selectors = {
@@ -21,14 +21,7 @@ export function rampart(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
       return Promise.all(
         ['rifle', 'pistol'].map(t =>
-          throttle(() =>
-            scrape(
-              page =>
-                `https://rampartcorp.com/firearms/ammunition/${t}-calibers/`,
-              info,
-              selectors
-            )
-          )
+          throttle(() => scrape(page => `https://rampartcorp.com/firearms/ammunition/${t}-calibers/`, info, selectors))
         )
       )
         .then(helpers.combineResults)

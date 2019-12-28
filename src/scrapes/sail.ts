@@ -5,13 +5,13 @@ import * as helpers from '../helpers'
 
 export function sail(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'sail.ca',
-    vendor: `Sail`,
+    link: 'sail.ca',
+    name: `Sail`,
     provinces: [Province.ON, Province.QC],
   }
 
   async function work(t: string, page = 1) {
-    await helpers.delayScrape(info.site)
+    await helpers.delayScrape(info.link)
 
     const {
       data: { pagination, results },
@@ -28,7 +28,7 @@ export function sail(type: ItemType): Promise<IItemListing[]> {
         name: r.name,
         price: r.price,
         provinces: info.provinces,
-        vendor: info.vendor,
+        vendor: info.name,
       } as IItemListing
     })
 

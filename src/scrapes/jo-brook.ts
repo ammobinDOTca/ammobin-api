@@ -7,8 +7,8 @@ export function jobrook(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
 
   const info: Info = {
-    site: 'jobrookoutdoors.com',
-    vendor: `Jo Brook Outdoors`,
+    link: 'jobrookoutdoors.com',
+    name: `Jo Brook Outdoors`,
     provinces: [Province.MB],
   }
 
@@ -22,11 +22,7 @@ export function jobrook(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
   function work(f) {
-    return scrape(
-      p => `http://www.${info.site}/shooting/${f}/page${p}.html`,
-      info,
-      selectors
-    )
+    return scrape(p => `http://www.${info.link}/shooting/${f}/page${p}.html`, info, selectors)
   }
 
   switch (type) {
@@ -34,11 +30,9 @@ export function jobrook(type: ItemType): Promise<IItemListing[]> {
       return work('ammo/rimfire')
 
     case ItemType.centerfire:
-      return Promise.all(
-        ['rifle', 'pistol' /*, 'bulk'*/].map(t =>
-          throttle(() => work('ammo/' + t))
-        )
-      ).then(helpers.combineResults)
+      return Promise.all(['rifle', 'pistol' /*, 'bulk'*/].map(t => throttle(() => work('ammo/' + t)))).then(
+        helpers.combineResults
+      )
 
     case ItemType.shotgun:
       return work('ammo/shotgun')

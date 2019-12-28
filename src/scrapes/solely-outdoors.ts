@@ -3,8 +3,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'solelyoutdoors.com',
-    vendor: `Soley Outdoors`,
+    link: 'solelyoutdoors.com',
+    name: `Soley Outdoors`,
     provinces: [Province.ON],
   }
 
@@ -18,12 +18,7 @@ export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const work = t =>
-    scrape(
-      p => `https://www.solelyoutdoors.com/${t}/page${p}.html`,
-      info,
-      selectors
-    )
+  const work = t => scrape(p => `https://www.solelyoutdoors.com/${t}/page${p}.html`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition/rimfire')

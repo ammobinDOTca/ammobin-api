@@ -7,8 +7,8 @@ const throttle = throat(1)
 
 export async function crafm(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'crafm.com',
-    vendor: 'CRAFM',
+    link: 'crafm.com',
+    name: 'CRAFM',
     provinces: [Province.QC],
   }
   const selectors: Selectors = {
@@ -19,20 +19,15 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
     price: '.price',
     nextPage: '.next',
   }
-  const getUrl = t => page =>
-    `https://www.${info.site}/product-category/${t}/page/${page}/`
+  const getUrl = t => page => `https://www.${info.link}/product-category/${t}/page/${page}/`
   switch (type) {
     case ItemType.rimfire:
       return Promise.all(
-        ['handgun', 'revolver-2'].map(t =>
-          throttle(() => scrape(getUrl('ammunition/' + t), info, selectors))
-        )
+        ['handgun', 'revolver-2'].map(t => throttle(() => scrape(getUrl('ammunition/' + t), info, selectors)))
       ).then(helpers.combineResults)
     case ItemType.centerfire:
       return Promise.all(
-        ['handgun', 'revolver-2', 'rifle'].map(t =>
-          throttle(() => scrape(getUrl('ammunition/' + t), info, selectors))
-        )
+        ['handgun', 'revolver-2', 'rifle'].map(t => throttle(() => scrape(getUrl('ammunition/' + t), info, selectors)))
       ).then(helpers.combineResults)
     case ItemType.shotgun:
       return Promise.resolve(null)
@@ -40,11 +35,7 @@ export async function crafm(type: ItemType): Promise<IItemListing[]> {
         helpers.classifyShotgun
       )*/
     case ItemType.powder:
-      return scrape(
-        getUrl('reloading-equipment/powder-primers'),
-        info,
-        selectors
-      )
+      return scrape(getUrl('reloading-equipment/powder-primers'), info, selectors)
     case ItemType.shot:
     //return scrape(getUrl('ammunition/projectiles'), info, selectors)
     case ItemType.primer:

@@ -3,8 +3,8 @@ import { scrape, Info, Selectors } from './common'
 import { Province, ItemType, IItemListing } from '../graphql-types'
 function work(type: String): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'dantesports.com',
-    vendor: `Dante Sports`,
+    link: 'dantesports.com',
+    name: `Dante Sports`,
     provinces: [Province.QC],
   }
 
@@ -19,12 +19,7 @@ function work(type: String): Promise<IItemListing[]> {
     outOfStock: '.outofstock',
   }
 
-  return scrape(
-    _ =>
-      `https://www.${info.site}/en/product-category/shop/${type}/?product_count=100`,
-    info,
-    selectors
-  )
+  return scrape(_ => `https://www.${info.link}/en/product-category/shop/${type}/?product_count=100`, info, selectors)
 }
 export function dante(type: ItemType): Promise<IItemListing[]> {
   switch (type) {

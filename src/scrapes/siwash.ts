@@ -6,8 +6,8 @@ import { scrape, Info, Selectors } from './common'
 export function siwashSports(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'siwashsports.ca',
-    vendor: `Siwash Sports`,
+    link: 'siwashsports.ca',
+    name: `Siwash Sports`,
     provinces: [Province.BC],
   }
 
@@ -21,12 +21,7 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const work = t =>
-    scrape(
-      p => `https://www.${info.site}/product-category/${t}?page=${p}`,
-      info,
-      selectors
-    )
+  const work = t => scrape(p => `https://www.${info.link}/product-category/${t}?page=${p}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
@@ -34,9 +29,7 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['ammunition/centerfire-ammunition', 'surplus/surplus-ammunition'].map(
-          t => throttle(() => work(t))
-        )
+        ['ammunition/centerfire-ammunition', 'surplus/surplus-ammunition'].map(t => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:

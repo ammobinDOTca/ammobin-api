@@ -5,8 +5,8 @@ import throat from 'throat'
 
 export function theGunDealer(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'thegundealer.net',
-    vendor: `The Gun Dealer`,
+    link: 'thegundealer.net',
+    name: `The Gun Dealer`,
     provinces: [Province.NB],
   }
   const selectors: Selectors = {
@@ -20,7 +20,7 @@ export function theGunDealer(type: ItemType): Promise<IItemListing[]> {
   }
   const throttle = throat(1)
 
-  const BASE = `https://www.${info.site}/product-category/ammunition/`
+  const BASE = `https://www.${info.link}/product-category/ammunition/`
   switch (type) {
     case ItemType.centerfire:
       return Promise.all(
@@ -31,17 +31,11 @@ export function theGunDealer(type: ItemType): Promise<IItemListing[]> {
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
     case ItemType.shotgun:
-      return Promise.all(
-        ['shotgun'].map(t =>
-          throttle(() => scrape(p => `${BASE}/${t}/page/${p}`, info, selectors))
-        )
-      )
+      return Promise.all(['shotgun'].map(t => throttle(() => scrape(p => `${BASE}/${t}/page/${p}`, info, selectors))))
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun)
     case ItemType.rimfire:
-      return scrape(p => `${BASE}/rimfire/page/${p}`, info, selectors).then(
-        helpers.classifyRimfire
-      )
+      return scrape(p => `${BASE}/rimfire/page/${p}`, info, selectors).then(helpers.classifyRimfire)
     // todo: there is actual reloading
     case ItemType.case:
     case ItemType.powder:

@@ -6,8 +6,8 @@ import { ItemType, IItemListing, Province } from '../graphql-types'
 export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'northernelitefirearms.ca',
-    vendor: 'Northern Elite Firearms',
+    link: 'northernelitefirearms.ca',
+    name: 'Northern Elite Firearms',
     provinces: [Province.SK],
   }
 
@@ -24,27 +24,17 @@ export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
   const BASE = 'https://www.northernelitefirearms.ca/product-category'
   switch (type) {
     case ItemType.rimfire:
-      return scrape(
-        p => `${BASE}/ammunition-rim-fire/page/${p}`,
-        info,
-        selectors
-      )
+      return scrape(p => `${BASE}/ammunition-rim-fire/page/${p}`, info, selectors)
 
     case 'centerfire':
       return Promise.all(
         ['hand-guns', 'rifles', ''].map(t =>
-          throttle(() =>
-            scrape(p => `${BASE}/ammunition-${t}/page/${p}`, info, selectors)
-          )
+          throttle(() => scrape(p => `${BASE}/ammunition-${t}/page/${p}`, info, selectors))
         )
       ).then(helpers.combineResults)
 
     case 'shotgun':
-      return scrape(
-        p => `${BASE}/ammunition-shot-gun/page/${p}`,
-        info,
-        selectors
-      )
+      return scrape(p => `${BASE}/ammunition-shot-gun/page/${p}`, info, selectors)
     case ItemType.shot:
     case ItemType.primer:
     case ItemType.case:

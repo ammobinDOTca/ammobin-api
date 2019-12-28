@@ -19,8 +19,8 @@ export interface Selectors {
 }
 
 export interface Info {
-  site: string
-  vendor: string
+  link: string
+  name: string
   provinces: Province[]
 }
 
@@ -60,9 +60,7 @@ async function getPage(url: string) {
      */
     function stripPage() {
       // Strip only script tags that contain JavaScript (either no type attribute or one that contains "javascript")
-      const elements = document.querySelectorAll(
-        'script:not([type]), script[type*="javascript"], link[rel=import]'
-      )
+      const elements = document.querySelectorAll('script:not([type]), script[type*="javascript"], link[rel=import]')
       for (const e of Array.from(elements)) {
         e.remove()
       }
@@ -137,9 +135,7 @@ async function getPage(url: string) {
     // code.
     let statusCode = response.status()
     const newStatusCode = await page
-      .$eval('meta[name="render:status_code"]', element =>
-        parseInt(element.getAttribute('content') || '', 10)
-      )
+      .$eval('meta[name="render:status_code"]', element => parseInt(element.getAttribute('content') || '', 10))
       .catch(() => undefined)
     // On a repeat visit to the same origin, browser cache is enabled, so we may
     // encounter a 304 Not Modified. Instead we'll treat this as a 200 OK.
@@ -156,10 +152,7 @@ async function getPage(url: string) {
     await page.evaluate(stripPage)
     // Inject <base> tag with the origin of the request (ie. no path).
     const parsedUrl = new URL(url)
-    await page.evaluate(
-      injectBaseHref,
-      `${parsedUrl.protocol}//${parsedUrl.host}`
-    )
+    await page.evaluate(injectBaseHref, `${parsedUrl.protocol}//${parsedUrl.host}`)
 
     // Serialize page.
     const result = await page.evaluate('document.firstElementChild.outerHTML')
@@ -177,7 +170,7 @@ export async function scrape(
   selectors: Selectors,
   page = 1
 ): Promise<IItemListing[]> {
-  await helpers.delayScrape(info.site)
+  await helpers.delayScrape(info.link)
   const r = await getPage(getUrl(page))
   let $ = cheerio.load(r.data)
   const items = []
@@ -188,8 +181,8 @@ export async function scrape(
     if (selectors.outOfStock && tha.find(selectors.outOfStock).length > 0) {
       return
     }
-    result.link = correctUrl(info.site, tha.find(selectors.link).prop('href'))
-    result.img = correctUrl(info.site, tha.find(selectors.img).prop('src'))
+    result.link = correctUrl(info.link, tha.find(selectors.link).prop('href'))
+    result.img = correctUrl(info.link, tha.find(selectors.img).prop('src'))
 
     result.name = tha
       .find(selectors.name)
@@ -202,17 +195,13 @@ export async function scrape(
 
     result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
-    result.vendor = info.vendor
+    result.vendor = info.name
     result.provinces = info.provinces
 
     items.push(result)
   })
 
-  if (
-    selectors.nextPage &&
-    $(selectors.nextPage).length > 0 &&
-    items.length > 0
-  ) {
+  if (selectors.nextPage && $(selectors.nextPage).length > 0 && items.length > 0) {
     $ = null // dont hold onto page for recursion
     const more = await scrape(getUrl, info, selectors, page + 1)
     return items.concat(more)

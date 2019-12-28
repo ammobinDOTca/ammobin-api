@@ -7,8 +7,8 @@ import { scrape, Info, Selectors } from './common'
 export function leverarms(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'leverarms.com',
-    vendor: `Lever Arms`,
+    link: 'leverarms.com',
+    name: `Lever Arms`,
     provinces: [Province.BC],
   }
 
@@ -22,12 +22,7 @@ export function leverarms(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.outofstock',
   }
 
-  const work = t =>
-    scrape(
-      p => `https://leverarms.com/product-category/${t}/page/${p}`,
-      info,
-      selectors
-    )
+  const work = t => scrape(p => `https://leverarms.com/product-category/${t}/page/${p}`, info, selectors)
 
   switch (type) {
     case 'rimfire':

@@ -8,8 +8,8 @@ import { scrape, Info, Selectors } from './common'
 export function tenda(type): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'gotenda.com',
-    vendor: `Tenda`,
+    link: 'gotenda.com',
+    name: `Tenda`,
     provinces: [Province.ON],
   }
 
@@ -36,23 +36,17 @@ export function tenda(type): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
       return Promise.all(
-        ['rimfire-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest('ammunition/' + t))
-        )
+        ['rimfire-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
 
     case ItemType.centerfire:
       return Promise.all(
-        ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest('ammunition/' + t))
-        )
+        ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
       return Promise.all(
-        ['shotgun-ammo', 'bulk-ammo'].map(t =>
-          throttle(() => makeTendaRequest('ammunition/' + t))
-        )
+        ['shotgun-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
     case ItemType.powder:
       return makeTendaRequest('reloading/gun-powders')

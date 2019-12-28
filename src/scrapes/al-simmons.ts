@@ -3,8 +3,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function alSimmons(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'alsimmonsgunshop.com',
-    vendor: `Al Simmons`,
+    link: 'alsimmonsgunshop.com',
+    name: `Al Simmons`,
     provinces: [Province.ON],
   }
 
@@ -23,8 +23,7 @@ export function alSimmons(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
     case ItemType.shotgun:
       return scrape(
-        p =>
-          `https://${info.site}/product-category/ammunition/page/${p}/?product_count=100`,
+        p => `https://${info.link}/product-category/ammunition/page/${p}/?product_count=100`,
         info,
         selectors
       )

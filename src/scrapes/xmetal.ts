@@ -4,8 +4,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function xmetal(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'xmetaltargets.com',
-    vendor: `Xmetal Targets`,
+    link: 'xmetaltargets.com',
+    name: `Xmetal Targets`,
     provinces: [Province.QC],
   }
 
@@ -18,8 +18,7 @@ export function xmetal(type: ItemType): Promise<IItemListing[]> {
     nextPage: '.next',
     outOfStock: '.out-of-stock',
   }
-  const work = t =>
-    scrape(_ => `https://${info.site}/product-category/${t}/`, info, selectors)
+  const work = t => scrape(_ => `https://${info.link}/product-category/${t}/`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
     case ItemType.shotgun:

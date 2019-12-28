@@ -4,8 +4,8 @@ import { scrape, Info, Selectors } from './common'
 
 function work(path: String) {
   const info: Info = {
-    site: 'canadaammo.com',
-    vendor: `Canada Ammo`,
+    link: 'canadaammo.com',
+    name: `Canada Ammo`,
     provinces: [Province.BC, Province.ON],
   }
 
@@ -18,8 +18,7 @@ function work(path: String) {
   }
 
   return scrape(
-    p =>
-      `https://www.${info.site}/product/byCategory/${path}/?page=${p}&status=instock&count=72`,
+    p => `https://www.${info.link}/product/byCategory/${path}/?page=${p}&status=instock&count=72`,
     info,
     selectors
   )
@@ -31,9 +30,7 @@ export function canadaammo(type: ItemType): Promise<IItemListing[]> {
     case ItemType.case:
       return Promise.resolve(null)
     case ItemType.centerfire:
-      return Promise.all([work('rifle-ammo'), work('handgun-ammo')]).then(
-        combineResults
-      )
+      return Promise.all([work('rifle-ammo'), work('handgun-ammo')]).then(combineResults)
     case ItemType.shotgun:
       return work('shotgun-ammo')
     case ItemType.powder:

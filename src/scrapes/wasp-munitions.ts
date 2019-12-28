@@ -4,8 +4,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function waspMunitions(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'waspmunitions.ca',
-    vendor: `WASP Munitions`,
+    link: 'waspmunitions.ca',
+    name: `WASP Munitions`,
     provinces: [Province.AB],
   }
 
@@ -18,16 +18,12 @@ export function waspMunitions(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.subscribe-link',
   }
 
-  const BASE = `https://${info.site}`
+  const BASE = `https://${info.link}`
   switch (type) {
     case ItemType.centerfire:
     case ItemType.shotgun:
     case ItemType.rimfire:
-      return scrape(
-        p => `${BASE}/FACTORY-AMMUNITION-c15510061`,
-        info,
-        selectors
-      ).then(helpers.classify(type))
+      return scrape(p => `${BASE}/FACTORY-AMMUNITION-c15510061`, info, selectors).then(helpers.classify(type))
     // todo: there is actual reloading
     case ItemType.case:
     case ItemType.powder:

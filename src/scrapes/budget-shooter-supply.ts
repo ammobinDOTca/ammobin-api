@@ -5,8 +5,8 @@ import throat from 'throat'
 
 export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'budgetshootersupply.ca',
-    vendor: `Budget Shooter Supply`,
+    link: 'budgetshootersupply.ca',
+    name: `Budget Shooter Supply`,
     provinces: [Province.BC],
   }
 
@@ -21,18 +21,12 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
   }
   const throttle = throat(1)
 
-  const BASE = `https://www.${info.site}/product-category/categories`
+  const BASE = `https://www.${info.link}/product-category/categories`
   switch (type) {
     case ItemType.centerfire:
       return Promise.all(
         ['pistol', 'rifle'].map(t =>
-          throttle(() =>
-            scrape(
-              p => `${BASE}/ammunition/centerfire-${t}-ammunition/page/${p}`,
-              info,
-              selectors
-            )
-          )
+          throttle(() => scrape(p => `${BASE}/ammunition/centerfire-${t}-ammunition/page/${p}`, info, selectors))
         )
       )
         .then(helpers.combineResults)
@@ -40,23 +34,15 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
     case ItemType.shotgun:
       return Promise.all(
         ['410-gauge-shotgun', '12-gauge-buckshot'].map(t =>
-          throttle(() =>
-            scrape(
-              p => `${BASE}/ammunition/${t}-ammo/page/${p}`,
-              info,
-              selectors
-            )
-          )
+          throttle(() => scrape(p => `${BASE}/ammunition/${t}-ammo/page/${p}`, info, selectors))
         )
       )
         .then(helpers.combineResults)
         .then(helpers.classifyShotgun)
     case ItemType.rimfire:
-      return scrape(
-        p => `${BASE}/ammunition/rimfire-ammunition/page/${p}`,
-        info,
-        selectors
-      ).then(helpers.classifyRimfire)
+      return scrape(p => `${BASE}/ammunition/rimfire-ammunition/page/${p}`, info, selectors).then(
+        helpers.classifyRimfire
+      )
     case ItemType.case:
       return Promise.all(
         [
@@ -65,13 +51,7 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
           '1-fired-brass-cases/1-fired-brass-rifle-cases',
           '1-fired-brass-cases/1-fired-brass-pistol-cases',
         ].map(t =>
-          throttle(() =>
-            scrape(
-              p => `${BASE}/rifle-pistol-reloading-components/${t}/page/${p}`,
-              info,
-              selectors
-            )
-          )
+          throttle(() => scrape(p => `${BASE}/rifle-pistol-reloading-components/${t}/page/${p}`, info, selectors))
         )
       ).then(helpers.combineResults)
     case ItemType.powder:
@@ -86,32 +66,15 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
           'winchester-powder',
         ].map(t =>
           throttle(() =>
-            scrape(
-              p =>
-                `${BASE}/rifle-pistol-reloading-components/smokeless-powder/${t}/page/${p}`,
-              info,
-              selectors
-            )
+            scrape(p => `${BASE}/rifle-pistol-reloading-components/smokeless-powder/${t}/page/${p}`, info, selectors)
           )
         )
       ).then(helpers.combineResults)
     case ItemType.primer:
       return Promise.all(
-        [
-          '50-bmg',
-          'large-pistol',
-          'large-rifle-berdan',
-          'large-rifle',
-          'small-pistol',
-          'small-rifle',
-        ].map(t =>
+        ['50-bmg', 'large-pistol', 'large-rifle-berdan', 'large-rifle', 'small-pistol', 'small-rifle'].map(t =>
           throttle(() =>
-            scrape(
-              p =>
-                `${BASE}/rifle-pistol-reloading-components/primers/${t}-primers/page/${p}`,
-              info,
-              selectors
-            )
+            scrape(p => `${BASE}/rifle-pistol-reloading-components/primers/${t}-primers/page/${p}`, info, selectors)
           )
         )
       ).then(helpers.combineResults)
@@ -146,13 +109,7 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
             '7mm-284',
           ].map(s => 'rifle-bullets-projectiles/' + s),
         ].map(t =>
-          throttle(() =>
-            scrape(
-              p => `${BASE}/rifle-pistol-reloading-components/${t}/page/${p}`,
-              info,
-              selectors
-            )
-          )
+          throttle(() => scrape(p => `${BASE}/rifle-pistol-reloading-components/${t}/page/${p}`, info, selectors))
         )
       ).then(helpers.combineResults)
     default:

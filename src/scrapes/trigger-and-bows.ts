@@ -4,15 +4,13 @@ import Axios from 'axios'
 
 export function triggerAndBows(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'triggersandbows.com',
-    vendor: `Triggers & Bows`,
+    link: 'triggersandbows.com',
+    name: `Triggers & Bows`,
     provinces: [Province.ON],
   }
 
   async function work(pType: string, reqPage = 1) {
-    const res = await Axios.get(
-      `https://shop.${info.site}/${pType}/page${reqPage}.ajax`
-    )
+    const res = await Axios.get(`https://shop.${info.link}/${pType}/page${reqPage}.ajax`)
 
     const { page, pages, products } = res.data
 
@@ -26,7 +24,7 @@ export function triggerAndBows(type: ItemType): Promise<IItemListing[]> {
             name: p.title,
             price: p.price.price,
             provinces: [Province.ON],
-            vendor: info.vendor,
+            vendor: info.name,
           } as IItemListing)
       )
 

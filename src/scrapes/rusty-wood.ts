@@ -5,8 +5,8 @@ import throat from 'throat'
 
 export function rustyWood(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'rustywood.ca',
-    vendor: `Rusty Wood`,
+    link: 'rustywood.ca',
+    name: `Rusty Wood`,
     provinces: [Province.BC],
   }
 
@@ -21,17 +21,14 @@ export function rustyWood(type: ItemType): Promise<IItemListing[]> {
   }
   const throttle = throat(1)
 
-  const BASE = `https://www.${info.site}/shop`
+  const BASE = `https://www.${info.link}/shop`
   switch (type) {
     case ItemType.centerfire:
     case ItemType.rimfire:
       return Promise.all(
-        [
-          'factory',
-          'custom-loaded',
-          'custom-loaded/page/2',
-          'custom-loaded/page/3',
-        ].map(t => throttle(() => scrape(p => `${BASE}/${t}`, info, selectors)))
+        ['factory', 'custom-loaded', 'custom-loaded/page/2', 'custom-loaded/page/3'].map(t =>
+          throttle(() => scrape(p => `${BASE}/${t}`, info, selectors))
+        )
       )
         .then(helpers.combineResults)
         .then(helpers.classify(type))

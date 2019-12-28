@@ -7,8 +7,8 @@ import throat from 'throat'
 export function westCoastHunting(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'westcoasthunting.ca',
-    vendor: `West Coast Hunting Supplies`,
+    link: 'westcoasthunting.ca',
+    name: `West Coast Hunting Supplies`,
     provinces: [Province.BC],
   }
 
@@ -22,22 +22,15 @@ export function westCoastHunting(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.outofstock',
   }
 
-  const fn = t =>
-    scrape(
-      page =>
-        `https://${info.site}/product-category/ammunition/${t}/page/${page}/`,
-      info,
-      selectors
-    )
+  const fn = t => scrape(page => `https://${info.link}/product-category/ammunition/${t}/page/${page}/`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
       return fn('rimfire-others')
 
     case ItemType.centerfire:
-      return Promise.all([
-        throttle(() => fn('handgun-ammo')),
-        throttle(() => fn('rifle-ammo')),
-      ]).then(helpers.combineResults)
+      return Promise.all([throttle(() => fn('handgun-ammo')), throttle(() => fn('rifle-ammo'))]).then(
+        helpers.combineResults
+      )
 
     case ItemType.shotgun:
       return fn('shotgun-ammo')

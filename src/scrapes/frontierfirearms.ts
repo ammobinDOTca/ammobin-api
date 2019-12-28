@@ -4,8 +4,8 @@ import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 function work(type: string): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'frontierfirearms.ca',
-    vendor: `Frontier Firearms`,
+    link: 'frontierfirearms.ca',
+    name: `Frontier Firearms`,
     provinces: [Province.SK],
   }
 
@@ -18,11 +18,7 @@ function work(type: string): Promise<IItemListing[]> {
     // nextPage: '.next',
     // outOfStock: '.out-of-stock',
   }
-  return scrape(
-    p => `https://${info.site}/ammunition-reloading/${type}.html`,
-    info,
-    selectors
-  )
+  return scrape(p => `https://${info.link}/ammunition-reloading/${type}.html`, info, selectors)
 }
 
 export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
@@ -34,11 +30,7 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        [
-          'surplus-ammunition',
-          'hand-gun-ammunition',
-          'centerfire-ammunition',
-        ].map(t => throttle(() => work(t)))
+        ['surplus-ammunition', 'hand-gun-ammunition', 'centerfire-ammunition'].map(t => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:

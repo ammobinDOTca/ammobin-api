@@ -7,8 +7,8 @@ const throttle = throat(1)
 
 export function wanstalls(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'wanstallsonline.com',
-    vendor: 'Wanstalls',
+    link: 'wanstallsonline.com',
+    name: 'Wanstalls',
     provinces: [Province.BC],
   }
 
@@ -21,8 +21,7 @@ export function wanstalls(type: ItemType): Promise<IItemListing[]> {
     nextPage: '.pagination-item--next',
   }
 
-  const getStuff = t =>
-    scrape(p => `https://${info.site}/${t}?page=${p}`, info, selectors)
+  const getStuff = t => scrape(p => `https://${info.link}/${t}?page=${p}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
@@ -32,11 +31,9 @@ export function wanstalls(type: ItemType): Promise<IItemListing[]> {
       return getStuff('shotgun-ammunition')
 
     case ItemType.centerfire:
-      return Promise.all(
-        ['rifle-ammunition', 'handgun-ammunition'].map(t =>
-          throttle(() => getStuff(t))
-        )
-      ).then(helpers.combineResults)
+      return Promise.all(['rifle-ammunition', 'handgun-ammunition'].map(t => throttle(() => getStuff(t)))).then(
+        helpers.combineResults
+      )
     case ItemType.case:
     case ItemType.powder:
     case ItemType.shot:

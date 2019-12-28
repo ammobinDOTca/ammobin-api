@@ -5,8 +5,8 @@ import { Info, Selectors, scrape } from './common'
 
 function work(path: String) {
   const info: Info = {
-    site: 'bartonsbigcountry.ca',
-    vendor: `Bartons Big Country`,
+    link: 'bartonsbigcountry.ca',
+    name: `Bartons Big Country`,
     provinces: [Province.AB],
   }
 
@@ -20,12 +20,8 @@ function work(path: String) {
     // pagination not working as expected...
     // nextPage: '.pages-item-next',
   }
-  const BASE = 'https://' + info.site
-  return scrape(
-    p => `${BASE}/index.php/${path}.html?p=${p}&product_list_limit=30`,
-    info,
-    selectors
-  )
+  const BASE = 'https://' + info.link
+  return scrape(p => `${BASE}/index.php/${path}.html?p=${p}&product_list_limit=30`, info, selectors)
 }
 
 export function barton(type: ItemType): Promise<IItemListing[]> {
@@ -37,9 +33,7 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['centerfire-pistol', 'centerfire-rifle', 'bulk-surplus'].map(t =>
-          throttle(() => work('ammunition/' + t))
-        )
+        ['centerfire-pistol', 'centerfire-rifle', 'bulk-surplus'].map(t => throttle(() => work('ammunition/' + t)))
       ).then(helpers.combineResults)
     case ItemType.shotgun:
       return work('ammunition/shotgun-ammunition')

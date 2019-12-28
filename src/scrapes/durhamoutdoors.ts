@@ -8,11 +8,10 @@ export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
     case ItemType.shotgun:
       return scrape(
-        page =>
-          `https://durhamoutdoors.ca/Ammo-and-reloading_c_12-${page}.html`,
+        page => `https://durhamoutdoors.ca/Ammo-and-reloading_c_12-${page}.html`,
         {
-          site: 'durhamoutdoors.ca',
-          vendor: 'Durham Outdoors',
+          link: 'durhamoutdoors.ca',
+          name: 'Durham Outdoors',
           provinces: [Province.ON],
         },
         {

@@ -5,8 +5,8 @@ import { scrape, Info, Selectors } from './common'
 const throttle = throat(1)
 export function tesro(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'tesro.ca',
-    vendor: `Tesro`,
+    link: 'tesro.ca',
+    name: `Tesro`,
     provinces: [Province.ON],
   }
 
@@ -21,16 +21,13 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const work = t =>
-    scrape(_ => `https://www.${info.site}/${t}.html?limit=all`, info, selectors)
+  const work = t => scrape(_ => `https://www.${info.link}/${t}.html?limit=all`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition-and-pellets/smallbore-ammunition')
     case ItemType.centerfire:
       return Promise.all(
-        ['centerfire-ammunition', 'pistol-ammunition'].map(s =>
-          throttle(() => work('ammunition-and-pellets/' + s))
-        )
+        ['centerfire-ammunition', 'pistol-ammunition'].map(s => throttle(() => work('ammunition-and-pellets/' + s)))
       ).then(helpers.combineResults)
     case ItemType.shotgun:
       return Promise.resolve(null)
@@ -38,9 +35,7 @@ export function tesro(type: ItemType): Promise<IItemListing[]> {
       return work('reloading/brass')
     case ItemType.shot:
       return Promise.all(
-        ['bullets', 'pistol-bullets', 'lapua-hunting-bullets'].map(t =>
-          throttle(() => work('reloading/' + t))
-        )
+        ['bullets', 'pistol-bullets', 'lapua-hunting-bullets'].map(t => throttle(() => work('reloading/' + t)))
       ).then(helpers.combineResults)
     case ItemType.primer:
       return work('reloading/primers')

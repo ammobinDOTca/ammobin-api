@@ -8,8 +8,8 @@ const throttle = throat(1)
 export function wildWest(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
     provinces: [Province.AB],
-    site: 'gun-shop.ca',
-    vendor: 'Wild West',
+    link: 'gun-shop.ca',
+    name: 'Wild West',
   }
 
   const selectors: Selectors = {
@@ -23,21 +23,14 @@ export function wildWest(type: ItemType): Promise<IItemListing[]> {
   }
 
   const fn = (t: string) =>
-    scrape(
-      p =>
-        `https://${info.site}/product-category/${t}/page/${p}/?orderby=price-desc`,
-      info,
-      selectors
-    )
+    scrape(p => `https://${info.link}/product-category/${t}/page/${p}/?orderby=price-desc`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
     case ItemType.centerfire:
-      return Promise.all(
-        ['bulk-ammo', 'box-ammo'].map(t =>
-          throttle(() => fn('ammunition/' + t))
-        )
-      ).then(helpers.combineResults)
+      return Promise.all(['bulk-ammo', 'box-ammo'].map(t => throttle(() => fn('ammunition/' + t)))).then(
+        helpers.combineResults
+      )
 
     case ItemType.shotgun:
       return fn('ammunition/shotgun-ammo')

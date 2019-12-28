@@ -4,8 +4,8 @@ import { Info, Selectors, scrape } from './common'
 
 function work(path: String): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'bullseyelondon.com',
-    vendor: `Bulls Eye London`,
+    link: 'bullseyelondon.com',
+    name: `Bulls Eye London`,
     provinces: [Province.ON],
   }
 
@@ -16,7 +16,7 @@ function work(path: String): Promise<IItemListing[]> {
     link: 'a',
     price: '.regular-price',
   }
-  const BASE = 'https://www.' + info.site
+  const BASE = 'https://www.' + info.link
   return scrape(p => `${BASE}/${path}/?limit=all`, info, selectors)
 }
 
@@ -25,10 +25,7 @@ export function bullseyelondon(type: ItemType): Promise<IItemListing[]> {
     case ItemType.rimfire:
       return work('ammunition/rimfire-ammunition').then(helpers.classifyRimfire)
     case ItemType.centerfire:
-      return Promise.all([
-        work('ammunition/centerfire-ammunition'),
-        work('ammunition/surplus-ammunition'),
-      ])
+      return Promise.all([work('ammunition/centerfire-ammunition'), work('ammunition/surplus-ammunition')])
         .then(helpers.combineResults)
         .then(helpers.classifyCenterfire)
     case ItemType.shotgun:

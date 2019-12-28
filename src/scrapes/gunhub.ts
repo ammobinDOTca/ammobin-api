@@ -3,8 +3,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function gunhub(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'gun-hub.mybigcommerce.com',
-    vendor: `Canadian Gunhub`,
+    link: 'gun-hub.mybigcommerce.com',
+    name: `Canadian Gunhub`,
     provinces: [Province.AB],
   }
 
@@ -19,7 +19,7 @@ export function gunhub(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const BASE = `https://${info.site}`
+  const BASE = `https://${info.link}`
   switch (type) {
     case ItemType.centerfire:
     case ItemType.shotgun:

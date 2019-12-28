@@ -1,4 +1,5 @@
 import { IVendor, Province, ItemType } from './graphql-types'
+import { BACK_COUNTRY_SPORTS } from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
 export const VENDORS: IVendor[] = [
@@ -6,13 +7,7 @@ export const VENDORS: IVendor[] = [
     name: `Cabela's`,
     link: 'cabelas.ca',
     logo: 'cabelas-logo.png',
-    provinces: [
-      Province.BC,
-      Province.AB,
-      Province.SK,
-      Province.MB,
-      Province.ON,
-    ],
+    provinces: [Province.BC, Province.AB, Province.SK, Province.MB, Province.ON],
     location: 'all over the place',
     hasReloadingItems: true,
   },
@@ -384,6 +379,7 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON],
     location: `Markham`,
   },
+  BACK_COUNTRY_SPORTS as IVendor,
 ].map(i => {
   i.logo = '/logos/' + i.logo
   i.background = i.background || false
@@ -408,16 +404,7 @@ export const CACHE_REFRESH_HOURS = 4
 
 export const RENDERTRON_URL = 'http://rendertron:3000'
 
-export const AMMO_TYPES: ItemType[] = [
-  ItemType.centerfire,
-  ItemType.rimfire,
-  ItemType.shotgun,
-]
-export const RELOAD_TYPES: ItemType[] = [
-  ItemType.case,
-  ItemType.powder,
-  ItemType.primer,
-  ItemType.shot,
-]
+export const AMMO_TYPES: ItemType[] = [ItemType.centerfire, ItemType.rimfire, ItemType.shotgun]
+export const RELOAD_TYPES: ItemType[] = [ItemType.case, ItemType.powder, ItemType.primer, ItemType.shot]
 
 export const TYPES: ItemType[] = [...AMMO_TYPES, ...RELOAD_TYPES]

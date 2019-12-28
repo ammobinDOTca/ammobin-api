@@ -5,8 +5,8 @@ import { scrape, Info, Selectors } from './common'
 
 function makeFaocReq(ammotype: String) {
   const info: Info = {
-    site: 'firearmsoutletcanada.com',
-    vendor: `Firearms Outlet Canada`,
+    link: 'firearmsoutletcanada.com',
+    name: `Firearms Outlet Canada`,
     provinces: [Province.ON],
   }
 
@@ -21,11 +21,7 @@ function makeFaocReq(ammotype: String) {
     outOfStock: '.out-of-stock',
   }
 
-  return scrape(
-    p => `https://www.${info.site}/${ammotype}?limit=all`,
-    info,
-    selectors
-  )
+  return scrape(p => `https://www.${info.link}/${ammotype}?limit=all`, info, selectors)
 }
 
 export function faoc(type: ItemType): Promise<IItemListing[]> {
@@ -35,10 +31,9 @@ export function faoc(type: ItemType): Promise<IItemListing[]> {
     case ItemType.shotgun:
       return makeFaocReq('ammo/shotgun-ammuntion')
     case ItemType.centerfire:
-      return Promise.all([
-        makeFaocReq('ammo/rifle-ammunition'),
-        makeFaocReq('ammo/pistol-ammunition'),
-      ]).then(helpers.combineResults)
+      return Promise.all([makeFaocReq('ammo/rifle-ammunition'), makeFaocReq('ammo/pistol-ammunition')]).then(
+        helpers.combineResults
+      )
 
     case ItemType.case:
       //return makeFaocReq('reloading/brass')

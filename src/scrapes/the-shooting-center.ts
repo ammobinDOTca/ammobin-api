@@ -3,8 +3,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'store.theshootingcentre.com',
-    vendor: `Calgary Shooting Center`,
+    link: 'store.theshootingcentre.com',
+    name: `Calgary Shooting Center`,
     provinces: [Province.AB],
   }
 
@@ -17,12 +17,7 @@ export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
     //nextPage: '.pages-item-next',
     //outOfStock: '.out-of-stock',
   }
-  const work = t =>
-    scrape(
-      _ => `https://${info.site}/${t}?product_list_limit=all`,
-      info,
-      selectors
-    )
+  const work = t => scrape(_ => `https://${info.link}/${t}?product_list_limit=all`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:

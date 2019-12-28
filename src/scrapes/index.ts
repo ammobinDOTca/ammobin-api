@@ -2,9 +2,7 @@ import axios from 'axios'
 
 const version = require('../../package.json').version
 const axiosVersion = require('../../node_modules/axios/package.json').version
-axios.defaults.headers.common[
-  'User-Agent'
-] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}` // be a
+axios.defaults.headers.common['User-Agent'] = `AmmoBin.ca/${version} (nodejs; Linux x86_64) axios/${axiosVersion}` // be a
 axios.defaults.headers.common.Referer = `ammobin.ca`
 axios.defaults.timeout = 20000 // 20s request timeout
 
@@ -60,10 +58,9 @@ import { tesro } from './tesro'
 import { xmetal } from './xmetal'
 import { triggerAndBows } from './trigger-and-bows'
 import { g4c } from './g4c'
-export function makeSearch(
-  source: string,
-  type: ItemType
-): Promise<IItemListing[]> {
+import { BACK_COUNTRY_SPORTS } from '../vendors'
+import { backcountrysports } from './backcountrysports'
+export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
     case 'g4cgunstore.com':
       return g4c(type)
@@ -204,6 +201,8 @@ export function makeSearch(
       return crafm(type)
     case 'northernelitefirearms.ca':
       return northernEliteFirearms(type)
+    case BACK_COUNTRY_SPORTS.link:
+      return backcountrysports(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

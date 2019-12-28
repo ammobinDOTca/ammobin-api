@@ -5,8 +5,8 @@ import { Info, Selectors, scrape } from './common'
 
 function work(path: String) {
   const info: Info = {
-    site: 'g4cgunstore.com',
-    vendor: `G4C`,
+    link: 'g4cgunstore.com',
+    name: `G4C`,
     provinces: [Province.ON],
   }
 
@@ -21,12 +21,8 @@ function work(path: String) {
 
     nextPage: '.next',
   }
-  const BASE = 'https://' + info.site
-  return scrape(
-    p => `${BASE}/product-category/ammunition/${path}/page/${p}`,
-    info,
-    selectors
-  )
+  const BASE = 'https://' + info.link
+  return scrape(p => `${BASE}/product-category/ammunition/${path}/page/${p}`, info, selectors)
 }
 
 export function g4c(type: ItemType): Promise<IItemListing[]> {
@@ -35,11 +31,9 @@ export function g4c(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
     case ItemType.centerfire:
-      return Promise.all(
-        ['rifle-ammo', 'bulk-ammo', 'handgun-ammo'].map(t =>
-          throttle(() => work(t))
-        )
-      ).then(helpers.combineResults)
+      return Promise.all(['rifle-ammo', 'bulk-ammo', 'handgun-ammo'].map(t => throttle(() => work(t)))).then(
+        helpers.combineResults
+      )
     case ItemType.shotgun:
       return work('shotgun-ammo')
 

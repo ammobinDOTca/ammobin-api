@@ -10,8 +10,8 @@ import throat from 'throat'
 export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info: Info = {
-    site: 'rangeviewsports.ca',
-    vendor: `Rangeview Sports`,
+    link: 'rangeviewsports.ca',
+    name: `Rangeview Sports`,
     provinces: [Province.ON],
   }
 
@@ -27,8 +27,7 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
 
   const work = t =>
     scrape(
-      p =>
-        `https://${info.site}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60`,
+      p => `https://${info.link}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60`,
       info,
       selectors
     )
@@ -38,12 +37,9 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
       return work('ammunition/ammunition-rimfire-ammo')
     case ItemType.centerfire:
       return Promise.all(
-        [
-          'ammo/bulk-ammo',
-          'ammo/premium-ammo',
-          'ammo/handgun-ammo',
-          'ammo/rifle-ammo',
-        ].map(t => throttle(() => work(t)))
+        ['ammo/bulk-ammo', 'ammo/premium-ammo', 'ammo/handgun-ammo', 'ammo/rifle-ammo'].map(t =>
+          throttle(() => work(t))
+        )
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:

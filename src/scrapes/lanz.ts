@@ -6,8 +6,8 @@ import { scrape, Info, Selectors } from './common'
 
 async function work(type, page = 1): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'lanzshootingsupplies.com',
-    vendor: `Lanz Shooting Supplies`,
+    link: 'lanzshootingsupplies.com',
+    name: `Lanz Shooting Supplies`,
     provinces: [Province.ON],
   }
 
@@ -20,11 +20,7 @@ async function work(type, page = 1): Promise<IItemListing[]> {
     nextPage: '.next a',
     outOfStock: '.out-of-stock',
   }
-  return scrape(
-    p => `http://www.${info.site}/shop/${type}/page${p}.html?limit=50`,
-    info,
-    selectors
-  )
+  return scrape(p => `http://www.${info.link}/shop/${type}/page${p}.html?limit=50`, info, selectors)
 }
 
 export function lanz(type: ItemType) {

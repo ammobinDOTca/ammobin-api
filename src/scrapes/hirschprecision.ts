@@ -5,8 +5,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function hirsch(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'hirschprecision.com',
-    vendor: `Hirsch Precision`,
+    link: 'hirschprecision.com',
+    name: `Hirsch Precision`,
     provinces: [Province.NS],
   }
 
@@ -20,13 +20,8 @@ export function hirsch(type: ItemType): Promise<IItemListing[]> {
     // too lazy to figure out pagination
   }
 
-  const BASE = `https://${info.site}`
-  const fn = s =>
-    scrape(
-      () => `${BASE}/index.php?main_page=index&cPath=${s}`,
-      info,
-      selectors
-    )
+  const BASE = `https://${info.link}`
+  const fn = s => scrape(() => `${BASE}/index.php?main_page=index&cPath=${s}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
@@ -50,9 +45,7 @@ export function hirsch(type: ItemType): Promise<IItemListing[]> {
 
 export function hirschss(type: ItemType): Promise<IItemListing[]> {
   function fn(ammotype) {
-    return helpers
-      .makeWrapApiReq('hirschprecision', ammotype)
-      .then(d => d.items || [])
+    return helpers.makeWrapApiReq('hirschprecision', ammotype).then(d => d.items || [])
   }
 
   switch (type) {

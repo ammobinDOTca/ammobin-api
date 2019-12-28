@@ -6,8 +6,8 @@ import { scrape, Info, Selectors } from './common'
 
 export function westernMetal(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'westernmetal.ca',
-    vendor: 'Western Metal',
+    link: 'westernmetal.ca',
+    name: 'Western Metal',
     provinces: [Province.AB],
   }
 
@@ -29,7 +29,7 @@ export function westernMetal(type: ItemType): Promise<IItemListing[]> {
   const fn = (section, t?) =>
     scrape(
       page =>
-        `https://www.${info.site}/shooting-category/${section}?${
+        `https://www.${info.link}/shooting-category/${section}?${
           t ? 'field_product_types_tid[]=' + t + '&' : ''
         }sort_order=DESC&page=${page}`,
       info,
@@ -54,9 +54,7 @@ export function westernMetal(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.shot:
       return Promise.all(
-        ['bullets-lead', 'bullets-plated', 'bullets-jacketed', 'lead-shot'].map(
-          f => throttle(() => fn(f))
-        )
+        ['bullets-lead', 'bullets-plated', 'bullets-jacketed', 'lead-shot'].map(f => throttle(() => fn(f)))
       ).then(helpers.combineResults)
 
     case ItemType.primer:

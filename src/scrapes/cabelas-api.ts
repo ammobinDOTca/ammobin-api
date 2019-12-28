@@ -19,17 +19,9 @@ const columns = [
 ].map(c => c.map(s => s.toLowerCase()))
 
 const info: Info = {
-  site: 'cabelas.ca',
-  vendor: `Cabela's`,
-  provinces: [
-    Province.BC,
-    Province.AB,
-    Province.SK,
-    Province.MB,
-    Province.ON,
-    Province.NB,
-    Province.NS,
-  ],
+  link: 'cabelas.ca',
+  name: `Cabela's`,
+  provinces: [Province.BC, Province.AB, Province.SK, Province.MB, Province.ON, Province.NB, Province.NS],
 }
 
 const selectors: Selectors = {
@@ -39,7 +31,7 @@ const selectors: Selectors = {
   link: '.productCard-heading a',
   price: '.price-primary',
 }
-const BASE = 'https://www.' + info.site
+const BASE = 'https://www.' + info.link
 
 function classify(d) {
   if (!d.titles || !d.items) {
@@ -48,9 +40,7 @@ function classify(d) {
 
   const titles = d.titles
   const myTitles = titles.map(t => {
-    const find = columns.find(
-      colNames => colNames.indexOf(t.toLowerCase()) >= 0
-    )
+    const find = columns.find(colNames => colNames.indexOf(t.toLowerCase()) >= 0)
     if (find) {
       return find[0] // if found a match, return the common property name
     } else {
@@ -62,7 +52,7 @@ function classify(d) {
 
   const result = items.map(i => {
     const item: any = {
-      vendor: info.vendor,
+      vendor: info.name,
       provinces: info.provinces,
     }
     for (let index = 0; index < 12; index++) {
@@ -84,10 +74,8 @@ function classify(d) {
       }
     }
 
-    item.name = `${item.brand} ${item.type || ''} ${
-      item.calibre
-    },  ${item.weight || ''} ${item.bullet || ''} ${item.velocity ||
-      ''}, box of ${item.count}`
+    item.name = `${item.brand} ${item.type || ''} ${item.calibre},  ${item.weight || ''} ${item.bullet ||
+      ''} ${item.velocity || ''}, box of ${item.count}`
     return item
   })
 
@@ -98,11 +86,7 @@ async function makeCabelasCalibre(ammotype, subtype) {
   await helpers.delayScrape(BASE)
 
   return axios
-    .get(
-      `${BASE}/checkproductvariantavailability/${ammotype}?${
-        subtype ? 'specs=' + subtype : ''
-      }`
-    )
+    .get(`${BASE}/checkproductvariantavailability/${ammotype}?${subtype ? 'specs=' + subtype : ''}`)
     .then(r => {
       const $ = cheerio.load(r.data)
 

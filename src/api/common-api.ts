@@ -38,15 +38,11 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     path: BASE + '/track-performance',
     handler: function(request, h) {
       const userAgent = request.headers['user-agent'] || 'unknown'
-      const { performance, href } =
-        typeof request.payload === 'string'
-          ? JSON.parse(request.payload)
-          : request.payload
+      const { performance, href } = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
 
       const connectTime = performance.responseEnd - performance.requestStart
       const renderTime = performance.domComplete - performance.domLoading
-      const interactiveTime =
-        performance.domInteractive - performance.domLoading
+      const interactiveTime = performance.domInteractive - performance.domLoading
       request.log('info', {
         type: 'track-performance',
         userAgent,
@@ -66,14 +62,14 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     path: BASE + '/track-pageview',
     handler: function(request, h) {
       const userAgent = request.headers['user-agent'] || 'unknown'
-      const body =
-        typeof request.payload === 'string'
-          ? JSON.parse(request.payload)
-          : request.payload
+      const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
+
       request.log('info', {
         type: 'track-pageview',
         userAgent,
-        route: body.route,
+        body: body,
+
+        ass: request.payload[`route`],
         requestId: request.info.id,
       })
       return h.response('success')
@@ -87,10 +83,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     handler: function(request, h) {
       // record user agent + calibre + brand that user opened up
       const userAgent = request.headers['user-agent'] || 'unknown'
-      const body =
-        typeof request.payload === 'string'
-          ? JSON.parse(request.payload)
-          : request.payload
+      const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
       request.log('info', {
         type: 'track-view',
         userAgent,
@@ -107,10 +100,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     method: 'POST',
     path: BASE + '/errors',
     handler: async (request, h) => {
-      const body =
-        typeof request.payload === 'string'
-          ? JSON.parse(request.payload)
-          : request.payload
+      const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
 
       request.log('info', {
         type: 'client-side-error',
@@ -126,15 +116,10 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     path: BASE + '/track-click',
     handler: async function(request, h) {
       // record user agent + calibre + brand that user opened up
-      const body =
-        typeof request.payload === 'string'
-          ? JSON.parse(request.payload)
-          : request.payload
+      const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
       const targetUrl = url.parse(body.link, true)
 
-      let host = targetUrl.hostname
-        ? targetUrl.hostname.replace('www.', '')
-        : ''
+      let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
 
       // lazy comp.....
       const vendor = VENDORS.find(v => v.link.includes(host))
@@ -143,12 +128,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       }
 
       const { link, itemType, subType, index, query } = body
-      const record: IItemListing = await getRecordFn(
-        itemType,
-        subType,
-        vendor,
-        link
-      )
+      const record: IItemListing = await getRecordFn(itemType, subType, vendor, link)
 
       request.log('info', {
         type: 'track-outbound-click',
@@ -176,17 +156,9 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     handler: function(req, h) {
       let body = {}
       try {
-        body =
-          typeof req.payload === 'string'
-            ? JSON.parse(req.payload)
-            : req.payload
+        body = typeof req.payload === 'string' ? JSON.parse(req.payload) : req.payload
       } catch (e) {
-        console.error(
-          'failed to parse content report',
-          e,
-          req.payload,
-          typeof req.payload
-        )
+        console.error('failed to parse content report', e, req.payload, typeof req.payload)
       }
       req.log('info', {
         type: 'content-security-report',
@@ -204,16 +176,11 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       method: request.method.toUpperCase(),
       path: request.url.pathname,
       headers: request.headers,
-      statusCode: request.response
-        ? (request.response as ResponseObject).statusCode
-        : 0,
+      statusCode: request.response ? (request.response as ResponseObject).statusCode : 0,
       timeMs: new Date().getTime() - request.info.received,
     })
 
-    if (
-      request.method.toUpperCase() === 'POST' &&
-      request.url.pathname === '/graphql'
-    ) {
+    if (request.method.toUpperCase() === 'POST' && request.url.pathname === '/graphql') {
       if (Array.isArray(request.payload)) {
         request.payload.forEach(({ query, variables, opName }) => {
           request.log('info', {
@@ -233,10 +200,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
           method: 'POST',
         })
       }
-    } else if (
-      request.method.toUpperCase() === 'GET' &&
-      request.url.pathname === '/graphql'
-    ) {
+    } else if (request.method.toUpperCase() === 'GET' && request.url.pathname === '/graphql') {
       request.log('info', {
         type: 'graphql-query',
         query: (request.query as any).query,
@@ -245,10 +209,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
         method: 'GET',
       })
     }
-    if (
-      request.response &&
-      (request.response as ResponseObject).statusCode >= 500
-    ) {
+    if (request.response && (request.response as ResponseObject).statusCode >= 500) {
       request.log('error', {
         type: 'http500',
         request: {
@@ -269,10 +230,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   })
 
   server.events.on('request', (request, event) => {
-    const ip =
-      request.headers['x-forwarded-for'] ||
-      request.headers['x-real-ip'] ||
-      request.info.remoteAddress
+    const ip = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || request.info.remoteAddress
     const sessionId = ip
       ? crypto
           .createHmac('sha256', secret)

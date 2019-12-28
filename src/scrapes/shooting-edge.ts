@@ -7,8 +7,8 @@ const throttle = throat(1)
 
 export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
-    site: 'theshootingedge.com',
-    vendor: `The Shooting Edge`,
+    link: 'theshootingedge.com',
+    name: `The Shooting Edge`,
     provinces: [Province.AB],
   }
 
@@ -21,12 +21,7 @@ export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
     nextPage: '.next-only',
     outOfStock: '.product-card__availability',
   }
-  const work = t =>
-    scrape(
-      p => `https://www.${info.site}/custom/${t}/page/${p}`,
-      info,
-      selectors
-    )
+  const work = t => scrape(p => `https://www.${info.link}/custom/${t}/page/${p}`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
