@@ -67,9 +67,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       request.log('info', {
         type: 'track-pageview',
         userAgent,
-        body: body,
-
-        ass: request.payload[`route`],
+        route: body.route,
         requestId: request.info.id,
       })
       return h.response('success')
