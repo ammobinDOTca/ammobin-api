@@ -10,3 +10,11 @@ export const BACK_COUNTRY_SPORTS: Vendor = {
   provinces: [Province.BC],
   logo: 'backcountrysports-logo.png',
 }
+
+export const SYLVESTRE_SPORTING_GOODS: Vendor = {
+  name: 'Sylvestre Sporting Goods',
+  link: 'shop.sylvestresportinggoods.com',
+  location: 'Bonnyville',
+  provinces: [Province.AB],
+  logo: 'sylvestresportinggoods-logo.png',
+}

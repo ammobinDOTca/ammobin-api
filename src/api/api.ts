@@ -15,19 +15,12 @@ import { getRecordFn } from './types'
 const DEV = process.env.DEV === 'true'
 const client = redis.createClient({ host: 'redis' })
 
-const getRecordFromRedis: getRecordFn = async (
-  itemType,
-  subType,
-  vendor,
-  link
-) => {
+const getRecordFromRedis: getRecordFn = async (itemType, subType, vendor, link) => {
   const targetUrl = url.parse(link, true)
 
   let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
   const results: IItemListing[] = await new Promise((resolve, reject) =>
-    client.get(helpers.getKey(host, itemType, subType), (err, res) =>
-      err ? reject(err) : resolve(JSON.parse(res))
-    )
+    client.get(helpers.getKey(host, itemType, subType), (err, res) => (err ? reject(err) : resolve(JSON.parse(res))))
   )
 
   const record = results.find(r => r && r.link === link)
@@ -51,10 +44,8 @@ async function doWork() {
         Query: {
           vendors,
           bestPrices,
-          itemsListings: (_, params) =>
-            getScrapeResponses(params, getRedisItems),
-          itemsFlatListings: (_, params) =>
-            getItemsFlatListings(params, getRedisItems),
+          itemsListings: (_, params) => getScrapeResponses(params, getRedisItems),
+          itemsFlatListings: (_, params) => getItemsFlatListings(params, getRedisItems),
         },
       },
       debug: DEV,
@@ -70,7 +61,7 @@ async function doWork() {
       },
       plugins: !DEV ? [responseCachePlugin()] : undefined,
       cacheControl: {
-        defaultMaxAge: 4 * 60 * 60, // 4hrs in seconds
+        defaultMaxAge: DEV ? 0 : 4 * 60 * 60, // 4hrs in seconds
       },
     })
     await apolloServer.applyMiddleware({

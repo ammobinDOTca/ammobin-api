@@ -171,6 +171,7 @@ export async function scrape(
   page = 1
 ): Promise<IItemListing[]> {
   await helpers.delayScrape(info.link)
+  console.log(getUrl(page))
   const r = await getPage(getUrl(page))
   let $ = cheerio.load(r.data)
   const items = []
