@@ -42,3 +42,11 @@ export const PROPHET_RIVER: Vendor = {
   provinces: [Province.AB],
   logo: 'prophetriver-logo.png',
 }
+
+export const PRECISION_OPTICS: Vendor = {
+  name: 'Precision Optics',
+  link: 'precisionoptics.net',
+  location: 'Quesnel',
+  provinces: [Province.BC],
+  logo: 'precisionoptics-logo.png',
+}
