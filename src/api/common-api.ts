@@ -137,7 +137,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
         foundRecord: !!record,
         requestId: request.info.id,
         index,
-        page: query.page || 1,
+        page: query.page || body.page || 0,
       })
       return h.response('success')
     },
