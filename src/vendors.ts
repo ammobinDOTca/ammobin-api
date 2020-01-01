@@ -26,3 +26,11 @@ export const LONDEROS_SPORTS: Vendor = {
   provinces: [Province.QC],
   logo: 'londerosports-logo.png',
 }
+
+export const NORDIC_MARKSMAN: Vendor = {
+  name: 'Nordic Marksman',
+  link: 'nordicmarksman.com',
+  location: 'Truro',
+  provinces: [Province.NS],
+  logo: 'nordicmarksman-logo.png',
+}
