@@ -34,3 +34,11 @@ export const NORDIC_MARKSMAN: Vendor = {
   provinces: [Province.NS],
   logo: 'nordicmarksman-logo.png',
 }
+
+export const PROPHET_RIVER: Vendor = {
+  name: 'Prophet River',
+  link: 'store.prophetriver.com',
+  location: 'Lloydminster',
+  provinces: [Province.AB],
+  logo: 'prophetriver-logo.png',
+}

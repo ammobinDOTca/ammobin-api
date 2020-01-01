@@ -1,5 +1,11 @@
 import { IVendor, Province, ItemType } from './graphql-types'
-import { BACK_COUNTRY_SPORTS, SYLVESTRE_SPORTING_GOODS, LONDEROS_SPORTS, NORDIC_MARKSMAN } from './vendors'
+import {
+  BACK_COUNTRY_SPORTS,
+  SYLVESTRE_SPORTING_GOODS,
+  LONDEROS_SPORTS,
+  NORDIC_MARKSMAN,
+  PROPHET_RIVER,
+} from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
 export const VENDORS: IVendor[] = [
@@ -383,6 +389,7 @@ export const VENDORS: IVendor[] = [
   SYLVESTRE_SPORTING_GOODS as IVendor,
   LONDEROS_SPORTS as IVendor,
   NORDIC_MARKSMAN as IVendor,
+  PROPHET_RIVER as IVendor,
 ].map(i => {
   i.logo = '/logos/' + i.logo
   i.background = i.background || false

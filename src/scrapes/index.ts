@@ -58,11 +58,18 @@ import { tesro } from './tesro'
 import { xmetal } from './xmetal'
 import { triggerAndBows } from './trigger-and-bows'
 import { g4c } from './g4c'
-import { BACK_COUNTRY_SPORTS, SYLVESTRE_SPORTING_GOODS, LONDEROS_SPORTS, NORDIC_MARKSMAN } from '../vendors'
+import {
+  BACK_COUNTRY_SPORTS,
+  SYLVESTRE_SPORTING_GOODS,
+  LONDEROS_SPORTS,
+  NORDIC_MARKSMAN,
+  PROPHET_RIVER,
+} from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
 import { londerosports } from './londerosports'
 import { nordicMarksman } from './nordic-marksman'
+import { prophetRiver } from './prophetriver'
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
     case 'g4cgunstore.com':
@@ -214,6 +221,8 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return londerosports(type)
     case NORDIC_MARKSMAN.link:
       return nordicMarksman(type)
+    case PROPHET_RIVER.link:
+      return prophetRiver(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }
