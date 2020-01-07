@@ -5,6 +5,7 @@ import { SQS } from 'aws-sdk'
 import { ScheduledEvent } from 'aws-lambda'
 import { SOURCES, TYPES } from '../constants'
 import { logger } from '../logger'
+import { ItemType } from '../graphql-types'
 /**
  * {
     "version": "0",
@@ -21,6 +22,21 @@ import { logger } from '../logger'
 }
  */
 
+function getQueueUrl(source: string, type: ItemType): string {
+  if (
+    [
+      {
+        source: 'gotenda.com',
+        type: ItemType.centerfire,
+      },
+    ].some(x => x.source === source && x.type === type)
+  ) {
+    return process.env.LargeMemoryQueueUrl || 'SHIT'
+  }
+
+  return process.env.QueueUrl || 'SHIT'
+}
+
 const sqs = new SQS()
 export async function handler(e: ScheduledEvent) {
   logger.info({
@@ -34,7 +50,7 @@ export async function handler(e: ScheduledEvent) {
           SOURCES.map(source =>
             sqs
               .sendMessage({
-                QueueUrl: process.env.QueueUrl || 'SHIT',
+                QueueUrl: getQueueUrl(source, t),
                 MessageBody: JSON.stringify({ source, type: t }),
               })
               .promise()
