@@ -17,10 +17,10 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
     name: '.card-title',
     img: '.card-image',
     link: '.card-title a',
-    price: '.price',
+    price: '.card-text--price .price-section .price--main',
 
     nextPage: '.pagination-item--next',
-    outOfStock: '.out-of-stock',
+    outOfStock: '.sale-flag-side--outstock',
   }
 
   const BASE = 'https://alflahertys.com'
