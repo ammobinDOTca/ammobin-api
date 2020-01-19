@@ -29,6 +29,10 @@ function getQueueUrl(source: string, type: ItemType): string {
         source: 'gotenda.com',
         type: ItemType.centerfire,
       },
+      {
+        source: 'gotenda.com',
+        type: ItemType.shotgun,
+      },
     ].some(x => x.source === source && x.type === type)
   ) {
     return process.env.LargeMemoryQueueUrl || 'SHIT'
