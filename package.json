@@ -12,7 +12,7 @@
     "test": "npm run test:lint && npm run build",
     "format": "pretty-quick",
     "build": "tsc",
-    "build-lambda": "webpack --progress && cp graphql.gql lambda/graphql",
+    "build-lambda": "webpack  && cp graphql.gql lambda/graphql",
     "dev": "DEV=true ts-node-dev ./src/api/api.ts",
     "dev:worker": "DEV=true ts-node-dev ./src/worker/redis-worker.ts",
     "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-refresher.ts",
