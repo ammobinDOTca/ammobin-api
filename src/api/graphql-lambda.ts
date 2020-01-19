@@ -2,12 +2,7 @@
  * basic lambda to expose graphql as own endpoint
  * without the other cruff
  */
-import {
-  Callback,
-  Context,
-  APIGatewayEvent,
-  APIGatewayProxyResult,
-} from 'aws-lambda'
+import { Callback, Context, APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { ApolloServer } from 'apollo-server-lambda'
 import { getDyanmoItems } from './dynamo-getter'
 import { getScrapeResponses, getItemsFlatListings } from './shared'
@@ -20,20 +15,19 @@ const resolvers = {
     vendors,
     bestPrices,
     itemsListings: (_, params) => getScrapeResponses(params, getDyanmoItems),
-    itemsFlatListings: (_, params) =>
-      getItemsFlatListings(params, getDyanmoItems),
+    itemsFlatListings: (_, params) => getItemsFlatListings(params, getDyanmoItems),
   },
 }
 
 const secret = process.env.HASH_SECRET || Math.random().toString()
+const DEV = process.env.DEV === 'true'
 
 const server = new ApolloServer({ typeDefs, resolvers })
 
 exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
 
-  const ip =
-    event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
+  const ip = event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
   const sessionId = ip
     ? createHmac('sha256', secret)
         .update(ip)
@@ -101,6 +95,12 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       requestId,
       sessionId,
     })
+    const now = new Date()
+    const maxAge =
+      DEV! && event.httpMethod === 'GET'
+        ? Math.max((24 - now.getHours()) * 60 * 60 + (60 - now.getMinutes()) * 60 + (60 - now.getSeconds()), 1)
+        : 1
+    result.headers['Cache-Control'] = 'max-age=' + maxAge
     cb(err, result)
   })
 }
