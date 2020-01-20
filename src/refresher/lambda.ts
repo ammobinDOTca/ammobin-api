@@ -3,7 +3,7 @@
  */
 import { SQS } from 'aws-sdk'
 import { ScheduledEvent } from 'aws-lambda'
-import { SOURCES, TYPES } from '../constants'
+import { SOURCES, TYPES, AMMO_TYPES } from '../constants'
 import { logger } from '../logger'
 import { ItemType } from '../graphql-types'
 /**
@@ -47,8 +47,23 @@ export async function handler(e: ScheduledEvent) {
     type: 'refresh-cache',
     roundType: 'all',
   })
+
+  /**
+   * 20200119 most of AWS bill is DynamoDB, and 97% of the cost is due to writes.
+   * since most people are only looking at centerfire, reduce refresh rate for others...
+   */
+  const today = new Date()
+  let types: ItemType[]
+  if (today.getUTCDay() === 1) {
+    types = TYPES
+  } else if (today.getUTCDay() % 3 === 0) {
+    types = AMMO_TYPES
+  } else {
+    types = [ItemType.centerfire]
+  }
+
   return Promise.all(
-    TYPES.reduce(
+    types.reduce(
       (lst, t) =>
         lst.concat(
           SOURCES.map(source =>

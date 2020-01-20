@@ -25,13 +25,14 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON, Province.QC],
     location: 'all over the place',
   },
-  {
-    name: 'Firearms Outlet Canada',
-    link: 'firearmsoutletcanada.com',
-    logo: 'foc-logo.jpg',
-    provinces: [Province.ON],
-    location: 'Ajax',
-  },
+  // 20200119 cert issues
+  // {
+  //   name: 'Firearms Outlet Canada',
+  //   link: 'firearmsoutletcanada.com',
+  //   logo: 'foc-logo.jpg',
+  //   provinces: [Province.ON],
+  //   location: 'Ajax',
+  // },
   {
     name: `Al Flaherty's`,
     link: 'alflahertys.com',
@@ -66,13 +67,14 @@ export const VENDORS: IVendor[] = [
     ],
     location: 'all over the place',
   },
-  {
-    name: 'Reliable Gun',
-    link: 'reliablegun.com',
-    logo: 'reliable-gun-logo.jpg',
-    provinces: [Province.BC],
-    location: 'Vancover',
-  },
+  // 20200119: all pages fail with 500
+  // {
+  //   name: 'Reliable Gun',
+  //   link: 'reliablegun.com',
+  //   logo: 'reliable-gun-logo.jpg',
+  //   provinces: [Province.BC],
+  //   location: 'Vancover',
+  // },
   {
     name: 'Tenda',
     link: 'gotenda.com',
@@ -80,13 +82,14 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON],
     location: 'Richmond Hill',
   },
-  {
-    name: 'Canada Ammo',
-    link: 'canadaammo.com',
-    logo: 'canada-ammo-logo.jpg',
-    provinces: [Province.BC, Province.ON],
-    location: 'all over the place',
-  },
+  // 20200119: cert issues
+  // {
+  //   name: 'Canada Ammo',
+  //   link: 'canadaammo.com',
+  //   logo: 'canada-ammo-logo.jpg',
+  //   provinces: [Province.BC, Province.ON],
+  //   location: 'all over the place',
+  // },
   {
     name: 'Wolverine Supplies',
     link: 'wolverinesupplies.com',
