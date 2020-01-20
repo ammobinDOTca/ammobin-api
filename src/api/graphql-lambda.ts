@@ -97,7 +97,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     })
     const now = new Date()
     const maxAge =
-      DEV! && event.httpMethod === 'GET'
+      !DEV && event.httpMethod === 'GET'
         ? Math.max((24 - now.getUTCHours()) * 60 * 60 + (60 - now.getUTCMinutes()) * 60 + (60 - now.getUTCSeconds()), 2)
         : 1
     console.log(`maxAge DEV? ${DEV} method ${event.httpMethod} now ${now} maxAge ${maxAge}`)
