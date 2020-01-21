@@ -4,9 +4,7 @@ import { scrape } from './common'
 
 export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
-    case ItemType.rimfire:
     case ItemType.centerfire:
-    case ItemType.shotgun:
       return scrape(
         page => `https://durhamoutdoors.ca/Ammo-and-reloading_c_12-${page}.html`,
         {
@@ -23,6 +21,8 @@ export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
           // nextPage:'', // todo: not able to get selector
         }
       ).then(i => helpers.classifyBullets(i, type))
+    case ItemType.rimfire:
+    case ItemType.shotgun:
     case ItemType.case:
     case ItemType.powder:
     case ItemType.shot:
