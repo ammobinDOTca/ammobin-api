@@ -1,11 +1,7 @@
 import { AMMO_TYPES, RELOAD_TYPES, VENDORS } from '../constants'
 import * as helpers from '../helpers'
 
-import {
-  IItemsFlatListingsOnQueryArguments,
-  IItemFlatListings,
-  IVendor,
-} from '../graphql-types'
+import { IItemsFlatListingsOnQueryArguments, IItemFlatListings, IVendor } from '../graphql-types'
 import {
   IItemsListingsOnQueryArguments,
   IItemListings,
@@ -70,24 +66,9 @@ export async function getBestPrices(): Promise<IBestPrice[]> {
 
 export async function getScrapeResponses(
   params: IItemsListingsOnQueryArguments,
-  valueGetter: (
-    types: ItemType[],
-    subTypes: string[],
-    vendors: IVendor[]
-  ) => Promise<IItemListing[]>
+  valueGetter: (types: ItemType[], subTypes: string[], vendors: IVendor[]) => Promise<IItemListing[]>
 ): Promise<IItemListings> {
-  let {
-    itemType,
-    page,
-    pageSize,
-    subType,
-    province,
-    vendor,
-    query,
-    sortField,
-    sortOrder,
-    brand,
-  } = params
+  let { itemType, page, pageSize, subType, province, vendor, query, sortField, sortOrder, brand } = params
 
   if (!sortOrder) {
     sortOrder = SortOrder.ASC
@@ -130,12 +111,7 @@ export async function getScrapeResponses(
     vendors = VENDORS.filter(v => v.provinces.includes(province))
   }
 
-  const subTypes = subType
-    ? [subType]
-    : itemTypes.reduce(
-        (lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)),
-        []
-      )
+  const subTypes = subType ? [subType] : itemTypes.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
   let results: IItemListing[] = await valueGetter(itemTypes, subTypes, vendors)
 
   const result: IItemListing[] = results
@@ -143,8 +119,7 @@ export async function getScrapeResponses(
       r =>
         r &&
         r.price > 0 &&
-        (!AMMO_TYPES.includes(itemType) ||
-          (r.subType && r.subType !== 'UNKNOWN')) &&
+        (!AMMO_TYPES.includes(itemType) || (r.subType && r.subType !== 'UNKNOWN')) &&
         (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase()))
     )
     .sort((a, b) => {
@@ -158,10 +133,7 @@ export async function getScrapeResponses(
     })
   const itemsGrouped = result.reduce((r, item) => {
     // if provided, filter out items that DONT match
-    if (
-      (subType && item.subType !== subType) ||
-      (query && !item.name.toLowerCase().includes(query.toLowerCase()))
-    ) {
+    if ((subType && item.subType !== subType) || (query && !item.name.toLowerCase().includes(query.toLowerCase()))) {
       return r
     }
 
@@ -284,18 +256,7 @@ export async function getItemsFlatListings(
   args: IItemsFlatListingsOnQueryArguments,
   valueGetter: valueGetterFn
 ): Promise<IItemFlatListings> {
-  let {
-    itemType,
-    page,
-    pageSize,
-    subType,
-    province,
-    vendor,
-    sortField,
-    sortOrder,
-    query,
-    brand,
-  } = args
+  let { itemType, page, pageSize, subType, province, vendor, sortField, sortOrder, query, brand } = args
 
   if (!sortOrder) {
     sortOrder = SortOrder.ASC
@@ -337,9 +298,7 @@ export async function getItemsFlatListings(
   } else if (province) {
     vendors = VENDORS.filter(v => v.provinces.includes(province))
   }
-  const subTypes = subType
-    ? [subType]
-    : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
+  const subTypes = subType ? [subType] : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
   let results: IItemListing[] = await valueGetter(types, subTypes, vendors)
 
   // only filters out ammo without subType set (not setup for reloading yet)
@@ -347,8 +306,7 @@ export async function getItemsFlatListings(
     r =>
       r &&
       r.price > 0 &&
-      (!AMMO_TYPES.includes(itemType) ||
-        (r.subType && r.subType !== 'UNKNOWN')) &&
+      (!AMMO_TYPES.includes(itemType) || (r.subType && r.subType !== 'UNKNOWN')) &&
       (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase())) &&
       (!query || r.name.toLowerCase().includes(query.toLowerCase()))
   )
@@ -359,10 +317,11 @@ export async function getItemsFlatListings(
     let bb = b[sortField]
     // put unknown unit costs at the bottom of the sort order
     if (sortField === FlatSortField.unitCost) {
-      if (aa <= 0) {
+      if (aa <= 0 || aa === undefined) {
         aa = Number.MAX_SAFE_INTEGER
       }
-      if (bb <= 0) {
+
+      if (bb <= 0 || bb === undefined) {
         bb = Number.MAX_SAFE_INTEGER
       }
     }
