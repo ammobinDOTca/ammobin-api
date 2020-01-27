@@ -57,7 +57,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       })
     } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
-      variables = event.queryStringParameters.variables
+      variables = JSON.parse(event.queryStringParameters.variables)
       opName = event.queryStringParameters.opName
 
       logger.info({

@@ -14,6 +14,7 @@ module.exports = {
     api: './src/api/lambda.ts',
     refresher: './src/refresher/lambda.ts',
     worker: './src/worker/lambda.ts',
+    test: './test/index.ts',
   },
   output: {
     libraryTarget: 'commonjs2',
