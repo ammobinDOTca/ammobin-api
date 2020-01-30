@@ -2,19 +2,43 @@ import { handler as graphqlTest } from './graphql'
 import { handler as imagesTest } from './images'
 import { handler as apiTest } from './api'
 
+import { logger } from '../src/logger'
+
 /**
  * run all of our integ tests...
  * @param param0 {base: baseUrl}
  */
 export async function handler(event) {
-  console.log(event)
+  logger.info({
+    type: 'test-run-started',
+    message: {
+      event,
+    },
+  })
   const { base } = event
+  try {
+    await apiTest({ base })
 
-  await apiTest({ base })
+    await graphqlTest({ base })
 
-  await graphqlTest({ base })
+    await imagesTest({ base })
 
-  await imagesTest({ base })
+    logger.info({
+      type: 'test-run-passed',
+      message: {
+        event,
+      },
+    })
 
-  return true
+    return true
+  } catch (e) {
+    logger.info({
+      type: 'test-run-failed',
+      message: {
+        event,
+        error: e.toString(),
+      },
+    })
+    throw e
+  }
 }
