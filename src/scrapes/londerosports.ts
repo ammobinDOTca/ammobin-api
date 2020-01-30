@@ -11,8 +11,8 @@ export function londerosports(type: ItemType): Promise<IItemListing[]> {
   const info: Info = LONDEROS_SPORTS
 
   const selectors: Selectors = {
-    item: '.item',
-    name: '.product-name',
+    item: '.products .item',
+    name: '.product-item-link',
     img: 'img',
     link: 'a',
     price: '.price',
