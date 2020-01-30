@@ -11,9 +11,7 @@ import { logger } from '../src/logger'
 export async function handler(event) {
   logger.info({
     type: 'test-run-started',
-    message: {
-      event,
-    },
+    event,
   })
   const { base } = event
   try {
@@ -25,19 +23,15 @@ export async function handler(event) {
 
     logger.info({
       type: 'test-run-passed',
-      message: {
-        event,
-      },
+      event,
     })
 
     return true
   } catch (e) {
     logger.info({
       type: 'test-run-failed',
-      message: {
-        event,
-        error: e.toString(),
-      },
+      event,
+      error: e.toString(),
     })
     throw e
   }
