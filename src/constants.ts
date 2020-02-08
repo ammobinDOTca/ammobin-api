@@ -67,14 +67,13 @@ export const VENDORS: IVendor[] = [
     ],
     location: 'all over the place',
   },
-  // 20200119: all pages fail with 500
-  // {
-  //   name: 'Reliable Gun',
-  //   link: 'reliablegun.com',
-  //   logo: 'reliable-gun-logo.jpg',
-  //   provinces: [Province.BC],
-  //   location: 'Vancover',
-  // },
+  {
+    name: 'Reliable Gun',
+    link: 'reliablegun.com',
+    logo: 'reliable-gun-logo.jpg',
+    provinces: [Province.BC],
+    location: 'Vancover',
+  },
   {
     name: 'Tenda',
     link: 'gotenda.com',
@@ -169,14 +168,13 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.BC],
     location: 'Smithers',
   },
-  // site is offline while they upgrade jan 2020 TODO
-  // {
-  //   name: 'NAS Guns & Ammo',
-  //   link: 'nasgunsandammo.com',
-  //   logo: 'nas-logo.jpg',
-  //   provinces: [Province.ON],
-  //   location: 'Niagara and Sault Ste. Marie',
-  // },
+  {
+    name: 'NAS Guns & Ammo',
+    link: 'nasgunsandammo.com',
+    logo: 'nas-logo.jpg',
+    provinces: [Province.ON],
+    location: 'Niagara and Sault Ste. Marie',
+  },
   {
     name: 'Dante Sports',
     link: 'dantesports.com',
@@ -212,13 +210,14 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON],
     location: 'Hamilton',
   },
-  {
-    name: 'Vancouver Gun Store',
-    link: 'vancouvergunstore.ca',
-    logo: 'vancouvergunstore-logo.png',
-    provinces: [Province.BC],
-    location: 'Vancouver',
-  },
+  // site offline feb 2020
+  // {
+  //   name: 'Vancouver Gun Store',
+  //   link: 'vancouvergunstore.ca',
+  //   logo: 'vancouvergunstore-logo.png',
+  //   provinces: [Province.BC],
+  //   location: 'Vancouver',
+  // },
   {
     name: 'Bartons Big Country',
     link: 'bartonsbigcountry.ca',
