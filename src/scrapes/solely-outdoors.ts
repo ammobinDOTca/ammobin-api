@@ -1,5 +1,8 @@
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
+import { combineResults } from '../helpers'
+import throat from 'throat'
+const throttle = throat(1)
 
 export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
   const info: Info = {
@@ -24,10 +27,13 @@ export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
       return work('ammunition/rimfire')
 
     case ItemType.centerfire:
-      return work('ammunition/centerfire')
-
+      return Promise.all(
+        ['handgun-ammo', 'rifle-ammo', 'bulk-ammo'].map(t => throttle(() => work('ammunition/' + t)))
+      ).then(combineResults)
     case ItemType.shotgun:
-      return work('ammunition/shotgun')
+      return Promise.all(['shotgun-ammo', 'bulk-ammo'].map(t => throttle(() => work('ammunition/' + t)))).then(
+        combineResults
+      )
     case ItemType.primer:
       return work('reloading/primers')
     case ItemType.case:
