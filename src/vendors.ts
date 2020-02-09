@@ -50,3 +50,11 @@ export const PRECISION_OPTICS: Vendor = {
   provinces: [Province.BC],
   logo: 'precisionoptics-logo.png',
 }
+
+export const MARSTAR: Vendor = {
+  name: 'Marstar',
+  link: 'marstar.ca',
+  location: 'Vankleek Hill',
+  provinces: [Province.ON],
+  logo: 'marstar-logo.png',
+}

@@ -64,14 +64,19 @@ import {
   LONDEROS_SPORTS,
   NORDIC_MARKSMAN,
   PROPHET_RIVER,
+  MARSTAR,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
 import { londerosports } from './londerosports'
 import { nordicMarksman } from './nordic-marksman'
 import { prophetRiver } from './prophetriver'
+import { marstar } from './marstar'
+
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
+    case MARSTAR.link:
+      return marstar(type)
     case 'g4cgunstore.com':
       return g4c(type)
     case 'triggersandbows.com':
