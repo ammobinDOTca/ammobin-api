@@ -6,6 +6,7 @@ import {
   NORDIC_MARKSMAN,
   PROPHET_RIVER,
   MARSTAR,
+  NAS,
   // PRECISION_OPTICS,
 } from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
@@ -168,13 +169,6 @@ export const VENDORS: IVendor[] = [
     logo: 'bvoutdoors-logo.png',
     provinces: [Province.BC],
     location: 'Smithers',
-  },
-  {
-    name: 'NAS Guns & Ammo',
-    link: 'nasgunsandammo.com',
-    logo: 'nas-logo.jpg',
-    provinces: [Province.ON],
-    location: 'Niagara and Sault Ste. Marie',
   },
   {
     name: 'Dante Sports',
@@ -396,6 +390,7 @@ export const VENDORS: IVendor[] = [
   NORDIC_MARKSMAN as IVendor,
   PROPHET_RIVER as IVendor,
   MARSTAR as IVendor,
+  NAS as IVendor,
   // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
 ].map(i => {
   i.logo = '/logos/' + i.logo

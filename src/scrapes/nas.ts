@@ -1,28 +1,25 @@
 import * as helpers from '../helpers'
 import throat from 'throat'
-import { ItemType, IItemListing, Province } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
+import { NAS } from '../vendors'
 
 export function nas(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
-  const info: Info = {
-    link: 'nasgunsandammo.com',
-    name: `NAS Guns & Ammo`,
-    provinces: [Province.ON],
-  }
+  const info: Info = NAS
 
   const selectors: Selectors = {
-    item: '.product',
-    name: '.kw-details-title',
-    img: '.kw-prodimage-img',
-    link: '.woocommerce-LoopProduct-link',
+    item: '#main .product',
+    name: '.name',
+    img: 'img',
+    link: '.name a',
     price: '.price',
     nextPage: '.pagination-item-next-link',
-    outOfStock: '.outofstock',
+    outOfStock: '.out-of-stock-label',
   }
   const work = t =>
     scrape(
-      p => `https://www.nasgunsandammo.com/product-category/${t}/page/${p}/`,
+      p => `https://${info.link}/product-category/${t}/page/${p}/`,
 
       info,
       selectors
@@ -36,7 +33,7 @@ export function nas(type: ItemType): Promise<IItemListing[]> {
       return Promise.all(
         [
           'centrefire', // look at these fancy fellows...
-          'surplus-ammo',
+          // 'surplus-ammo',
         ].map(t => throttle(() => work('ammo/' + t)))
       ).then(helpers.combineResults)
 

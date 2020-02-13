@@ -65,6 +65,7 @@ import {
   NORDIC_MARKSMAN,
   PROPHET_RIVER,
   MARSTAR,
+  NAS,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -159,7 +160,7 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
     case 'bvoutdoors.com':
       return bvoutdoors(type)
 
-    case 'nasgunsandammo.com':
+    case NAS.link:
       return nas(type)
 
     case 'dantesports.com':

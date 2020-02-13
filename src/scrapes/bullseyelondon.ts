@@ -1,4 +1,3 @@
-import * as helpers from '../helpers'
 import { ItemType, IItemListing, Province } from '../graphql-types'
 import { Info, Selectors, scrape } from './common'
 
@@ -23,13 +22,11 @@ function work(path: String): Promise<IItemListing[]> {
 export function bullseyelondon(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
-      return work('ammunition/rimfire-ammunition').then(helpers.classifyRimfire)
+      return work('ammunition/rimfire-ammunition')
     case ItemType.centerfire:
-      return Promise.all([work('ammunition/centerfire-ammunition'), work('ammunition/surplus-ammunition')])
-        .then(helpers.combineResults)
-        .then(helpers.classifyCenterfire)
+      return work('ammunition/centerfire-ammunition')
     case ItemType.shotgun:
-      return work('ammunition/shotgun').then(helpers.classifyShotgun)
+      return work('ammunition/shotgun')
     case ItemType.shot:
       return work('reloading/bullets')
     case ItemType.case:
