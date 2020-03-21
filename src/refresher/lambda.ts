@@ -51,6 +51,9 @@ export async function handler(e: ScheduledEvent) {
   let types: ItemType[]
   if (today.getUTCDay() === 1) {
     types = TYPES
+  } else if (today.getUTCDay() % 2 === 0) {
+    // wuhan hype
+    types = [ItemType.centerfire, ItemType.shotgun]
   } else {
     types = [ItemType.centerfire]
   }
