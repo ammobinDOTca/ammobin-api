@@ -27,7 +27,7 @@
     "apollo-server-cache-redis": "^1.1.4",
     "apollo-server-hapi": "^2.9.14",
     "apollo-server-lambda": "^2.9.14",
-    "apollo-server-plugin-response-cache": "^0.3.9",
+    "apollo-server-plugin-response-cache": "^0.3.11",
     "aws-sdk": "^2.595.0",
     "axios": "^0.19.0",
     "boom": "^7.3.0",
