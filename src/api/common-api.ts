@@ -224,7 +224,11 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   })
 
   server.events.on('log', event => {
-    logger.info(event.data)
+    if(typeof event.data === "string"){
+      logger.info({info:event.data})
+    } else {
+      logger.info(event.data)
+    }
   })
 
   server.events.on('request', (request, event) => {
