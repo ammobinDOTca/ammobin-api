@@ -35,7 +35,7 @@
     "chrome-aws-lambda": "^2.1.1",
     "delay": "^4.3.0",
     "fluent-logger": "^3.4.1",
-    "graphql": "^14.6.0",
+    "graphql": "^15.0.0",
     "hapi": "^18.1.0",
     "hapi-lambda": "^1.0.0",
     "jsonp": "^0.2.1",
