@@ -7,10 +7,11 @@ import { makeSearch } from '../scrapes'
 import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
 import { logger } from '../logger'
+import moment from 'moment'
 const docClient = new DynamoDB.DocumentClient()
 
 function proxyImages(items) {
-  return items.map(i => {
+  return items.map((i) => {
     if (!i.img || i.img === '') {
       return i
     }
@@ -25,14 +26,14 @@ function proxyImages(items) {
 }
 
 function classifyBrand(items) {
-  return items.map(i => {
+  return items.map((i) => {
     i.brand = classifier.classifyBrand(i.brand || i.name || '')
     return i
   })
 }
 
 function getCounts(items) {
-  return items.map(i => {
+  return items.map((i) => {
     i.count = isNaN(i.count) ? classifier.getItemCount(i.name) || '' : i.count
     if (i.count > 1) {
       i.unitCost = i.price / i.count
@@ -47,8 +48,8 @@ function getCounts(items) {
 }
 // remove empty props (dynamo doesnt want em)
 function nukeEmpties(items: IItemListing[]): IItemListing[] {
-  return items.map(i => {
-    Object.entries(i).forEach(e => {
+  return items.map((i) => {
+    Object.entries(i).forEach((e) => {
       const key = e[0]
       const value = e[1]
       if (value === null || value === undefined || value === '') {
@@ -61,15 +62,21 @@ function nukeEmpties(items: IItemListing[]): IItemListing[] {
 
 function setItemType(itemType: ItemType) {
   return (items: IItemListing[]) =>
-    items.map(i => {
+    items.map((i) => {
       i.itemType = itemType
       return i
     })
 }
 
 const appendGAParam = (items: IItemListing[]) =>
-  items.map(i => {
+  items.map((i) => {
     i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
+    return i
+  })
+
+const setTTL = (items: IItemListing[]) =>
+  items.map((i) => {
+    i.ttl = moment().add(7, 'days').utcOffset()
     return i
   })
 
@@ -85,7 +92,7 @@ function removeDuplicates(items: IItemListing[]): IItemListing[] {
 export async function handler(event: SQSEvent) {
   // want all promises to resolve (failed scrapes should be logged and moved onto the next one)
   await Promise.all(
-    event.Records.map(async r => {
+    event.Records.map(async (r) => {
       const { source, type } = JSON.parse(r.body)
 
       const searchStart = new Date()
@@ -98,11 +105,11 @@ export async function handler(event: SQSEvent) {
           return
         }
         return Promise.resolve(searchRes)
-          .then(items => items.filter(i => i.price && i.link && i.name))
-          .then(items =>
+          .then((items) => items.filter((i) => i.price && i.link && i.name))
+          .then((items) =>
             AMMO_TYPES.includes(type)
               ? classifyBullets(items, type)
-              : items.map(i => {
+              : items.map((i) => {
                   i.subType = type // dont have way to classify subType for reloading items, so just duplicate field
                   return i
                 })
@@ -114,7 +121,8 @@ export async function handler(event: SQSEvent) {
           .then(appendGAParam)
           .then(nukeEmpties)
           .then(removeDuplicates)
-          .then(items => {
+          .then(setTTL)
+          .then((items) => {
             logger.info({
               type: 'finished-scrape',
               source,
@@ -134,7 +142,7 @@ export async function handler(event: SQSEvent) {
 
             // throattle?
             return Promise.all(
-              Object.entries(ass).map(e => {
+              Object.entries(ass).map((e) => {
                 const names = e[1][0].vendor
                 const values = e[1].slice(0, 50)
                 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-expression-parameters
@@ -157,7 +165,7 @@ export async function handler(event: SQSEvent) {
               })
             )
           })
-          .catch(e => {
+          .catch((e) => {
             logger.info({
               type: 'failed-scrape',
               source,

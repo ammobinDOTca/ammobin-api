@@ -36,7 +36,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   server.route({
     method: 'POST',
     path: BASE + '/track-performance',
-    handler: function(request, h) {
+    handler: function (request, h) {
       const userAgent = request.headers['user-agent'] || 'unknown'
       const { performance, href } = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
 
@@ -60,7 +60,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   server.route({
     method: 'POST',
     path: BASE + '/track-pageview',
-    handler: function(request, h) {
+    handler: function (request, h) {
       const userAgent = request.headers['user-agent'] || 'unknown'
       const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
 
@@ -78,7 +78,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   server.route({
     method: 'POST',
     path: BASE + '/track-view',
-    handler: function(request, h) {
+    handler: function (request, h) {
       // record user agent + calibre + brand that user opened up
       const userAgent = request.headers['user-agent'] || 'unknown'
       const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
@@ -112,7 +112,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
   server.route({
     method: 'POST',
     path: BASE + '/track-click',
-    handler: async function(request, h) {
+    handler: async function (request, h) {
       // record user agent + calibre + brand that user opened up
       const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
       const targetUrl = url.parse(body.link, true)
@@ -120,7 +120,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
 
       // lazy comp.....
-      const vendor = VENDORS.find(v => v.link.includes(host))
+      const vendor = VENDORS.find((v) => v.link.includes(host))
       if (!vendor) {
         throw boom.badRequest('invalid target url')
       }
@@ -151,7 +151,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
       },
     },
     path: BASE + '/content-security-report-uri',
-    handler: function(req, h) {
+    handler: function (req, h) {
       let body = {}
       try {
         body = typeof req.payload === 'string' ? JSON.parse(req.payload) : req.payload
@@ -223,9 +223,9 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
     }
   })
 
-  server.events.on('log', event => {
-    if(typeof event.data === "string"){
-      logger.info({info:event.data})
+  server.events.on('log', (event) => {
+    if (typeof event.data === 'string') {
+      logger.info({ info: event.data })
     } else {
       logger.info(event.data)
     }
@@ -233,12 +233,7 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
 
   server.events.on('request', (request, event) => {
     const ip = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || request.info.remoteAddress
-    const sessionId = ip
-      ? crypto
-          .createHmac('sha256', secret)
-          .update(ip)
-          .digest('hex')
-      : 'unknown_ip'
+    const sessionId = ip ? crypto.createHmac('sha256', secret).update(ip).digest('hex') : 'unknown_ip'
     delete request.headers['x-forwarded-for']
     delete request.headers['x-real-ip']
     const requestId = request.info.id
