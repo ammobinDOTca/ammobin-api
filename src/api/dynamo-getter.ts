@@ -1,6 +1,8 @@
 import { IItemListing, ItemType, IVendor } from '../graphql-types'
 
 import { DynamoDB } from 'aws-sdk'
+import * as zlib from 'zlib'
+
 const docClient = new DynamoDB.DocumentClient({
   region: process.env.AWS_REGION || 'ca-central-1',
 })
@@ -11,13 +13,7 @@ export async function getDyanmoItems(
   vendors: IVendor[]
 ): Promise<IItemListing[]> {
   const keys: string[] = types.reduce(
-    (ll, type) =>
-      ll.concat(
-        subTypes.reduce(
-          (lll, _subType) => lll.concat(`${type}_${_subType}`),
-          [] as string[]
-        )
-      ),
+    (ll, type) => ll.concat(subTypes.reduce((lll, _subType) => lll.concat(`${type}_${_subType}`), [] as string[])),
     [] as string[]
   )
 
@@ -30,7 +26,7 @@ export async function getDyanmoItems(
             return m
           }, {}),
           ProjectionExpression: vendors.map((_, i) => '#' + i).join(','),
-          Keys: keys.map(k => ({
+          Keys: keys.map((k) => ({
             id: k, // lol. thanks API DOCS...
           })),
         },
@@ -38,17 +34,20 @@ export async function getDyanmoItems(
     })
     .promise()
 
-  const results = docs.Responses[`ammobinItems`].reduce<IItemListing[]>(
-    (_res, doc) => {
-      vendors.forEach(v => {
-        if (doc[v.name]) {
-          _res = _res.concat(doc[v.name])
+  const results = docs.Responses[`ammobinItems`].reduce<IItemListing[]>((_res, doc) => {
+    vendors.forEach((v) => {
+      if (doc[v.name]) {
+        let vals
+        try {
+          vals = JSON.parse(zlib.gunzipSync(Buffer.from(doc[v.name], 'base64')).toString())
+        } catch (e) {
+          vals = doc[v.name]
         }
-      })
-      return _res
-    },
-    []
-  )
+        _res = _res.concat(vals)
+      }
+    })
+    return _res
+  }, [])
   if (docs.UnprocessedKeys && Object.keys(docs.UnprocessedKeys).length > 0) {
     console.log('UNPROCESSED KEYS', docs.UnprocessedKeys)
   }

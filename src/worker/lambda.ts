@@ -8,6 +8,7 @@ import { classifyBullets } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
 import { logger } from '../logger'
 import moment from 'moment'
+import * as zlib from 'zlib'
 const docClient = new DynamoDB.DocumentClient()
 
 function proxyImages(items) {
@@ -144,7 +145,7 @@ export async function handler(event: SQSEvent) {
             return Promise.all(
               Object.entries(ass).map((e) => {
                 const names = e[1][0].vendor
-                const values = e[1].slice(0, 50)
+                const values = zlib.gzipSync(JSON.stringify(e[1])).toString('base64')
                 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-expression-parameters
                 // size limits The maximum length of all substitution variables in an expression is 2 MB. This is the sum of the lengths of all ExpressionAttributeNames and ExpressionAttributeValues.
                 return docClient
