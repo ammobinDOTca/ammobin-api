@@ -10,15 +10,16 @@ function work(type: string): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '#frmCompare li',
-    name: '.pname',
-    img: 'img',
-    link: '.pname',
-    price: '.p-price',
+    item: '.product',
+    name: '.card-title',
+    img: null, // images lazy loaded
+    link: 'a',
+    price: '.price--withoutTax',
+
     // nextPage: '.next',
     // outOfStock: '.out-of-stock',
   }
-  return scrape(p => `https://${info.link}/ammunition-reloading/${type}.html`, info, selectors)
+  return scrape((p) => `https://${info.link}/ammunition-reloading/${type}.html`, info, selectors)
 }
 
 export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
@@ -30,7 +31,7 @@ export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['surplus-ammunition', 'hand-gun-ammunition', 'centerfire-ammunition'].map(t => throttle(() => work(t)))
+        ['surplus-ammunition', 'hand-gun-ammunition', 'centerfire-ammunition'].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
