@@ -270,14 +270,15 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.AB],
     location: 'Calagary',
   },
-  {
-    name: 'Rampart',
-    link: 'rampartcorp.com',
-    logo: 'rampart.png',
-    provinces: [Province.ON],
-    location: 'Ottawa',
-    background: true,
-  },
+  // 20200422 no longer selling ammo
+  // {
+  //   name: 'Rampart',
+  //   link: 'rampartcorp.com',
+  //   logo: 'rampart.png',
+  //   provinces: [Province.ON],
+  //   location: 'Ottawa',
+  //   background: true,
+  // },
   {
     name: 'West Coast Hunting Supplies',
     link: 'westcoasthunting.ca',
@@ -392,7 +393,7 @@ export const VENDORS: IVendor[] = [
   MARSTAR as IVendor,
   NAS as IVendor,
   // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
-].map(i => {
+].map((i) => {
   i.logo = '/logos/' + i.logo
   i.background = i.background || false
   i.hasReloadingItems = i.hasReloadingItems || false
@@ -402,12 +403,12 @@ export const VENDORS: IVendor[] = [
 /**
  * name of vendors (as shown to user)
  */
-export const VENDOR_NAMES = VENDORS.map(v => v.name)
+export const VENDOR_NAMES = VENDORS.map((v) => v.name)
 
 /**
  * domains of all vendors
  */
-export const SOURCES = VENDORS.map(v => v.link)
+export const SOURCES = VENDORS.map((v) => v.link)
 
 export const PROXY_URL = 'https://ammobin.ca/images'
 export const DATE_FORMAT = 'YYYY-MM-DD'
