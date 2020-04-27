@@ -12,26 +12,26 @@ export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product ',
-    name: '.fulltitle',
-    img: '.image-wrap img',
-    link: '.image-wrap a',
-    price: '.price-new',
-    nextPage: '.next.enabled',
+    item: '.product-block',
+    name: '.with-brand',
+    img: 'img',
+    link: 'a',
+    price: '.product-block-price',
+    nextPage: '.load-more',
     outOfStock: '.out-of-stock',
   }
 
-  const work = t => scrape(p => `https://www.solelyoutdoors.com/${t}/page${p}.html`, info, selectors)
+  const work = (t) => scrape((p) => `https://www.solelyoutdoors.com/${t}/page${p}.html`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition/rimfire')
 
     case ItemType.centerfire:
       return Promise.all(
-        ['handgun-ammo', 'rifle-ammo', 'bulk-ammo'].map(t => throttle(() => work('ammunition/' + t)))
+        ['handgun-ammo', 'rifle-ammo', 'bulk-ammo'].map((t) => throttle(() => work('ammunition/' + t)))
       ).then(combineResults)
     case ItemType.shotgun:
-      return Promise.all(['shotgun-ammo', 'bulk-ammo'].map(t => throttle(() => work('ammunition/' + t)))).then(
+      return Promise.all(['shotgun-ammo', 'bulk-ammo'].map((t) => throttle(() => work('ammunition/' + t)))).then(
         combineResults
       )
     case ItemType.primer:

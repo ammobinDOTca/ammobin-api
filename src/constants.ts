@@ -198,13 +198,14 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.AB],
     location: 'somewhere',
   },
-  {
-    name: 'Al Simmons',
-    link: 'alsimmonsgunshop.com',
-    logo: 'al-simmons-logo.jpg',
-    provinces: [Province.ON],
-    location: 'Hamilton',
-  },
+  //  april 2020 ammo no longer listed on site
+  // {
+  //   name: 'Al Simmons',
+  //   link: 'alsimmonsgunshop.com',
+  //   logo: 'al-simmons-logo.jpg',
+  //   provinces: [Province.ON],
+  //   location: 'Hamilton',
+  // },
   // site offline feb 2020
   // {
   //   name: 'Vancouver Gun Store',
