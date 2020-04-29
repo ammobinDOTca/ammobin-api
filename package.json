@@ -22,7 +22,7 @@
   "author": "Simon Ramsay",
   "license": "MIT",
   "dependencies": {
-    "ammobin-classifier": "0.1.1",
+    "ammobin-classifier": "0.1.2",
     "apollo-server": "^2.12.0",
     "apollo-server-cache-redis": "^1.1.6",
     "apollo-server-hapi": "^2.12.0",
