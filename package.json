@@ -41,7 +41,7 @@
     "jsonp": "^0.2.1",
     "moment": "^2.24.0",
     "node-cron": "^2.0.3",
-    "puppeteer-core": "^3.0.1",
+    "puppeteer-core": "^3.0.4",
     "redis": "^3.0.2",
     "rsmq-worker": "^0.5.2",
     "throat": "^5.0.0",
