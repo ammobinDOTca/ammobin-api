@@ -57,7 +57,7 @@
     "gql2ts": "^1.10.1",
     "husky": "^4.2.5",
     "json-loader": "^0.5.7",
-    "nodemon": "^2.0.3",
+    "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "ts-loader": "^6.2.2",
