@@ -8,15 +8,13 @@ import crypto from 'crypto'
 const secret = process.env.HASH_SECRET || Math.random().toString()
 import { logger } from '../logger'
 import { VENDORS } from '../constants'
-import { IItemListing } from '../graphql-types'
-import { getRecordFn as getRecordFnType } from './types'
 
 /**
  * get common hapi config to use for both docker and lambda
  * @param config hapi config
  * @param getRecordFn function to get record for tracking clicks
  */
-export async function getApi(config, getRecordFn: getRecordFnType) {
+export async function getApi(config) {
   const BASE = '/api'
   const server = new Server(config)
 
@@ -125,8 +123,9 @@ export async function getApi(config, getRecordFn: getRecordFnType) {
         throw boom.badRequest('invalid target url')
       }
 
-      const { link, itemType, subType, index, query } = body
-      const record: IItemListing = await getRecordFn(itemType, subType, vendor, link)
+      const { link, record, index, query } = body
+      // old way of getting record from DB, but gonna save some pennies and have the client send us the data
+      //await getRecordFn(itemType, subType, vendor, link)
 
       request.log('info', {
         type: 'track-outbound-click',

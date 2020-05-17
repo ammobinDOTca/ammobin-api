@@ -1,31 +1,27 @@
-import * as redis from 'redis'
-import * as url from 'url'
-import * as helpers from '../helpers'
 import { ApolloServer } from 'apollo-server-hapi'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, vendors, bestPrices } from './graphql'
-import { IItemListing } from '../graphql-types'
 import { getItemsFlatListings, getScrapeResponses } from './shared'
 import { getRedisItems } from './redis-getter'
 import { getApi } from './common-api'
-import { getRecordFn } from './types'
+// import { getRecordFn } from './types'
 
 const DEV = process.env.DEV === 'true'
-const client = redis.createClient({ host: 'redis' })
+// const client = redis.createClient({ host: 'redis' })
 
-const getRecordFromRedis: getRecordFn = async (itemType, subType, vendor, link) => {
-  const targetUrl = url.parse(link, true)
+// const getRecordFromRedis: getRecordFn = async (itemType, subType, vendor, link) => {
+//   const targetUrl = url.parse(link, true)
 
-  let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
-  const results: IItemListing[] = await new Promise((resolve, reject) =>
-    client.get(helpers.getKey(host, itemType, subType), (err, res) => (err ? reject(err) : resolve(JSON.parse(res))))
-  )
+//   let host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
+//   const results: IItemListing[] = await new Promise((resolve, reject) =>
+//     client.get(helpers.getKey(host, itemType, subType), (err, res) => (err ? reject(err) : resolve(JSON.parse(res))))
+//   )
 
-  const record = results.find(r => r && r.link === link)
-  return record
-}
+//   const record = results.find(r => r && r.link === link)
+//   return record
+// }
 let server
 async function doWork() {
   try {
@@ -34,8 +30,8 @@ async function doWork() {
         routes: { cors: true },
         host: '0.0.0.0',
         port: process.env.PORT || 8080,
-      },
-      getRecordFromRedis
+      }
+      // getRecordFromRedis
     )
 
     const apolloServer = new ApolloServer({
@@ -55,7 +51,7 @@ async function doWork() {
             host: 'redis',
           })
         : undefined,
-      formatError: error => {
+      formatError: (error) => {
         server.log('error', { type: 'graphql-error', error: error.toString() })
         return error
       },
@@ -83,8 +79,8 @@ doWork()
 function shutDown() {
   server.log('info', { type: 'server-stopped', uri: server.info.uri })
   server.stop({ timeout: 10000 }).then(
-    _ => process.exit(0),
-    _ => process.exit(1)
+    (_) => process.exit(0),
+    (_) => process.exit(1)
   )
 }
 process.on('SIGTERM', shutDown)
