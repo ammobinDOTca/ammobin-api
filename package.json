@@ -39,7 +39,7 @@
     "hapi": "^18.1.0",
     "hapi-lambda": "^1.0.0",
     "jsonp": "^0.2.1",
-    "moment": "^2.24.0",
+    "moment": "^2.25.1",
     "node-cron": "^2.0.3",
     "puppeteer-core": "^3.0.1",
     "redis": "^3.0.2",
