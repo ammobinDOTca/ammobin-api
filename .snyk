@@ -1,8 +1,21 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.3
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-AXIOS-174505:
     - axios:
         patched: '2019-05-06T23:39:39.683Z'
+  SNYK-JS-LODASH-567746:
+    - cheerio > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
+    - rsmq-worker > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
+    - rsmq-worker > async > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
+    - rsmq-worker > mpbasic > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
+    - rsmq-worker > rsmq > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
+    - winston > async > lodash:
+        patched: '2020-04-30T23:32:00.042Z'
