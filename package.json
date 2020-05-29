@@ -48,7 +48,7 @@
     "rsmq-worker": "^0.5.2",
     "throat": "^5.0.0",
     "winston": "^3.2.1",
-    "snyk": "^1.316.1"
+    "snyk": "^1.332.1"
   },
   "devDependencies": {
     "@types/boom": "^7.3.0",
