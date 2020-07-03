@@ -106,9 +106,9 @@ export async function getScrapeResponses(
   // figure out subset of keys to get (keys are stored by vendor)
   let vendors: IVendor[] = VENDORS
   if (vendor) {
-    vendors = VENDORS.filter(v => v.name === vendor)
+    vendors = VENDORS.filter((v) => v.name === vendor)
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province))
+    vendors = VENDORS.filter((v) => v.provinces.includes(province))
   }
 
   const subTypes = subType ? [subType] : itemTypes.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
@@ -116,10 +116,10 @@ export async function getScrapeResponses(
 
   const result: IItemListing[] = results
     .filter(
-      r =>
+      (r) =>
         r &&
         r.price > 0 &&
-        (!AMMO_TYPES.includes(itemType) || (r.subType && r.subType !== 'UNKNOWN')) &&
+        (!AMMO_TYPES.includes(itemType) || r.subType) &&
         (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase()))
     )
     .sort((a, b) => {
@@ -178,7 +178,7 @@ export async function getScrapeResponses(
 
   // flatten map and sort groups by sortField + sortKey
   let res = Object.keys(itemsGrouped)
-    .map(k => itemsGrouped[k])
+    .map((k) => itemsGrouped[k])
     .sort((a, b) => {
       let aa = a[sortField]
       let bb = b[sortField]
@@ -202,7 +202,7 @@ export async function getScrapeResponses(
     })
   // paginate
   // and then sort vendor listings within the selected groups
-  let items = res.slice((page - 1) * pageSize, page * pageSize).map(row => {
+  let items = res.slice((page - 1) * pageSize, page * pageSize).map((row) => {
     row.vendors = row.vendors.sort((a, b) => {
       let groupedKey: string
       switch (sortField) {
@@ -294,19 +294,19 @@ export async function getItemsFlatListings(
   // figure out subset of keys to get (keys are stored by vendor)
   let vendors: IVendor[] = VENDORS
   if (vendor) {
-    vendors = VENDORS.filter(v => v.name === vendor)
+    vendors = VENDORS.filter((v) => v.name === vendor)
   } else if (province) {
-    vendors = VENDORS.filter(v => v.provinces.includes(province))
+    vendors = VENDORS.filter((v) => v.provinces.includes(province))
   }
   const subTypes = subType ? [subType] : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
   let results: IItemListing[] = await valueGetter(types, subTypes, vendors)
 
   // only filters out ammo without subType set (not setup for reloading yet)
   const result: IItemListing[] = results.filter(
-    r =>
+    (r) =>
       r &&
       r.price > 0 &&
-      (!AMMO_TYPES.includes(itemType) || (r.subType && r.subType !== 'UNKNOWN')) &&
+      (!AMMO_TYPES.includes(itemType) || r.subType) &&
       (!brand || (r.brand && r.brand.toLowerCase() === brand.toLowerCase())) &&
       (!query || r.name.toLowerCase().includes(query.toLowerCase()))
   )
