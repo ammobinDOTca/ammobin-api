@@ -66,6 +66,7 @@ import {
   PROPHET_RIVER,
   MARSTAR,
   NAS,
+  BULLS_EYE,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -108,7 +109,7 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
     case 'alflahertys.com':
       return alflahertys(type)
 
-    case 'bullseyelondon.com':
+    case BULLS_EYE.link:
       return bullseyelondon(type)
 
     case 'sail.ca':

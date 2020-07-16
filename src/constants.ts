@@ -7,6 +7,7 @@ import {
   PROPHET_RIVER,
   MARSTAR,
   NAS,
+  BULLS_EYE,
   // PRECISION_OPTICS,
 } from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
@@ -27,14 +28,13 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON, Province.QC],
     location: 'all over the place',
   },
-  // 20200119 cert issues
-  // {
-  //   name: 'Firearms Outlet Canada',
-  //   link: 'firearmsoutletcanada.com',
-  //   logo: 'foc-logo.jpg',
-  //   provinces: [Province.ON],
-  //   location: 'Ajax',
-  // },
+  {
+    name: 'Firearms Outlet Canada',
+    link: 'firearmsoutletcanada.com',
+    logo: 'foc-logo.jpg',
+    provinces: [Province.ON],
+    location: 'Ajax',
+  },
   {
     name: `Al Flaherty's`,
     link: 'alflahertys.com',
@@ -42,13 +42,7 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.ON],
     location: 'Toronto',
   },
-  {
-    name: 'Bulls Eye London',
-    link: 'bullseyelondon.com',
-    logo: 'bulls-logo.png',
-    provinces: [Province.ON],
-    location: 'London',
-  },
+
   {
     name: 'Canadian Tire',
     link: 'canadiantire.ca',
@@ -393,6 +387,7 @@ export const VENDORS: IVendor[] = [
   PROPHET_RIVER as IVendor,
   MARSTAR as IVendor,
   NAS as IVendor,
+  BULLS_EYE as IVendor,
   // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
 ].map((i) => {
   i.logo = '/logos/' + i.logo

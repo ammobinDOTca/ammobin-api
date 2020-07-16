@@ -66,3 +66,11 @@ export const NAS: Vendor = {
   provinces: [Province.ON],
   location: 'Niagara and Sault Ste. Marie',
 }
+
+export const BULLS_EYE: Vendor = {
+  name: 'Bulls Eye North',
+  link: 'bullseyenorth.com',
+  logo: 'bulls-logo.png',
+  provinces: [Province.ON],
+  location: 'London',
+}

@@ -1,40 +1,35 @@
-import { ItemType, IItemListing, Province } from '../graphql-types'
-import { Info, Selectors, scrape } from './common'
+import { ItemType, IItemListing } from '../graphql-types'
+import { Selectors, scrape } from './common'
+import { BULLS_EYE } from '../vendors'
 
 function work(path: String): Promise<IItemListing[]> {
-  const info: Info = {
-    link: 'bullseyelondon.com',
-    name: `Bulls Eye London`,
-    provinces: [Province.ON],
-  }
-
   const selectors: Selectors = {
-    item: '.item',
-    name: '.product-name',
-    img: '.product-image img',
+    item: '.productListing',
+    name: '.name',
+    img: 'img',
     link: 'a',
-    price: '.regular-price',
+    price: '.itemPrice',
   }
-  const BASE = 'https://www.' + info.link
-  return scrape(p => `${BASE}/${path}/?limit=all`, info, selectors)
+  const BASE = 'https://www.' + BULLS_EYE.link
+  return scrape((p) => `${BASE}/${path}/browse/perpage/999`, BULLS_EYE, selectors)
 }
 
 export function bullseyelondon(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
-      return work('ammunition/rimfire-ammunition')
+      return work('ammunition-rimfire')
     case ItemType.centerfire:
-      return work('ammunition/centerfire-ammunition')
+      return work('ammunition-centerfire')
     case ItemType.shotgun:
-      return work('ammunition/shotgun')
+      return work('ammunition-shotgun')
     case ItemType.shot:
-      return work('reloading/bullets')
+      return work('reloading-bullets')
     case ItemType.case:
-      return work('reloading/brass')
+      return work('reloading-brass')
     case ItemType.powder:
-      return work('reloading/powder')
+      return work('reloading-powder')
     case ItemType.primer:
-      return work('reloading/primers')
+      return work('reloading-primers')
     default:
       throw new Error(`unknown type: ${type}`)
   }
