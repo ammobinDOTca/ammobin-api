@@ -12,14 +12,13 @@ export function sail(type: ItemType): Promise<IItemListing[]> {
 
   async function work(t: string, page = 1) {
     await helpers.delayScrape(info.link)
-
     const {
       data: { pagination, results },
     } = await axios.get(
       `https://api.searchspring.net/api/search/search.json?resultsFormat=native&siteId=s8zq1c&domain=https%3A%2F%2Fwww.sail.ca%2Fen%2Fhunting%2Ffirearms%2Fammunition%2F${t.toLowerCase()}&bgfilter.category_hierarchy=Hunting>Firearms>Ammunition>${t}&q=&page=${page}`
     )
 
-    const items: IItemListing[] = results.map(r => {
+    const items: IItemListing[] = results.map((r) => {
       return {
         brand: r.brand,
         img: r.thumbnailImageUrl,
@@ -31,8 +30,7 @@ export function sail(type: ItemType): Promise<IItemListing[]> {
         vendor: info.name,
       } as IItemListing
     })
-
-    if (pagination.currentPage === pagination.totalPages) {
+    if (pagination.currentPage >= pagination.nextPage) {
       return items
     } else {
       return (await work(t, page + 1)).concat(items)
@@ -45,7 +43,7 @@ export function sail(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
       return work('Centerfire')
     case ItemType.shotgun:
-      return work('Shotgun')
+      return work('Shotguns')
 
     case ItemType.shot:
     case ItemType.case:
