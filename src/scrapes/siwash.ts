@@ -12,16 +12,16 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product ',
-    name: '.woocommerce-loop-product__title',
-    img: '.wp-post-image',
+    item: '.product',
+    name: '.info a',
+    img: 'img',
     link: 'a',
-    price: '.amount',
-    nextPage: '.next',
+    price: '.info .left',
+    nextPage: '.next.enabled',
     outOfStock: '.out-of-stock',
   }
 
-  const work = t => scrape(p => `https://www.${info.link}/product-category/${t}?page=${p}`, info, selectors)
+  const work = (t) => scrape((p) => `https://www.${info.link}/ammo/page${p}.html`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
@@ -29,7 +29,7 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['ammunition/centerfire-ammunition', 'surplus/surplus-ammunition'].map(t => throttle(() => work(t)))
+        ['ammunition/centerfire-ammunition', 'surplus/surplus-ammunition'].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
