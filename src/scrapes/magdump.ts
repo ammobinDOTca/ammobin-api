@@ -6,10 +6,10 @@ import throat from 'throat'
 async function work(type) {
   await helpers.delayScrape('https://magdump.ca')
   const r = await axios.get(`https://magdump.ca/${type}`)
-  return r.data.products.map(p => {
+  return r.data.products.map((p) => {
     return {
       link: p.link,
-      img: null,
+      img: 'img',
       name: p.name,
       price: p.price_amount,
       vendor: 'Mag Dump',
@@ -30,25 +30,18 @@ export async function magdump(type: ItemType): Promise<IItemListing[]> {
         [
           '13-22-long-rifle',
           // '17-hmr'
-        ].map(t => throttle(() => work(t)))
+        ].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case 'centerfire':
       return Promise.all(
-        [
-          '14-223-rem-556x45mm',
-          '15-9mm',
-          '16-308-win',
-          '21-30-06',
-          '22-62x39',
-          '52-ammo-by-the-can',
-        ].map(t => throttle(() => work(t)))
+        ['16-9mm', '17-223-rem', '18-308-win', '19-12-gauge', '20-762x39mm', '21-45-acp'].map((t) =>
+          throttle(() => work(t))
+        )
       ).then(helpers.combineResults)
 
     case 'shotgun':
-      return Promise.all(
-        ['17-12-gauge'].map(t => throttle(() => work(t)))
-      ).then(helpers.combineResults)
+      return Promise.all(['17-12-gauge'].map((t) => throttle(() => work(t)))).then(helpers.combineResults)
     case ItemType.shot:
     case ItemType.primer:
     case ItemType.case:
