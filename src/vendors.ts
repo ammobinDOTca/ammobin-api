@@ -74,3 +74,11 @@ export const BULLS_EYE: Vendor = {
   provinces: [Province.ON],
   location: 'London',
 }
+
+export const NICKS_SPORTS: Vendor = {
+  name: 'Nicks Sports',
+  link: 'nickssportshop.ca',
+  logo: 'nicks-sports-logo.png',
+  provinces: [Province.ON],
+  location: 'Toronto',
+}

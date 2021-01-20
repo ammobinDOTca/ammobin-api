@@ -8,6 +8,7 @@ import {
   MARSTAR,
   NAS,
   BULLS_EYE,
+  NICKS_SPORTS,
   // PRECISION_OPTICS,
 } from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
@@ -388,6 +389,7 @@ export const VENDORS: IVendor[] = [
   MARSTAR as IVendor,
   NAS as IVendor,
   BULLS_EYE as IVendor,
+  NICKS_SPORTS as IVendor,
   // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
 ].map((i) => {
   i.logo = '/logos/' + i.logo

@@ -67,6 +67,7 @@ import {
   MARSTAR,
   NAS,
   BULLS_EYE,
+  NICKS_SPORTS,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -74,6 +75,7 @@ import { londerosports } from './londerosports'
 import { nordicMarksman } from './nordic-marksman'
 import { prophetRiver } from './prophetriver'
 import { marstar } from './marstar'
+import { nickssportshop } from './nickssportshop'
 
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
@@ -230,6 +232,8 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return nordicMarksman(type)
     case PROPHET_RIVER.link:
       return prophetRiver(type)
+    case NICKS_SPORTS.link:
+      return nickssportshop(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }
