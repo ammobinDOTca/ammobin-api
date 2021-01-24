@@ -1,4 +1,4 @@
-import { ServerRoute, Server, Request, ResponseObject } from '@hapi/hapi'
+import { ServerRoute, Server, Request, ResponseObject } from 'hapi'
 
 import boom from 'boom'
 import * as url from 'url'
