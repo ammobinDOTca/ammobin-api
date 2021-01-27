@@ -29,11 +29,11 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['ammunition/centerfire-ammunition', 'surplus/surplus-ammunition'].map((t) => throttle(() => work(t)))
+        ['ammunition/handgun', 'ammunition/rifle', 'ammunition/surplus'].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return work('ammunition/shotgun-ammunition')
+      return work('ammunition/shotgun')
     case ItemType.case:
     case ItemType.shot:
     case ItemType.primer:

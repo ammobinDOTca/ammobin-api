@@ -22,7 +22,15 @@ function work(path: String) {
   }
   //https://www.bartonsbigcountry.ca/ammunition/centerfire-rifle/
   const BASE = 'https://' + info.link
-  return scrape((p) => `${BASE}/${path}`, info, selectors)
+  try {
+    return scrape((p) => `${BASE}/${path}`, info, selectors)
+  } catch (e) {
+    if (e.message.contains('Request failed with status code 403')) {
+      return Promise.resolve([] as IItemListing[])
+    } else {
+      throw e
+    }
+  }
 }
 
 export function barton(type: ItemType): Promise<IItemListing[]> {
@@ -136,7 +144,7 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
         ].map((t) => throttle(() => work('ammunition/centerfire-pistol/' + t))),
       ]).then(helpers.combineResults)
     case ItemType.shotgun:
-      return work('ammunition/shotgun-ammunition')
+      return work('ammunition/shotgun')
 
     case ItemType.shot:
       return work('reloading/bullets')

@@ -26,8 +26,8 @@ export function rustyWood(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
     case ItemType.rimfire:
       return Promise.all(
-        ['factory', 'custom-loaded', 'custom-loaded/page/2', 'custom-loaded/page/3'].map(t =>
-          throttle(() => scrape(p => `${BASE}/${t}`, info, selectors))
+        ['factory-handgun', 'factory-rifle-ammunition', 'custom-handgun', 'custom-rifle'].map((t) =>
+          throttle(() => scrape((p) => `${BASE}/${t}`, info, selectors))
         )
       )
         .then(helpers.combineResults)
