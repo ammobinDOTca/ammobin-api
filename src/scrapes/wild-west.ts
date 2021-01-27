@@ -13,22 +13,22 @@ export function wildWest(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    img: '.attachment-woocommerce_thumbnail',
+    img: 'img',
     item: '.product',
     link: 'a',
-    name: '.product-title',
+    name: '.woocommerce-loop-product__title',
     price: '.amount',
     outOfStock: '.out-of-stock-label',
     nextPage: '.woocommerce-pagination .next',
   }
 
   const fn = (t: string) =>
-    scrape(p => `https://${info.link}/product-category/${t}/page/${p}/?orderby=price-desc`, info, selectors)
+    scrape((p) => `https://${info.link}/product-category/${t}/page/${p}/?orderby=price-desc`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
     case ItemType.centerfire:
-      return Promise.all(['bulk-ammo', 'box-ammo'].map(t => throttle(() => fn('ammunition/' + t)))).then(
+      return Promise.all(['bulk-ammo', 'box-ammo'].map((t) => throttle(() => fn('ammunition/' + t)))).then(
         helpers.combineResults
       )
 
