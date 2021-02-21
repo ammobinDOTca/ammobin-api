@@ -53,6 +53,7 @@ async function getPage(url: string) {
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
     })
+
     // taken from https://github.com/GoogleChrome/rendertron/blob/master/src/renderer.ts
     /**
      * Executed on the page after the page has loaded. Strips script and
@@ -89,13 +90,19 @@ async function getPage(url: string) {
     }
 
     const page = await browser.newPage()
+    const UA = await browser.userAgent()
 
-    // Page may reload when setting isMobile
-    // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport
-    await page.setViewport({
-      width: 1024,
-      height: 640,
-    })
+    await Promise.all([
+      // try to tell site about use
+      page.setUserAgent(UA + ' ammobin.ca-1.0'),
+      page.setExtraHTTPHeaders({ Referrer: 'ammobin.ca' }),
+      // Page may reload when setting isMobile
+      // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport
+      page.setViewport({
+        width: 1024,
+        height: 640,
+      }),
+    ])
 
     page.evaluateOnNewDocument('customElements.forcePolyfill = true')
     page.evaluateOnNewDocument('ShadyDOM = {force: true}')
@@ -106,7 +113,7 @@ async function getPage(url: string) {
     // times out, which results in puppeteer throwing an error. This allows us
     // to return a partial response for what was able to be rendered in that
     // time frame.
-    page.addListener('response', r => {
+    page.addListener('response', (r) => {
       if (!response) {
         response = r
       }
@@ -135,7 +142,7 @@ async function getPage(url: string) {
     // code.
     let statusCode = response.status()
     const newStatusCode = await page
-      .$eval('meta[name="render:status_code"]', element => parseInt(element.getAttribute('content') || '', 10))
+      .$eval('meta[name="render:status_code"]', (element) => parseInt(element.getAttribute('content') || '', 10))
       .catch(() => undefined)
     // On a repeat visit to the same origin, browser cache is enabled, so we may
     // encounter a 304 Not Modified. Instead we'll treat this as a 200 OK.
@@ -185,14 +192,8 @@ export async function scrape(
     result.link = correctUrl(info.link, tha.find(selectors.link).prop('href'))
     result.img = correctUrl(info.link, tha.find(selectors.img).prop('src'))
 
-    result.name = tha
-      .find(selectors.name)
-      .text()
-      .trim()
-    const priceTxt = tha
-      .find(selectors.price)
-      .last()
-      .text() // sale price come last...
+    result.name = tha.find(selectors.name).text().trim()
+    const priceTxt = tha.find(selectors.price).last().text() // sale price come last...
 
     result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
