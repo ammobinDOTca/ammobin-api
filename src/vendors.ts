@@ -82,3 +82,11 @@ export const NICKS_SPORTS: Vendor = {
   provinces: [Province.ON],
   location: 'Toronto',
 }
+
+export const CANADA_FIRST_AMMO: Vendor = {
+  name: 'Canada First Ammo',
+  link: 'canadafirstammo.ca',
+  logo: 'canada-first-ammo.png',
+  provinces: [Province.AB],
+  location: '_unknown_',
+}

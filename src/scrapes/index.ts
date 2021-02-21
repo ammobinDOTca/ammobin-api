@@ -68,6 +68,7 @@ import {
   NAS,
   BULLS_EYE,
   NICKS_SPORTS,
+  CANADA_FIRST_AMMO,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -76,9 +77,11 @@ import { nordicMarksman } from './nordic-marksman'
 import { prophetRiver } from './prophetriver'
 import { marstar } from './marstar'
 import { nickssportshop } from './nickssportshop'
-
+import { canadaFirstAmmo } from './canada-first-ammo'
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
+    case CANADA_FIRST_AMMO.link:
+      return canadaFirstAmmo(type)
     case MARSTAR.link:
       return marstar(type)
     case 'g4cgunstore.com':
