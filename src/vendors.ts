@@ -1,5 +1,5 @@
 import { IVendor, Province } from './graphql-types'
-declare type Vendor = Omit<Omit<Omit<IVendor, '__typename'>, 'background'>, 'hasReloadingItems'>
+declare type Vendor = Omit<Omit<IVendor, '__typename'>, 'background'>
 
 // todo move other vendors here
 
@@ -9,6 +9,7 @@ export const BACK_COUNTRY_SPORTS: Vendor = {
   location: 'Penticton',
   provinces: [Province.BC],
   logo: 'backcountrysports-logo.png',
+  hasReloadingItems: false,
 }
 
 export const SYLVESTRE_SPORTING_GOODS: Vendor = {
@@ -17,6 +18,7 @@ export const SYLVESTRE_SPORTING_GOODS: Vendor = {
   location: 'Bonnyville',
   provinces: [Province.AB],
   logo: 'sylvestresportinggoods-logo.png',
+  hasReloadingItems: false,
 }
 
 export const LONDEROS_SPORTS: Vendor = {
@@ -25,6 +27,7 @@ export const LONDEROS_SPORTS: Vendor = {
   location: 'Saint-Jean-sur-Richelieu',
   provinces: [Province.QC],
   logo: 'londerosports-logo.png',
+  hasReloadingItems: true,
 }
 
 export const NORDIC_MARKSMAN: Vendor = {
@@ -33,6 +36,7 @@ export const NORDIC_MARKSMAN: Vendor = {
   location: 'Truro',
   provinces: [Province.NS],
   logo: 'nordicmarksman-logo.png',
+  hasReloadingItems: false,
 }
 
 export const PROPHET_RIVER: Vendor = {
@@ -41,6 +45,7 @@ export const PROPHET_RIVER: Vendor = {
   location: 'Lloydminster',
   provinces: [Province.AB],
   logo: 'prophetriver-logo.png',
+  hasReloadingItems: false,
 }
 
 export const PRECISION_OPTICS: Vendor = {
@@ -49,6 +54,7 @@ export const PRECISION_OPTICS: Vendor = {
   location: 'Quesnel',
   provinces: [Province.BC],
   logo: 'precisionoptics-logo.png',
+  hasReloadingItems: false,
 }
 
 export const MARSTAR: Vendor = {
@@ -57,6 +63,7 @@ export const MARSTAR: Vendor = {
   location: 'Vankleek Hill',
   provinces: [Province.ON],
   logo: 'marstar-logo.png',
+  hasReloadingItems: false,
 }
 
 export const NAS: Vendor = {
@@ -65,6 +72,7 @@ export const NAS: Vendor = {
   logo: 'nas-logo.jpg',
   provinces: [Province.ON],
   location: 'Niagara and Sault Ste. Marie',
+  hasReloadingItems: true,
 }
 
 export const BULLS_EYE: Vendor = {
@@ -73,6 +81,7 @@ export const BULLS_EYE: Vendor = {
   logo: 'bulls-logo.png',
   provinces: [Province.ON],
   location: 'London',
+  hasReloadingItems: true,
 }
 
 export const NICKS_SPORTS: Vendor = {
@@ -81,6 +90,7 @@ export const NICKS_SPORTS: Vendor = {
   logo: 'nicks-sports-logo.png',
   provinces: [Province.ON],
   location: 'Toronto',
+  hasReloadingItems: false,
 }
 
 export const CANADA_FIRST_AMMO: Vendor = {
@@ -89,4 +99,23 @@ export const CANADA_FIRST_AMMO: Vendor = {
   logo: 'canada-first-ammo.png',
   provinces: [Province.AB],
   location: '_unknown_',
+  hasReloadingItems: false,
+}
+
+export const TENDA: Vendor = {
+  name: 'Tenda',
+  link: 'gotenda.com',
+  logo: 'tenda-logo.png',
+  provinces: [Province.ON],
+  location: 'Richmond Hill',
+  hasReloadingItems: true,
+}
+
+export const GREAT_NORTH_PRECISION: Vendor = {
+  name: 'Great North Precision',
+  link: 'greatnorthprecision.com',
+  logo: 'greatnorthprecision-logo.png',
+  provinces: [Province.BC],
+  location: 'Kelowna',
+  hasReloadingItems: true,
 }

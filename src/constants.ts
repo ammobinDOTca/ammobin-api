@@ -10,6 +10,8 @@ import {
   BULLS_EYE,
   NICKS_SPORTS,
   CANADA_FIRST_AMMO,
+  TENDA,
+  GREAT_NORTH_PRECISION,
   // PRECISION_OPTICS,
 } from './vendors'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
@@ -72,13 +74,7 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.BC],
     location: 'Vancover',
   },
-  {
-    name: 'Tenda',
-    link: 'gotenda.com',
-    logo: 'tenda-logo.png',
-    provinces: [Province.ON],
-    location: 'Richmond Hill',
-  },
+  TENDA as IVendor,
   // 20200119: cert issues
   // {
   //   name: 'Canada Ammo',
@@ -346,13 +342,7 @@ export const VENDORS: IVendor[] = [
     provinces: [Province.AB],
     location: 'Sylvan Lake',
   },
-  {
-    name: 'Great North Precision',
-    link: 'greatnorthprecision.com',
-    logo: 'greatnorthprecision-logo.png',
-    provinces: [Province.BC],
-    location: 'Kelowna',
-  },
+  GREAT_NORTH_PRECISION as IVendor,
   {
     name: 'Tesro',
     link: 'tesro.ca',

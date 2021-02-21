@@ -69,6 +69,8 @@ import {
   BULLS_EYE,
   NICKS_SPORTS,
   CANADA_FIRST_AMMO,
+  TENDA,
+  GREAT_NORTH_PRECISION,
 } from '../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -92,7 +94,7 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return xmetal(type)
     case 'tesro.ca':
       return tesro(type)
-    case 'greatnorthprecision.com':
+    case GREAT_NORTH_PRECISION.link:
       return greatNorthPrecision(type)
     case 'waspmunitions.ca':
       return waspMunitions(type)
@@ -126,7 +128,7 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
     case 'canadiantire.ca':
       return canadiantire(type)
 
-    case 'gotenda.com':
+    case TENDA.link:
       return tenda(type)
 
     case 'canadaammo.com':

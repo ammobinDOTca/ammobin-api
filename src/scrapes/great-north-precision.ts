@@ -1,17 +1,14 @@
 import throat from 'throat'
 
 import * as helpers from '../helpers'
-import { ItemType, IItemListing, Province } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
 import { RENDERTRON_URL } from '../constants'
+import { GREAT_NORTH_PRECISION } from '../vendors'
 const throttle = throat(1)
 
 export async function greatNorthPercision(type: ItemType): Promise<IItemListing[]> {
-  const info: Info = {
-    link: 'greatnorthprecision.com',
-    name: 'Great North Percision',
-    provinces: [Province.BC],
-  }
+  const info: Info = GREAT_NORTH_PRECISION
   const selectors: Selectors = {
     item: '.facets-item-cell-grid',
     name: '.facets-item-cell-grid-title',
@@ -21,15 +18,15 @@ export async function greatNorthPercision(type: ItemType): Promise<IItemListing[
     // nextPage: '.global-views-pagination-next', // todo: fix this
   }
 
-  const getUrl = t => page => `${RENDERTRON_URL}/render/https://www.${info.link}/${t}?page=${page}&show=100`
+  const getUrl = (t) => (page) => `${RENDERTRON_URL}/render/https://www.${info.link}/${t}?page=${page}&show=100`
   switch (type) {
     case ItemType.rimfire:
-      return Promise.all(['Rimfire-Ammo'].map(t => throttle(() => scrape(getUrl('ammo/' + t), info, selectors)))).then(
-        helpers.combineResults
-      )
+      return Promise.all(
+        ['Rimfire-Ammo'].map((t) => throttle(() => scrape(getUrl('ammo/' + t), info, selectors)))
+      ).then(helpers.combineResults)
     case ItemType.centerfire:
       return Promise.all(
-        ['Rifle-Ammo', 'Pistol-Ammo'].map(t => throttle(() => scrape(getUrl('ammo/' + t), info, selectors)))
+        ['Rifle-Ammo', 'Pistol-Ammo'].map((t) => throttle(() => scrape(getUrl('ammo/' + t), info, selectors)))
       ).then(helpers.combineResults)
     case ItemType.shotgun:
       return scrape(getUrl('ammo/Shotgun-Ammo'), info, selectors)

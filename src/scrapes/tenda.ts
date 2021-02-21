@@ -2,16 +2,13 @@ import * as helpers from '../helpers'
 import throat from 'throat'
 import { RENDERTRON_URL } from '../constants'
 
-import { ItemType, IItemListing, Province } from '../graphql-types'
+import { ItemType, IItemListing } from '../graphql-types'
 import { scrape, Info, Selectors } from './common'
+import { TENDA } from '../vendors'
 
 export function tenda(type): Promise<IItemListing[]> {
   const throttle = throat(1)
-  const info: Info = {
-    link: 'gotenda.com',
-    name: `Tenda`,
-    provinces: [Province.ON],
-  }
+  const info: Info = TENDA
 
   const selectors: Selectors = {
     item: '.product-grid  .item-product',
@@ -25,8 +22,8 @@ export function tenda(type): Promise<IItemListing[]> {
 
   function makeTendaRequest(t) {
     return scrape(
-      page =>
-        `${RENDERTRON_URL}/render/https://www.gotenda.com/product-category/${t}/${
+      (page) =>
+        `${RENDERTRON_URL}/render/https://www.${TENDA.link}/product-category/${t}/${
           page > 1 ? 'page/' + page + '/' : ''
         }?number=48`,
       info,
@@ -36,17 +33,17 @@ export function tenda(type): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
       return Promise.all(
-        ['rimfire-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
+        ['rimfire-ammo', 'bulk-ammo'].map((t) => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
 
     case ItemType.centerfire:
       return Promise.all(
-        ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
+        ['rifle-ammo', 'handgun-ammo', 'bulk-ammo'].map((t) => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
       return Promise.all(
-        ['shotgun-ammo', 'bulk-ammo'].map(t => throttle(() => makeTendaRequest('ammunition/' + t)))
+        ['shotgun-ammo', 'bulk-ammo'].map((t) => throttle(() => makeTendaRequest('ammunition/' + t)))
       ).then(helpers.combineResults)
     case ItemType.powder:
       return makeTendaRequest('reloading/gun-powders')

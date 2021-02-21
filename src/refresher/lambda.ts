@@ -6,6 +6,8 @@ import { ScheduledEvent } from 'aws-lambda'
 import { SOURCES, TYPES } from '../constants'
 import { logger } from '../logger'
 import { ItemType } from '../graphql-types'
+import { CANADA_FIRST_AMMO, TENDA, GREAT_NORTH_PRECISION } from '../vendors'
+
 /**
  * {
     "version": "0",
@@ -26,14 +28,15 @@ function getQueueUrl(source: string, type: ItemType): string {
   if (
     [
       {
-        source: 'gotenda.com',
-        type: ItemType.centerfire,
+        source: CANADA_FIRST_AMMO.link,
       },
       {
-        source: 'gotenda.com',
-        type: ItemType.shotgun,
+        source: GREAT_NORTH_PRECISION.link,
       },
-    ].some(x => x.source === source && x.type === type)
+      {
+        source: TENDA.link,
+      },
+    ].some((x) => x.source === source)
   ) {
     return process.env.LargeMemoryQueueUrl || 'SHIT'
   }
@@ -67,7 +70,7 @@ export async function handler(e: ScheduledEvent) {
     types.reduce(
       (lst, t) =>
         lst.concat(
-          SOURCES.map(source =>
+          SOURCES.map((source) =>
             sqs
               .sendMessage({
                 QueueUrl: getQueueUrl(source, t),
