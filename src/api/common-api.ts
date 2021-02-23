@@ -113,10 +113,11 @@ export async function getApi(config) {
     handler: async (request, h) => {
       const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
 
-      const targetUrl = url.parse(body.link, true)
+      const targetUrl = url.parse(body.target, true)
 
       const host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
-      const vendor = VENDORS.find((v) => v.link.includes(host))
+      const campaign = targetUrl.query.utm_campaign || 'UNKWOWN'
+      const vendor = VENDORS.find((v) => v.link.includes(host)) || 'UNKWOWN'
 
       request.log('info', {
         type: 'track-sponsor-click',
@@ -124,6 +125,7 @@ export async function getApi(config) {
         body: {
           host,
           vendor,
+          campaign,
           ...body,
         },
       })
