@@ -109,6 +109,30 @@ export async function getApi(config) {
 
   server.route({
     method: 'POST',
+    path: BASE + '/track-sponsor-click',
+    handler: async (request, h) => {
+      const body = typeof request.payload === 'string' ? JSON.parse(request.payload) : request.payload
+
+      const targetUrl = url.parse(body.link, true)
+
+      const host = targetUrl.hostname ? targetUrl.hostname.replace('www.', '') : ''
+      const vendor = VENDORS.find((v) => v.link.includes(host))
+
+      request.log('info', {
+        type: 'track-sponsor-click',
+        requestId: request.info.id,
+        body: {
+          host,
+          vendor,
+          ...body,
+        },
+      })
+      return h.response('success')
+    },
+  })
+
+  server.route({
+    method: 'POST',
     path: BASE + '/track-click',
     handler: async function (request, h) {
       // record user agent + calibre + brand that user opened up
