@@ -91,6 +91,7 @@ function removeDuplicates(items: IItemListing[]): IItemListing[] {
 }
 
 export async function handler(event: SQSEvent) {
+  console.log('event', event)
   // want all promises to resolve (failed scrapes should be logged and moved onto the next one)
   await Promise.all(
     event.Records.map(async (r) => {
