@@ -24,14 +24,14 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
   const defaultDelayMs = 5 // default to 5ms between requests (im paying by the 100ms with lambda. if they want me to slow down, then so be it)
   let delayMs = defaultDelayMs
   try {
-    const robots = await axios.get(site + '/robots.txt').then(d => d.data)
+    const robots = await axios.get(site + '/robots.txt').then((d) => d.data)
 
     const f = robots
       .split('\n')
-      .map(l => {
+      .map((l) => {
         return l.split(': ')
       })
-      .find(l => l[0].toLowerCase() === 'crawl-delay')
+      .find((l) => l[0].toLowerCase() === 'crawl-delay')
 
     if (f) {
       // check that actual number and between 0 and 1 min
@@ -59,35 +59,27 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
  * @param subType
  */
 export const getKey = (source: string, type: ItemType, subType: string) => {
-  return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType
-    .split(' ')
-    .join('')}`.toLowerCase()
+  return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType.split(' ').join('')}`.toLowerCase()
 }
 
 export function combineResults(results: IItemListing[][]): IItemListing[] {
   return results.reduce((final, r) => (r ? final.concat(r) : final), [])
 }
 export function classifyRimfire(items: IItemListing[]): IItemListing[] {
-  return items.map(i => {
-    i.subType = classifier
-      .classifyRimfire(i.subType || i.name || '')
-      .toUpperCase()
+  return items.map((i) => {
+    i.subType = classifier.classifyRimfire(i.subType || i.name || '').toUpperCase()
     return i
   })
 }
 export const classifyCenterfire = (items: IItemListing[]): IItemListing[] => {
-  return items.map(i => {
-    i.subType = classifier
-      .classifyCenterFire(i.subType || i.name || '')
-      .toUpperCase()
+  return items.map((i) => {
+    i.subType = classifier.classifyCenterFire(i.subType || i.name || '').toUpperCase()
     return i
   })
 }
 export function classifyShotgun(items: IItemListing[]): IItemListing[] {
-  return items.map(i => {
-    i.subType = classifier
-      .classifyShotgun(i.subType || i.name || '')
-      .toUpperCase()
+  return items.map((i) => {
+    i.subType = classifier.classifyShotgun(i.subType || i.name || '').toUpperCase()
     return i
   })
 }
@@ -96,15 +88,12 @@ export function classify(ammo: ItemType) {
   return (items: IItemListing[]) => classifyBullets(items, ammo)
 }
 
-export function classifyBullets(
-  items: IItemListing[],
-  ammo: ItemType
-): IItemListing[] {
+export function classifyBullets(items: IItemListing[], ammo: ItemType): IItemListing[] {
   /**
    * classify all items of a certain type, then remove all those which where not classified
    */
   return items
-    .map(i => {
+    .map((i) => {
       const f = classifier.classifyAmmo(i.name || '')
 
       if (f.type === ammo) {
@@ -113,7 +102,7 @@ export function classifyBullets(
 
       return i
     })
-    .filter(f => f.subType)
+    .filter((f) => f.subType)
 }
 export function makeWrapApiReq(
   target: string,
@@ -128,7 +117,7 @@ export function makeWrapApiReq(
       page,
       wrapAPIKey: WRAPAPI_KEY,
     },
-  }).then(d => {
+  }).then((d) => {
     if (!d.data.data) {
       // console.log(d.data)
       throw new Error(
@@ -165,6 +154,14 @@ export function itemTypeToStubTypes(itemType: ItemType): string[] {
   if (!cals) {
     return [itemType]
   } else {
-    return cals.map(i => i[0])
+    return cals.map((i) => i[0])
   }
+}
+
+export function getRegion(): 'US' | 'CA' {
+  return (process.env.REGION as any) || 'CA'
+}
+
+export function getStage() {
+  return process.env.STAGE
 }

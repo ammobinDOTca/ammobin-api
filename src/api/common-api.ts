@@ -8,6 +8,8 @@ import crypto from 'crypto'
 const secret = process.env.HASH_SECRET || Math.random().toString()
 import { logger } from '../logger'
 import { VENDORS } from '../constants'
+import { getStage } from '../helpers'
+import { getRegion } from '../helpers'
 
 /**
  * get common hapi config to use for both docker and lambda
@@ -248,11 +250,14 @@ export async function getApi(config) {
     }
   })
 
+  // add some info about where we are currently running
+  const REGION = getRegion()
+  const STAGE = getStage()
   server.events.on('log', (event) => {
     if (typeof event.data === 'string') {
-      logger.info({ info: event.data })
+      logger.info({ info: event.data, REGION, STAGE })
     } else {
-      logger.info(event.data)
+      logger.info({ ...event.data, REGION, STAGE })
     }
   })
 
@@ -262,7 +267,7 @@ export async function getApi(config) {
     delete request.headers['x-forwarded-for']
     delete request.headers['x-real-ip']
     const requestId = request.info.id
-    logger.info({ ...event.data, sessionId, requestId })
+    logger.info({ ...event.data, sessionId, requestId, REGION, STAGE })
   })
 
   return server
