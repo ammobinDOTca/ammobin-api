@@ -11,7 +11,7 @@ function checkTrackClick(base) {
     base + '/api/track-click',
     {
       href: 'https://test-page',
-      link: 'https://sail.ca/INTEG-TEST',
+      link: 'https://integ-test',
       itemType: ItemType.centerfire,
       subType: 'integ test',
       query: {},
