@@ -1,5 +1,5 @@
 import { IVendor, Province, ItemType } from './graphql-types'
-import { getRegion, getStage } from './helpers'
+import { getRegion, getStage } from './env'
 import {
   BACK_COUNTRY_SPORTS,
   SYLVESTRE_SPORTING_GOODS,

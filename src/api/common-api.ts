@@ -8,8 +8,8 @@ import crypto from 'crypto'
 const secret = process.env.HASH_SECRET || Math.random().toString()
 import { logger } from '../logger'
 import { VENDORS } from '../constants'
-import { getStage } from '../helpers'
-import { getRegion } from '../helpers'
+import { getStage } from '../env'
+import { getRegion } from '../env'
 
 /**
  * get common hapi config to use for both docker and lambda

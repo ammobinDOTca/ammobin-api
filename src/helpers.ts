@@ -8,7 +8,9 @@ import { DATE_FORMAT } from './constants'
 import { WRAPAPI_KEY } from './scrapes/wrap-api-key'
 import delay from 'delay'
 import { ItemType, IItemListing } from './graphql-types'
+
 // in memory cache of site to delay so as to not spam robots.txt
+
 const _siteToDelayMap = {}
 
 /**
@@ -156,12 +158,4 @@ export function itemTypeToStubTypes(itemType: ItemType): string[] {
   } else {
     return cals.map((i) => i[0])
   }
-}
-
-export function getRegion(): 'US' | 'CA' {
-  return (process.env.REGION as any) || 'CA'
-}
-
-export function getStage() {
-  return process.env.STAGE
 }

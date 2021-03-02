@@ -21,11 +21,12 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const work = (t) => scrape((p) => `https://www.${info.link}/ammo/page${p}.html`, info, selectors)
+  const work = (t) => scrape((p) => `https://www.${info.link}/${t}/page${p}.html`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:
-      return work('ammunition/rimfire-ammunition')
+      // return work('ammunition/rimfire-ammunition')
+      return Promise.resolve(null)
 
     case ItemType.centerfire:
       return Promise.all(

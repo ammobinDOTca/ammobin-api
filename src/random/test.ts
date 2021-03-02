@@ -4,15 +4,12 @@ async function work() {
   // tslint:disable: no-console
   console.time('makeSearch')
   try {
-    const f = await makeSearch(
-      process.env.URL || 'siwashsports.ca',
-      process.env.TYPE || ('shotgun' as any)
-    )
+    const f = await makeSearch(process.env.URL || 'siwashsports.ca', process.env.TYPE || ('shotgun' as any))
     console.log(f, f.length)
   } catch (e) {
-    console.error(e.request, e.code, e.message)
+    console.error('Failed', e.request, e.code, e.message)
   }
   console.timeEnd('makeSearch')
 }
 
-work()
+work().catch((e) => console.error('aaa', e))
