@@ -17,7 +17,7 @@ export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
     //nextPage: '.pages-item-next',
     //outOfStock: '.out-of-stock',
   }
-  const work = t => scrape(_ => `https://${info.link}/${t}?product_list_limit=all`, info, selectors)
+  const work = (t) => scrape((_) => `https://${info.link}/${t}?product_list_limit=2560&in-stock=1`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:

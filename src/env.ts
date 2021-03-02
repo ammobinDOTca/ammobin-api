@@ -1,4 +1,3 @@
-console.log('aaaa')
 export const getRegion = (): 'US' | 'CA' => {
   return (process.env.REGION as any) || 'CA'
 }

@@ -23,9 +23,12 @@ function work(path: String) {
   //https://www.bartonsbigcountry.ca/ammunition/centerfire-rifle/
   const BASE = 'https://' + info.link
   try {
-    return scrape((p) => `${BASE}/${path}`, info, selectors)
+    return scrape((p) => `${BASE}/${path}?limit=100`, info, selectors)
   } catch (e) {
-    if (e.message.contains('Request failed with status code 403')) {
+    if (
+      e.message.contains('Request failed with status code 403') ||
+      e.message.contains('Request failed with status code 404')
+    ) {
       return Promise.resolve([] as IItemListing[])
     } else {
       throw e
@@ -83,7 +86,7 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
           '7mm-weatherby-mag',
           '7mm-wsm',
           '762x39mm',
-          '762x54mmr',
+          // '762x54mmr',
           '8mm-remington-mag',
           '30-06-springfield',
           '30-378-weatherby-mag',
