@@ -17,17 +17,18 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
 
   const selectors: Selectors = {
     item: '.product.purchasable',
-    name: '.gridview .product-name a',
+    name: '.woocommerce-loop-product__title',
     img: 'img',
     link: '.woocommerce-loop-product__link',
-    price: '.price-box',
+    price: '.price',
     nextPage: '.page-numbers .next',
     outOfStock: '.badge--sold-out',
   }
 
   const work = (t) =>
     scrape(
-      (p) => `https://www.${info.link}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60`,
+      (p) =>
+        `https://www.${info.link}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60&instock_filter=1`,
       info,
       selectors
     )
@@ -37,9 +38,7 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
       return work('ammunition/ammunition-rimfire-ammo')
     case ItemType.centerfire:
       return Promise.all(
-        ['ammo/bulk-ammo', 'ammo/premium-ammo', 'ammo/handgun-ammo', 'ammo/rifle-ammo'].map((t) =>
-          throttle(() => work(t))
-        )
+        ['ammo/bulk-ammo', 'ammo/handgun-ammo', 'ammo/rifle-ammo'].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
