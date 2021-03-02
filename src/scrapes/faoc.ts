@@ -11,17 +11,17 @@ function makeFaocReq(ammotype: String) {
   }
 
   const selectors: Selectors = {
-    item: '.item',
-    name: '.product-name',
-    img: '.product-image a',
-    link: '.product-name a',
+    item: '.product-item',
+    name: '.product-item-link',
+    img: 'img',
+    link: 'a',
     price: '.price',
 
     // nextPage: '.next',
-    outOfStock: '.out-of-stock',
+    outOfStock: '.unavailable',
   }
 
-  return scrape(p => `https://www.${info.link}/${ammotype}?limit=all`, info, selectors)
+  return scrape((p) => `https://www.${info.link}/${ammotype}?limit=all`, info, selectors)
 }
 
 export function faoc(type: ItemType): Promise<IItemListing[]> {
