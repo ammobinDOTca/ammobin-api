@@ -11,13 +11,13 @@ export function tenda(type): Promise<IItemListing[]> {
   const info: Info = TENDA
 
   const selectors: Selectors = {
-    item: '.product-grid  .item-product',
-    name: '.title-product',
-    img: '.product-thumb-link img',
-    link: '.product-thumb-link',
+    item: '.product',
+    name: '.products-title',
+    img: 'img',
+    link: 'a',
     price: '.woocommerce-Price-amount',
     nextPage: '.product-pagi-nav .next',
-    //outOfStock: '.out-of-stock',
+    outOfStock: '.out-of-stock',
   }
 
   function makeTendaRequest(t) {
@@ -25,7 +25,7 @@ export function tenda(type): Promise<IItemListing[]> {
       (page) =>
         `${RENDERTRON_URL}/render/https://www.${TENDA.link}/product-category/${t}/${
           page > 1 ? 'page/' + page + '/' : ''
-        }?number=48`,
+        }?number=48&stock=instock`,
       info,
       selectors
     )
