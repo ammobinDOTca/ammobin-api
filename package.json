@@ -46,7 +46,7 @@
     "puppeteer-core": "^5.3",
     "redis": "^3.0.2",
     "rsmq-worker": "^0.5.2",
-    "snyk": "^1.459.0",
+    "snyk": "^1.465.0",
     "throat": "^5.0.0",
     "winston": "^3.3.3"
   },
