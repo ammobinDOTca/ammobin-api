@@ -28,7 +28,7 @@ export interface IQuery {
 }
 
 export interface IVendorsOnQueryArguments {
-  province?: Province | null
+  province?: Region | null
 }
 
 export interface IBestPricesOnQueryArguments {
@@ -41,7 +41,7 @@ export interface IItemsListingsOnQueryArguments {
   pageSize?: number | null
   itemType?: ItemType | null
   subType?: string | null
-  province?: Province | null
+  province?: Region | null
   vendor?: string | null
   sortOrder?: SortOrder | null
   sortField?: SortField | null
@@ -54,13 +54,15 @@ export interface IItemsFlatListingsOnQueryArguments {
   pageSize?: number | null
   itemType?: ItemType | null
   subType?: string | null
-  province?: Province | null
+  province?: Region | null
   vendor?: string | null
   sortOrder?: SortOrder | null
   sortField?: FlatSortField | null
   query?: string | null
   brand?: string | null
 }
+
+export type Region = Province | State
 
 export const enum Province {
   AB = 'AB',
@@ -78,10 +80,14 @@ export const enum Province {
   YT = 'YT',
 }
 
+export const enum State {
+  NV = 'NV',
+}
+
 export interface IVendor {
   __typename: string | null
   name: string
-  provinces: Array<Province>
+  provinces: Array<Region>
   location: string
   logo: string
   link: string
@@ -149,7 +155,7 @@ export interface IItemListing {
   name: string
   link: string
   vendor: string
-  provinces: Array<Province | null> | null
+  provinces: Array<Region | null> | null
   subType: string | null
   brand: string
   count: number | null

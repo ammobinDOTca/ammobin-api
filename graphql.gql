@@ -27,6 +27,11 @@ enum Province {
   SK
   YT
 }
+enum State {
+  NV
+}
+
+union Region = Province | State
 # colunm sort order
 enum SortOrder {
   ASC
@@ -54,7 +59,7 @@ type ItemListing {
   name: String!
   link: String!
   vendor: String!
-  provinces: [Province] #[Province!]!
+  provinces: [Region] #[Province!]!
   subType: String #!
   brand: String!
   count: Float
@@ -90,7 +95,7 @@ type ItemFlatListings {
 
 type Vendor {
   name: String!
-  provinces: [Province!]!
+  provinces: [Region!]!
   location: String!
   logo: String!
   link: String!
@@ -105,14 +110,14 @@ type BestPrice {
 # The "Query" type is the root of all GraphQL queries.
 # (A "Mutation" type will be covered later on.)
 type Query {
-  vendors(province: Province): [Vendor]
+  vendors(province: Region): [Vendor]
   bestPrices(type: ItemType, calibres: [String!]): [BestPrice]
   itemsListings(
     page: Int
     pageSize: Int
     itemType: ItemType
     subType: String
-    province: Province
+    province: Region
     vendor: String
     sortOrder: SortOrder
     sortField: SortField
@@ -125,7 +130,7 @@ type Query {
     pageSize: Int
     itemType: ItemType
     subType: String
-    province: Province
+    province: Region
     vendor: String
     sortOrder: SortOrder
     sortField: FlatSortField

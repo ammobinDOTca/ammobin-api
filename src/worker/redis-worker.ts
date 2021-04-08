@@ -2,7 +2,7 @@ const RSMQWorker = require('rsmq-worker')
 import * as classifier from 'ammobin-classifier'
 import { AMMO_TYPES, PROXY_URL, QUEUE_NAME } from '../constants'
 import { makeSearch } from '../scrapes'
-import { getKey, classifyBullets } from '../helpers'
+import { getKey, classifyBullets, getCountry } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
 import { logger } from '../logger'
 const worker = new RSMQWorker(QUEUE_NAME, {
@@ -17,7 +17,7 @@ const redis = require('redis')
 const client = redis.createClient({ host: 'redis' })
 
 function proxyImages(items) {
-  return items.map(i => {
+  return items.map((i) => {
     if (!i.img || i.img === '') {
       return i
     }
@@ -31,14 +31,14 @@ function proxyImages(items) {
 }
 
 function classifyBrand(items) {
-  return items.map(i => {
+  return items.map((i) => {
     i.brand = classifier.classifyBrand(i.brand || i.name || '')
     return i
   })
 }
 
 function getCounts(items) {
-  return items.map(i => {
+  return items.map((i) => {
     i.count = isNaN(i.count) ? classifier.getItemCount(i.name) || '' : i.count
     if (i.count > 1) {
       i.unitCost = i.price / i.count
@@ -54,14 +54,14 @@ function getCounts(items) {
 
 function setItemType(itemType: ItemType) {
   return (items: IItemListing[]) =>
-    items.map(i => {
+    items.map((i) => {
       i.itemType = itemType
       return i
     })
 }
 
 const appendGAParam = (items: IItemListing[]) =>
-  items.map(i => {
+  items.map((i) => {
     i.link += '?utm_source=ammobin.ca&utm_medium=ammobin.ca'
     return i
   })
@@ -93,18 +93,18 @@ worker.on('message', async (msg, next /* , id*/) => {
   const searchStart = new Date()
   logger.info({ type: 'started-scrape', source, ItemType: type })
   try {
-    const searchRes = await makeSearch(source, type)
+    const searchRes = await makeSearch(source, type, getCountry())
     if (searchRes === null) {
       // no scrape attempted
       logger.info({ type: 'skipped-scrape', source, ItemType: type })
       return next()
     }
     return Promise.resolve(searchRes)
-      .then(items => items.filter(i => i.price && i.link && i.name))
-      .then(items =>
+      .then((items) => items.filter((i) => i.price && i.link && i.name))
+      .then((items) =>
         AMMO_TYPES.includes(type)
           ? classifyBullets(items, type)
-          : items.map(i => {
+          : items.map((i) => {
               i.subType = type // dont have way to classify subType for reloading items, so just duplicate field
               return i
             })
@@ -115,20 +115,15 @@ worker.on('message', async (msg, next /* , id*/) => {
       .then(setItemType(type))
       .then(appendGAParam)
       .then(groupItemsBySubType)
-      .then(itemsGrouped => {
+      .then((itemsGrouped) => {
         // TODO: do something about items not getting classified
 
         let items = 0 // total found items
         const mut = client.multi()
-        itemsGrouped.forEach(ig => {
+        itemsGrouped.forEach((ig) => {
           items += ig[1].length
 
-          mut.set(
-            getKey(source, type, ig[0]),
-            JSON.stringify(ig[1]),
-            'EX',
-            172800 /*seconds => 48hrs*/
-          )
+          mut.set(getKey(source, type, ig[0]), JSON.stringify(ig[1]), 'EX', 172800 /*seconds => 48hrs*/)
         })
         logger.info({
           type: 'finished-scrape',
@@ -138,12 +133,10 @@ worker.on('message', async (msg, next /* , id*/) => {
           duration: new Date().valueOf() - searchStart.valueOf(),
         })
 
-        return new Promise((resolve, reject) =>
-          mut.exec((err, _) => (err ? reject(err) : resolve(0)))
-        )
+        return new Promise((resolve, reject) => mut.exec((err, _) => (err ? reject(err) : resolve(0))))
       })
       .then(() => next())
-      .catch(e => {
+      .catch((e) => {
         logger.info({
           type: 'failed-scrape',
           source,
@@ -172,7 +165,7 @@ worker.on('error', (err, msg) => {
   })
 })
 
-worker.on('timeout', msg => {
+worker.on('timeout', (msg) => {
   logger.info({ type: 'TIMEOUT-worker', msg })
 })
 

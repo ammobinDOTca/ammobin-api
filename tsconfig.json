@@ -10,7 +10,8 @@
     "noUnusedLocals": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "*": ["node_modules/*", "src/types/*"],
+      "~": ["./src"]
     }
   },
   "include": ["src/**/*"]

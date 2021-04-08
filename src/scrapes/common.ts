@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
-import { IItemListing, Province } from '../graphql-types'
+import { IItemListing, Region } from '../graphql-types'
 import { RENDERTRON_URL } from '../constants'
 import chromium from 'chrome-aws-lambda'
 import { URL } from 'url'
@@ -21,7 +21,7 @@ export interface Selectors {
 export interface Info {
   link: string
   name: string
-  provinces: Province[]
+  provinces: Region[]
 }
 
 function correctUrl(baseUrl: string, url: string): string {
@@ -196,7 +196,7 @@ export async function scrape(
 
     result.name = tha.find(selectors.name).text().trim()
     const priceTxt = tha.find(selectors.price).last().text() // sale price come last...
-
+    console.log('priceTxt', priceTxt)
     result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
     result.vendor = info.name

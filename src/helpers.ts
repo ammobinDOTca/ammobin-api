@@ -5,7 +5,7 @@ import { shotgunGauges } from 'ammobin-classifier/build/shotgun-gauges'
 import axios from 'axios'
 import moment from 'moment'
 import { DATE_FORMAT } from './constants'
-import { WRAPAPI_KEY } from './scrapes/wrap-api-key'
+import { WRAPAPI_KEY } from './scrapes/ca/wrap-api-key'
 import delay from 'delay'
 import { ItemType, IItemListing } from './graphql-types'
 
@@ -157,5 +157,20 @@ export function itemTypeToStubTypes(itemType: ItemType): string[] {
     return [itemType]
   } else {
     return cals.map((i) => i[0])
+  }
+}
+
+/**
+ * what country are we running for?
+ *ie: US CA
+ */
+export function getCountry() {
+  if (process.env.COUNTRY) return process.env.COUNTRY
+  else if (process.env.AWS_REGION) {
+    const region = process.env.AWS_REGION
+    if (region.startsWith('ca-')) return 'CA'
+    else if (region.startsWith('us-')) return 'US'
+  } else {
+    throw new Error('cant get country')
   }
 }

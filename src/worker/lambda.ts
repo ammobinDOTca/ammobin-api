@@ -4,7 +4,7 @@ import { SQSEvent } from 'aws-lambda'
 
 import { AMMO_TYPES, PROXY_URL } from '../constants'
 import { makeSearch } from '../scrapes'
-import { classifyBullets } from '../helpers'
+import { classifyBullets, getCountry } from '../helpers'
 import { ItemType, IItemListing } from '../graphql-types'
 import { logger } from '../logger'
 import moment from 'moment'
@@ -100,7 +100,7 @@ export async function handler(event: SQSEvent) {
       const searchStart = new Date()
       logger.info({ type: 'started-scrape', source, ItemType: type })
       try {
-        const searchRes = await makeSearch(source, type)
+        const searchRes = await makeSearch(source, type, getCountry())
         if (searchRes === null) {
           // no scrape attempted
           logger.info({ type: 'skipped-scrape', source, ItemType: type })
