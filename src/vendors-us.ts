@@ -9,3 +9,12 @@ export const BOTACH: Vendor = {
   location: 'Las Vegas',
   hasReloadingItems: false,
 }
+
+export const BROWNELLS: Vendor = {
+  name: 'Brownells',
+  link: 'brownells.com',
+  logo: 'brownells-logo.png',
+  provinces: [State.IA],
+  location: 'Grinnell',
+  hasReloadingItems: false, // TODO
+}
