@@ -81,6 +81,7 @@ export const enum Province {
 }
 
 export const enum State {
+  FL = 'FL',
   IA = 'IA',
   NV = 'NV',
 }

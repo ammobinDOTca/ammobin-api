@@ -18,3 +18,12 @@ export const BROWNELLS: Vendor = {
   location: 'Grinnell',
   hasReloadingItems: false, // TODO
 }
+
+export const GORILLA: Vendor = {
+  name: 'Gorilla Ammunition',
+  link: 'gorillaammo.com',
+  logo: 'gorilla-logo.png',
+  provinces: [State.FL],
+  location: 'Vero Beach',
+  hasReloadingItems: false,
+}

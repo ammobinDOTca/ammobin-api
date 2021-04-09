@@ -28,6 +28,7 @@ enum Province {
   YT
 }
 enum State {
+  FL
   IA
   NV
 }
