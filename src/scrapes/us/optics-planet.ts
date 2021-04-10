@@ -1,38 +1,36 @@
-// https://www.rainierarms.com/affiliates/
 // TODO https://www.natchezss.com/affiliates
 
 import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
-import { RAINER } from '../../vendors-us'
+import { OPTICS_PLANET } from '../../vendors-us'
 
 import throat from 'throat'
 
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function rainer(type: ItemType): Promise<IItemListing[]> {
+export function OpticsPlanet(type: ItemType): Promise<IItemListing[]> {
   const selectors: Selectors = {
-    item: '.products .item',
-    name: '.name',
+    item: '.product',
+    name: '.grid__text',
     img: 'img',
     link: 'a',
-    price: '.price',
-    nextPage: '.next',
-    // outOfStock: '.card-bulkOrder-action [data-event-type="product-click"]', // handled by url
+    price: '.grid__price',
+    pricePerRound: '.grid__save-text',
+    nextPage: '.e-pagination__btn_next',
   }
 
   const work = (t) =>
     scrape(
-      (p) => `https://www.${RAINER.link}/ammunition/${t}/?product_list_limit=48&in-stock=1&p=${p}`,
-      RAINER,
+      (p) => `https://www.${OPTICS_PLANET.link}/${t}.html?_iv_availability=in-stock&_iv_gridSize=240&_iv_page=${p}`,
+      OPTICS_PLANET,
       selectors
     )
   switch (type) {
     case ItemType.rimfire:
-      return work('rifle-ammo')
-
+      return work('rimfire-ammo')
     case ItemType.centerfire:
-      return Promise.all(['rifle-ammo', 'pistol-caliber'].map((t) => throttle(() => work(t)))).then(combineResults)
+      return Promise.all(['handgun-ammo', 'rifle-ammo'].map((t) => throttle(() => work(t)))).then(combineResults)
 
     case ItemType.shotgun:
       return work('shotgun-ammo')

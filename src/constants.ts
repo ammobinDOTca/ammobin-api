@@ -15,7 +15,17 @@ import {
   GREAT_NORTH_PRECISION,
   // PRECISION_OPTICS,
 } from './vendors'
-import { BOTACH, BROWNELLS, GORILLA } from './vendors-us'
+import {
+  BOTACH,
+  BROWNELLS,
+  GORILLA,
+  GUNMAG,
+  NATCHEZ,
+  OPTICS_PLANET,
+  // PALMETTO,
+  RAINER,
+  SPORTSMAN,
+} from './vendors-us'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
 const region = getRegion()
@@ -389,7 +399,17 @@ export const VENDORS: IVendor[] = (region === 'CA'
       CANADA_FIRST_AMMO as IVendor,
       // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
     ]
-  : ([BOTACH, BROWNELLS, GORILLA] as IVendor[])
+  : ([
+      BOTACH,
+      BROWNELLS,
+      GORILLA,
+      GUNMAG,
+      NATCHEZ,
+      OPTICS_PLANET,
+      // PALMETTO, // TODO: figureout new way, no bots allowed access...
+      RAINER,
+      SPORTSMAN,
+    ] as IVendor[])
 ).map((i) => {
   i.logo = '/logos/' + i.logo
   i.background = i.background || false

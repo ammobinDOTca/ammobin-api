@@ -30,8 +30,11 @@ enum Province {
 enum State {
   FL
   IA
+  IL
   NV
+  SC
   TX
+  WA
 }
 
 # colunm sort order

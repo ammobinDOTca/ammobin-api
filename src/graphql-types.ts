@@ -176,8 +176,11 @@ export const enum Province {
 export const enum State {
   FL = 'FL',
   IA = 'IA',
+  IL = 'IL',
   NV = 'NV',
+  SC = 'SC',
   TX = 'TX',
+  WA = 'WA',
 }
 
 // tslint:enable
