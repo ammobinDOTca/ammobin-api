@@ -36,3 +36,14 @@ export const GUNMAG: Vendor = {
   location: 'Coppell',
   hasReloadingItems: false,
 }
+
+export const NATCHEZ: Vendor = {
+  name: 'Natchez Shooting Supplies',
+  link: 'outdoors.natchezss.com',
+  logo: 'natchez-logo.png',
+  provinces: [
+    /**TODO */
+  ],
+  location: 'TODO',
+  hasReloadingItems: false, //TODO true
+}

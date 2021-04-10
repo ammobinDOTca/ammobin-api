@@ -3,6 +3,8 @@ import { scrape, Selectors } from '../common'
 import { GUNMAG } from '../../vendors-us'
 
 export function gunmag(type: ItemType): Promise<IItemListing[]> {
+  // TODO: https://gunmagwarehouse.com/affiliates/
+
   const selectors: Selectors = {
     item: '.item',
     name: '.product-name',
