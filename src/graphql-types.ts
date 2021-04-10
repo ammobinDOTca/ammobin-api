@@ -179,6 +179,7 @@ export const enum State {
   IL = 'IL',
   NV = 'NV',
   SC = 'SC',
+  TN = 'TN',
   TX = 'TX',
   WA = 'WA',
 }

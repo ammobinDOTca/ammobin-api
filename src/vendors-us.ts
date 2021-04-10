@@ -27,6 +27,7 @@ export const GORILLA: Vendor = {
   location: 'Vero Beach',
   hasReloadingItems: false,
 }
+GORILLA['background'] = true
 
 export const GUNMAG: Vendor = {
   name: 'Gun Mag Warehouse',
@@ -41,10 +42,8 @@ export const NATCHEZ: Vendor = {
   name: 'Natchez Shooting Supplies',
   link: 'outdoors.natchezss.com',
   logo: 'natchez-logo.png',
-  provinces: [
-    /**TODO */
-  ],
-  location: 'TODO',
+  provinces: [State.TN],
+  location: 'Chattanooga',
   hasReloadingItems: false, //TODO true
 }
 
