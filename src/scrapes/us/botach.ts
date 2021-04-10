@@ -24,6 +24,8 @@ export function botach(type: ItemType): Promise<IItemListing[]> {
     case ItemType.case:
     case ItemType.shot:
     case ItemType.powder:
+      return Promise.resolve(null)
+
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

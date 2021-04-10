@@ -27,3 +27,12 @@ export const GORILLA: Vendor = {
   location: 'Vero Beach',
   hasReloadingItems: false,
 }
+
+export const GUNMAG: Vendor = {
+  name: 'Gun Mag Warehouse',
+  link: 'gunmagwarehouse.com',
+  logo: 'gunmag-logo.png',
+  provinces: [State.TX],
+  location: 'Coppell',
+  hasReloadingItems: false,
+}

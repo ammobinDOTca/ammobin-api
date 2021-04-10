@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import cheerio from 'cheerio'
 import * as helpers from '../helpers'
-import { IItemListing, Region } from '../graphql-types'
+import { IItemListing } from '../graphql-types'
 import { RENDERTRON_URL } from '../constants'
 import chromium from 'chrome-aws-lambda'
 import { URL } from 'url'
@@ -21,7 +21,7 @@ export interface Selectors {
 export interface Info {
   link: string
   name: string
-  provinces: Region[]
+  provinces: string[]
 }
 
 function correctUrl(baseUrl: string, url: string): string {

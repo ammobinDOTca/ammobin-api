@@ -28,7 +28,7 @@ export interface IQuery {
 }
 
 export interface IVendorsOnQueryArguments {
-  province?: Region | null
+  province?: string | null
 }
 
 export interface IBestPricesOnQueryArguments {
@@ -41,7 +41,7 @@ export interface IItemsListingsOnQueryArguments {
   pageSize?: number | null
   itemType?: ItemType | null
   subType?: string | null
-  province?: Region | null
+  province?: string | null
   vendor?: string | null
   sortOrder?: SortOrder | null
   sortField?: SortField | null
@@ -54,7 +54,7 @@ export interface IItemsFlatListingsOnQueryArguments {
   pageSize?: number | null
   itemType?: ItemType | null
   subType?: string | null
-  province?: Region | null
+  province?: string | null
   vendor?: string | null
   sortOrder?: SortOrder | null
   sortField?: FlatSortField | null
@@ -62,34 +62,10 @@ export interface IItemsFlatListingsOnQueryArguments {
   brand?: string | null
 }
 
-export type Region = Province | State
-
-export const enum Province {
-  AB = 'AB',
-  BC = 'BC',
-  MB = 'MB',
-  NB = 'NB',
-  NL = 'NL',
-  NS = 'NS',
-  NT = 'NT',
-  NU = 'NU',
-  ON = 'ON',
-  PE = 'PE',
-  QC = 'QC',
-  SK = 'SK',
-  YT = 'YT',
-}
-
-export const enum State {
-  FL = 'FL',
-  IA = 'IA',
-  NV = 'NV',
-}
-
 export interface IVendor {
   __typename: string | null
   name: string
-  provinces: Array<Region>
+  provinces: Array<string>
   location: string
   logo: string
   link: string
@@ -157,7 +133,7 @@ export interface IItemListing {
   name: string
   link: string
   vendor: string
-  provinces: Array<Region | null> | null
+  provinces: Array<string | null> | null
   subType: string | null
   brand: string
   count: number | null
@@ -179,6 +155,29 @@ export interface IItemFlatListings {
   pages: number
   pageSize: number
   items: Array<IItemListing>
+}
+
+export const enum Province {
+  AB = 'AB',
+  BC = 'BC',
+  MB = 'MB',
+  NB = 'NB',
+  NL = 'NL',
+  NS = 'NS',
+  NT = 'NT',
+  NU = 'NU',
+  ON = 'ON',
+  PE = 'PE',
+  QC = 'QC',
+  SK = 'SK',
+  YT = 'YT',
+}
+
+export const enum State {
+  FL = 'FL',
+  IA = 'IA',
+  NV = 'NV',
+  TX = 'TX',
 }
 
 // tslint:enable
