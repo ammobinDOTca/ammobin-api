@@ -18,7 +18,7 @@ export function brownells(type: ItemType): Promise<IItemListing[]> {
   const work = (t) =>
     scrape(
       (p) =>
-        `https://www.${BROWNELLS.link}/ammunition/index.htm?avs%7cSpecial-Filters_1=In%2bStock&psize=96&f_a=${
+        `https://${BROWNELLS.link}/ammunition/index.htm?avs%7cSpecial-Filters_1=In%2bStock&psize=96&f_a=${
           (p - 1) * 96 + 1
         }`,
       BROWNELLS,

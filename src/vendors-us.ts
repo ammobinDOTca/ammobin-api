@@ -12,7 +12,7 @@ export const BOTACH: Vendor = {
 
 export const BROWNELLS: Vendor = {
   name: 'Brownells',
-  link: 'brownells.com',
+  link: 'www.brownells.com',
   logo: 'brownells-logo.png',
   provinces: [State.IA],
   location: 'Grinnell',
