@@ -18,6 +18,7 @@ import {
 import {
   BOTACH,
   BROWNELLS,
+  FOUNDRY,
   GORILLA,
   GUNMAG,
   NATCHEZ,
@@ -409,6 +410,7 @@ export const VENDORS: IVendor[] = (region === 'CA'
       // PALMETTO, // TODO: figureout new way, no bots allowed access...
       RAINER,
       SPORTSMAN,
+      FOUNDRY,
     ] as IVendor[])
 ).map((i) => {
   i.logo = '/logos/' + i.logo

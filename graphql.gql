@@ -31,10 +31,14 @@ enum State {
   FL
   IA
   IL
+  ID
+  NH
   NV
+  OK
   SC
   TN
   TX
+  UT
   WA
 }
 

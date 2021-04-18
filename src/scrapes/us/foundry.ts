@@ -1,40 +1,40 @@
-// https://www.rainierarms.com/affiliates/
-
+// https://foundry.refersion.com/affiliate/registration
 import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
-import { RAINER } from '../../vendors-us'
+import { FOUNDRY } from '../../vendors-us'
 
 import throat from 'throat'
 
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function rainer(type: ItemType): Promise<IItemListing[]> {
+export function foundry(type: ItemType): Promise<IItemListing[]> {
   const selectors: Selectors = {
-    item: '.products .item',
-    name: '.name',
-    img: '.product-image-photo',
+    item: '.product-grid-item',
+    name: '.product-name',
+    img: 'img',
     link: 'a',
-    price: '.price',
+    price: '.price-sale',
+    salePrice: '.price-sale',
     nextPage: '.next',
-    // outOfStock: '.card-bulkOrder-action [data-event-type="product-click"]', // handled by url
+    outOfStock: 'sold-out', // not handled by url b/c lies
   }
 
   const work = (t) =>
     scrape(
-      (p) => `https://www.${RAINER.link}/ammunition/${t}/?product_list_limit=48&in-stock=1&p=${p}`,
-      RAINER,
+      (p) => `https://www.${FOUNDRY.link}/collections/${t}-ammo/availability_in-stock?page=${p}`,
+      FOUNDRY,
       selectors
     )
   switch (type) {
     case ItemType.rimfire:
-      return work('rifle-ammo')
+      return work('rimfire')
 
     case ItemType.centerfire:
-      return Promise.all(['rifle-ammo', 'pistol-caliber'].map((t) => throttle(() => work(t)))).then(combineResults)
+      return Promise.all(['rifle', 'handgun'].map((t) => throttle(() => work(t)))).then(combineResults)
 
     case ItemType.shotgun:
-      return work('shotgun-ammo')
+      return work('shotgun')
 
     case ItemType.primer:
     case ItemType.case:

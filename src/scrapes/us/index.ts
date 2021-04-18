@@ -8,6 +8,7 @@ import {
   PALMETTO,
   RAINER,
   SPORTSMAN,
+  FOUNDRY,
 } from '../../vendors-us'
 import { botach } from './botach'
 import { ItemType, IItemListing } from '../../graphql-types'
@@ -19,6 +20,7 @@ import { sportsman } from './sportsman'
 import { rainer } from './rainier'
 import { OpticsPlanet as opticsPlanet } from './optics-planet'
 import { palmetto } from './palmetto'
+import { foundry } from './foundry'
 
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
@@ -40,6 +42,8 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return rainer(type)
     case SPORTSMAN.link:
       return sportsman(type) // not doing online orders currently as of april 2021....
+    case FOUNDRY.link:
+      return foundry(type)
     default:
       throw new Error('unknown source: ' + source)
   }

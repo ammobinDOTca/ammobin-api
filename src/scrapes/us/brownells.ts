@@ -1,3 +1,5 @@
+// https://www.brownells.com/aspx/general/affiliates.aspx
+
 import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { BROWNELLS } from '../../vendors-us'
