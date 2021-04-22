@@ -3,24 +3,25 @@ import { scrape, Selectors } from '../common'
 import { combineResults } from '../../helpers'
 import throat from 'throat'
 import { CANADA_FIRST_AMMO } from '../../vendors'
-import { RENDERTRON_URL } from '../../constants'
+// import { RENDERTRON_URL } from '../../constants'
 
 export function canadaFirstAmmo(type: ItemType): Promise<IItemListing[]> {
   const throttle = throat(1)
   const info = CANADA_FIRST_AMMO
 
   const selectors: Selectors = {
-    item: '.snize-product',
-    name: '.snize-title',
-    img: 'img',
+    item: '.product', //'.snize-product',
+    name: '.card-title', //'.snize-title',
+    img: 'amp-img', //'img',
     link: 'a',
-    price: '.snize-price',
+    price: '.price', //'.snize-price',
     // brand: '.snize-attribute-title',
   }
 
   const work = (t) =>
     scrape(
-      (page) => `${RENDERTRON_URL}/render/https://${info.link}/ammunition/${t}/?page=${page}&rb_stock_status=In+stock`,
+      // (page) => `${RENDERTRON_URL}/render/https://${info.link}/ammunition/${t}/?page=${page}&rb_stock_status=In+stock`,
+      (page) => `https://${info.link}/amp/ammunition/${t}/?page=${page}&rb_stock_status=In+stock`,
       info,
       selectors
     )
