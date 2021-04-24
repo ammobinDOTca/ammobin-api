@@ -6,7 +6,11 @@ import { ScheduledEvent } from 'aws-lambda'
 import { SOURCES, TYPES } from '../constants'
 import { logger } from '../logger'
 import { ItemType } from '../graphql-types'
-import { CANADA_FIRST_AMMO, TENDA, GREAT_NORTH_PRECISION } from '../vendors'
+import {
+  //CANADA_FIRST_AMMO,
+  TENDA,
+  GREAT_NORTH_PRECISION,
+} from '../vendors'
 
 /**
  * {
@@ -27,9 +31,10 @@ import { CANADA_FIRST_AMMO, TENDA, GREAT_NORTH_PRECISION } from '../vendors'
 function getQueueUrl(source: string, type: ItemType): string {
   if (
     [
-      {
-        source: CANADA_FIRST_AMMO.link,
-      },
+      // {
+      // moved to amp page for a test in april 2021
+      //   source: CANADA_FIRST_AMMO.link,
+      // },
       {
         source: GREAT_NORTH_PRECISION.link,
       },
