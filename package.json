@@ -45,7 +45,7 @@
     "moment": "^2.29.1",
     "node-cron": "^2.0.3",
     "puppeteer-core": "^5.3",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "rsmq-worker": "^0.5.2",
     "snyk": "^1.465.0",
     "throat": "^5.0.0",
