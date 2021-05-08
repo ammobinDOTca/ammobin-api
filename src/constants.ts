@@ -109,13 +109,13 @@ export const VENDORS: IVendor[] = (region === 'CA'
         provinces: [Province.MB],
         location: 'Virden',
       },
-      /*{ // TODO FIX scrape
+      {
         name: 'Jo Brook Outdoors',
         link: 'jobrookoutdoors.com',
         logo: 'jo-brook-logo.png',
         provinces: [Province.MB],
         location: 'Brandon',
-      },*/
+      },
       {
         name: 'The Ammo Source',
         link: 'theammosource.com',

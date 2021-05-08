@@ -18,11 +18,11 @@ export function jobrook(type: ItemType): Promise<IItemListing[]> {
     img: '.product-image img',
     link: '.product-image a',
     price: '.price',
-   // nextPage: '.next',
+    nextPage: '.next',
     outOfStock: '.out-of-stock',
   }
   function work(f) {
-    return scrape((p) => `http://www.${info.link}/shooting/${f}/page${p}.html`, info, selectors)
+    return scrape((p) => `http://www.${info.link}/hunt/${f}/page${p}.html`, info, selectors)
   }
 
   switch (type) {
