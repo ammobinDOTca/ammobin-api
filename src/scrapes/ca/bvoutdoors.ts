@@ -22,30 +22,30 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
     //    outOfStock: '.out-of-stock',
   }
 
-  const work = (t) => scrape((page) => `https://www.${info.link}/${t}/?page=${page}&matchesperpage=80`, info, selectors)
+  const work = (t) => scrape((page) => `https://www.${info.link}/${t}/page${page}.html`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
-      return work('Ammunition-Rimfire-2')
+      return work('store/category/1/4/rimfire-rifle-ammunition')
 
     case ItemType.centerfire:
-      return Promise.all(['Ammunition-Rifle-1', 'Ammunition-Handgun-108'].map((t) => throttle(() => work(t)))).then(
-        combineResults
-      )
-
-    case ItemType.shotgun:
       return Promise.all(
-        ['Ammunition-Shotshells-3', 'Ammunition-Slugs-258', 'Ammunition-Buckshot-257'].map((t) =>
+        ['store/category/1/2/centerfire-rifle-ammunition', 'store/category/1/3/handgun-ammunition'].map((t) =>
           throttle(() => work(t))
         )
       ).then(combineResults)
+
+    case ItemType.shotgun:
+      return Promise.all(['store/category/1/7/shotgun-ammunition'].map((t) => throttle(() => work(t)))).then(
+        combineResults
+      )
     case ItemType.case:
-      return work('reloading-unprimed-brass-341')
+      return work('store/category/267/376/reloading')
     case ItemType.shot:
-      return work('Reloading-Bullets-%26-Brass-110')
+      return work('store/category/267/376/reloading')
     case ItemType.primer:
-      return work('Reloading-Primers-342')
+      return work('store/category/267/376/reloading')
     case ItemType.powder:
-      return work('Reloading-Powder-%26-Primers-111')
+      return work('store/category/267/376/reloading')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }
