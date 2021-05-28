@@ -98,7 +98,7 @@ export const CANADA_FIRST_AMMO: Vendor = {
   link: 'canadafirstammo.ca',
   logo: 'canada-first-ammo.png',
   provinces: [Province.AB],
-  location: '_unknown_',
+  location: 'Calagary',
   hasReloadingItems: false,
 }
 
