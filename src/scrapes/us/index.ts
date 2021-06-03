@@ -9,6 +9,9 @@ import {
   RAINER,
   SPORTSMAN,
   FOUNDRY,
+  GREEN_COUNTRY,
+  IMPACT,
+  LUCKY,
 } from '../../vendors-us'
 import { botach } from './botach'
 import { ItemType, IItemListing } from '../../graphql-types'
@@ -21,6 +24,9 @@ import { rainer } from './rainier'
 import { OpticsPlanet as opticsPlanet } from './optics-planet'
 import { palmetto } from './palmetto'
 import { foundry } from './foundry'
+import { greenCountry } from './green-country'
+import { impact } from './impact'
+import { lucky } from './lucky'
 
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
@@ -44,6 +50,12 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return sportsman(type) // not doing online orders currently as of april 2021....
     case FOUNDRY.link:
       return foundry(type)
+    case GREEN_COUNTRY.link:
+      return greenCountry(type)
+    case IMPACT.link:
+      return impact(type)
+    case LUCKY.link:
+      return lucky(type)
     default:
       throw new Error('unknown source: ' + source)
   }

@@ -20,12 +20,15 @@ import {
   BROWNELLS,
   FOUNDRY,
   GORILLA,
+  GREEN_COUNTRY,
   GUNMAG,
   NATCHEZ,
   OPTICS_PLANET,
   // PALMETTO,
   RAINER,
   SPORTSMAN,
+  IMPACT,
+  LUCKY,
 } from './vendors-us'
 export const QUEUE_NAME = 'SCRAPE_QUEUE'
 
@@ -411,6 +414,9 @@ export const VENDORS: IVendor[] = (region === 'CA'
       RAINER,
       SPORTSMAN,
       FOUNDRY,
+      GREEN_COUNTRY,
+      IMPACT,
+      LUCKY,
     ] as IVendor[])
 ).map((i) => {
   i.logo = '/logos/' + i.logo
