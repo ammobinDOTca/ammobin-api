@@ -13,12 +13,12 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
 
   const selectors: Selectors = {
     item: '.product',
-    name: '.info a',
+    name: '.title',
     img: 'img',
-    link: 'a',
-    price: '.info .left',
+    link: '.title',
+    price: '.price',
     nextPage: '.next.enabled',
-    outOfStock: '.out-of-stock',
+    outOfStock: '.outstock',
   }
 
   const work = (t) => scrape((p) => `https://www.${info.link}/${t}/page${p}.html`, info, selectors)

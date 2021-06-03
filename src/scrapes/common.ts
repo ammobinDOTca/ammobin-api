@@ -169,7 +169,7 @@ async function getPage(url: string) {
     return { data: result }
   } else {
     return axios.get(url).catch((e) => {
-      throw new Error(`scrape failed http${e?.response?.status || 'unknown'} for ${url}`)
+      throw new Error(`scrape failed http${e?.response?.status || ' unknown'} for ${url}`)
     })
   }
 }
