@@ -13,6 +13,7 @@ import {
   CANADA_FIRST_AMMO,
   TENDA,
   GREAT_NORTH_PRECISION,
+  VICTORY_RIDGE_SPORTS,
   // PRECISION_OPTICS,
 } from './vendors'
 import {
@@ -401,6 +402,7 @@ export const VENDORS: IVendor[] = (region === 'CA'
       BULLS_EYE as IVendor,
       NICKS_SPORTS as IVendor,
       CANADA_FIRST_AMMO as IVendor,
+      VICTORY_RIDGE_SPORTS as IVendor,
       // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
     ]
   : ([

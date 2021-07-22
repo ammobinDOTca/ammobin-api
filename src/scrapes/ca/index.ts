@@ -63,6 +63,7 @@ import {
   CANADA_FIRST_AMMO,
   TENDA,
   GREAT_NORTH_PRECISION,
+  VICTORY_RIDGE_SPORTS,
 } from '../../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -72,8 +73,12 @@ import { prophetRiver } from './prophetriver'
 import { marstar } from './marstar'
 import { nickssportshop } from './nickssportshop'
 import { canadaFirstAmmo } from './canada-first-ammo'
+import { victoryRidge } from './victory-ridge'
+
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
+    case VICTORY_RIDGE_SPORTS.link:
+      return victoryRidge(type)
     case CANADA_FIRST_AMMO.link:
       return canadaFirstAmmo(type)
     case MARSTAR.link:

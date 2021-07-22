@@ -119,3 +119,12 @@ export const GREAT_NORTH_PRECISION: Vendor = {
   location: 'Kelowna',
   hasReloadingItems: true,
 }
+
+export const VICTORY_RIDGE_SPORTS: Vendor = {
+  name: 'Victory Ridge Sports',
+  link: 'victoryridgesports.ca',
+  logo: 'victoryridgepsorts-logo.png',
+  provinces: [Province.ON],
+  location: 'Barrie',
+  hasReloadingItems: false,
+}
