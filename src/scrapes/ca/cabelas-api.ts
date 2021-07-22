@@ -94,7 +94,9 @@ async function makeCabelasCalibre(ammotype, subtype) {
       const titles = []
       $('thead')
         .find('th')
-        .each((index, row) => titles.push($(row).text()))
+        .each((index, row) => {
+          titles.push($(row).text())
+        })
 
       const items = []
       $('tbody')

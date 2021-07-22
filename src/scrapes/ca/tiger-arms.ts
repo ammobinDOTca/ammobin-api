@@ -14,12 +14,12 @@ export function tigerArms(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product',
-    name: '.desc h4',
-    img: '.wp-post-image',
-    link: 'a',
-    price: '.amount',
-    outOfStock: '.gema75_soldout_badge_new_2327',
+    item: '.product-inner',
+    name: '.product-loop-title',
+    img: 'img',
+    link: '.product-loop-title',
+    price: '.price',
+    outOfStock: '.out-of-stock',
   }
   const BASE = `https://${info.link}/product-category/ammunition`
 

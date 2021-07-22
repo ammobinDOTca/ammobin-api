@@ -9,17 +9,21 @@ function work(type: String): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product',
-    name: '.woocommerce-loop-product__title',
-    img: '.wp-post-image',
-    link: '.woocommerce-LoopProduct-link',
-    price: '.woocommerce-Price-amount',
+    item: '.product-item-info',
+    name: '.product-item-name',
+    img: 'img',
+    link: '.product-item-link',
+    price: '.price-final_price',
 
     //nextPage: '.next',
-    outOfStock: '.outofstock',
+    outOfStock: '.pages-item-next',
   }
 
-  return scrape((_) => `https://www.${info.link}/en/product-category/shop/${type}/?product_count=100`, info, selectors)
+  return scrape(
+    (_) => `https://www.${info.link}/en/${type}/?product_list_limit=48&quantity_and_stock_status=1`,
+    info,
+    selectors
+  )
 }
 export function dante(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
