@@ -1,33 +1,42 @@
 import axios from 'axios'
-import { USER_AGENT } from '../common'
+import { assert, USER_AGENT } from '../common'
 import { ItemType } from '../../src/graphql-types'
 
 function checkPing(base) {
-  return axios.get(base + '/api/ping' + `?test_id=${Math.random()}`, { headers: { 'User-Agent': USER_AGENT } })
+  const url = base + '/api/ping' + `?test_id=${Math.random()}`
+  return axios
+    .get(url, { headers: { 'User-Agent': USER_AGENT } })
+    .then((r) => assert(r.status === 200, `expected http 200 for GET ${url}, got ${r.status}`))
 }
 
 function checkTrackClick(base) {
-  return axios.post(
-    base + '/api/track-click',
-    {
-      href: 'https://test-page',
-      link: 'https://integ-test',
-      itemType: ItemType.centerfire,
-      subType: 'integ test',
-      query: {},
-    },
-    { headers: { 'User-Agent': USER_AGENT } }
-  )
+  const url = base + '/api/track-click'
+  return axios
+    .post(
+      url,
+      {
+        href: 'https://test-page',
+        link: 'https://integ-test',
+        itemType: ItemType.centerfire,
+        subType: 'integ test',
+        query: {},
+      },
+      { headers: { 'User-Agent': USER_AGENT } }
+    )
+    .then((r) => assert(r.status === 200, `expected http 200 for GET ${url}, got ${r.status}`))
 }
 
 function checkTrackView(base) {
-  return axios.post(
-    base + '/api/track-pageview',
-    {
-      route: '/ping?integTests',
-    },
-    { headers: { 'User-Agent': USER_AGENT } }
-  )
+  const url = base + '/api/track-pageview'
+  return axios
+    .post(
+      url,
+      {
+        route: '/ping?integTests',
+      },
+      { headers: { 'User-Agent': USER_AGENT } }
+    )
+    .then((r) => assert(r.status === 200, `expected http 200 for GET ${url}, got ${r.status}`))
 }
 
 export async function handler({ base }) {

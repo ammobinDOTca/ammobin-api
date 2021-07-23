@@ -1,2 +1,2 @@
 import { handler } from './index'
-handler({ base: 'https://beta.ammobin.us' })
+handler({ base: 'https://ammobin.ca' })

@@ -1,6 +1,7 @@
 import { handler as graphqlTest } from './graphql'
 import { handler as imagesTest } from './images'
 import { handler as apiTest } from './api'
+import { handler as nuxtTest } from './nuxt'
 
 import { logger } from '../src/logger'
 
@@ -15,6 +16,7 @@ export async function handler(event) {
   })
   const { base } = event
   try {
+    await nuxtTest({ base })
     await apiTest({ base })
 
     await graphqlTest({ base })
