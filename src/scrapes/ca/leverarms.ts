@@ -22,7 +22,8 @@ export function leverarms(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.outofstock',
   }
 
-  const work = (t) => scrape((p) => `https://leverarms.com/product-category/${t}/page/${p}`, info, selectors)
+  const work = (t) =>
+    scrape((p) => `https://leverarms.com/product-category/ammo/factory-ammo/${t}/page/${p}`, info, selectors)
 
   switch (type) {
     case 'rimfire':
@@ -31,7 +32,7 @@ export function leverarms(type: ItemType): Promise<IItemListing[]> {
     case 'centerfire':
       return Promise.all(
         [
-          'rifle-ammunition',
+          'centerfire-ammo',
           // 'pistol-ammunition',
         ].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
