@@ -28,7 +28,7 @@ export function backcountrysports(type: ItemType): Promise<IItemListing[]> {
       return Promise.all(
         [
           'product-category/ammunition-sales-canada/handgun-ammunition',
-          'product-category/ammunition-sales-canada/bulk-ammunition',
+          // 'product-category/ammunition-sales-canada/bulk-ammunition',
           'product-category/ammunition-sales-canada/rifle-ammunition',
         ].map((t) => throttle(() => scrape((p) => `${BASE}/${t}`, info, selectors)))
       ).then(helpers.combineResults)
