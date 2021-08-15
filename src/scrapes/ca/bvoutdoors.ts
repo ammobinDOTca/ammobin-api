@@ -22,30 +22,26 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
     //    outOfStock: '.out-of-stock',
   }
 
-  const work = (t) => scrape((page) => `https://www.${info.link}/${t}/page${page}.html`, info, selectors)
+  const work = (t) => scrape((page) => `https://www.${info.link}/${t}`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
-      return work('store/category/1/4/rimfire-rifle-ammunition')
+      return work('ammunition/rimfire-rifle-ammunition/')
 
     case ItemType.centerfire:
       return Promise.all(
-        ['store/category/1/2/centerfire-rifle-ammunition', 'store/category/1/3/handgun-ammunition'].map((t) =>
-          throttle(() => work(t))
-        )
+        ['ammunition/handgun-ammunition', 'ammunition/centerfire-rifle-ammunition'].map((t) => throttle(() => work(t)))
       ).then(combineResults)
 
     case ItemType.shotgun:
-      return Promise.all(['store/category/1/7/shotgun-ammunition'].map((t) => throttle(() => work(t)))).then(
-        combineResults
-      )
+      return Promise.all(['ammunition/shotgun-ammunition/'].map((t) => throttle(() => work(t)))).then(combineResults)
     case ItemType.case:
-      return work('store/category/267/376/reloading')
+      return work('shooting/reloading/reloading-brass')
     case ItemType.shot:
-      return work('store/category/267/376/reloading')
+      return work('shooting/reloading/reloading-bullets')
     case ItemType.primer:
-      return work('store/category/267/376/reloading')
+      return work('shooting/reloading/reloading-primers')
     case ItemType.powder:
-      return work('store/category/267/376/reloading')
+      return work('shooting/reloading/reloading-powder')
     default:
       return Promise.reject(new Error('unknown type: ' + type))
   }

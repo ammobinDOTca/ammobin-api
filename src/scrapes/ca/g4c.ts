@@ -12,7 +12,7 @@ function work(path: String) {
 
   const selectors: Selectors = {
     item: '.product-grid-item',
-    name: '.product-title',
+    name: '.wd-entities-title',
     img: '.product-image-link img',
     link: '.product-image-link',
     price: '.price .amount',
