@@ -32,7 +32,7 @@
     "apollo-server-lambda": "^2.25.0",
     "apollo-server-plugin-response-cache": "^0.3.11",
     "aws-sdk": "^2.920.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "boom": "^7.3.0",
     "cheerio": "^1.0.0-rc.9",
     "chrome-aws-lambda": "^10",
