@@ -9,15 +9,15 @@ export function theShootingCenter(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product-item',
-    name: '.product-item-link',
-    img: '.product-image-photo',
-    link: '.product-item-link',
+    item: '.productCard',
+    name: '.card-title',
+    img: 'img',
+    link: 'a',
     price: '.price',
     //nextPage: '.pages-item-next',
     //outOfStock: '.out-of-stock',
   }
-  const work = (t) => scrape((_) => `https://${info.link}/${t}?product_list_limit=2560&in-stock=1`, info, selectors)
+  const work = (t) => scrape((_) => `https://${info.link}/${t}?limit=1000&_bc_fsnf=1&in_stock=1`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:

@@ -27,7 +27,8 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
   switch (type) {
     case ItemType.rimfire:
       return scrape(
-        (p) => `${BASE}/shooting-supplies-and-firearms/ammunition/rimfire-ammunition?page=${p}&setCurrencyId=1`,
+        (p) =>
+          `${BASE}/shooting-supplies-and-firearms/ammunition/rimfire-ammunition?page=${p}&setCurrencyId=1&in_stock=1`,
         info,
         selectors
       ).then((items) => helpers.classifyRimfire(items))
@@ -35,7 +36,7 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
     case ItemType.centerfire:
       return Promise.all(
         ['shooting-supplies-and-firearms/ammunition/bulk-centerfire', 'centerfire-ammo'].map((t) =>
-          throttle(() => scrape((p) => `${BASE}/${t}?page=${p}&setCurrencyId=1`, info, selectors))
+          throttle(() => scrape((p) => `${BASE}/${t}?page=${p}&setCurrencyId=1&in_stock=1`, info, selectors))
         )
       )
         .then(helpers.combineResults)
@@ -43,7 +44,8 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
 
     case ItemType.shotgun:
       return scrape(
-        (p) => `${BASE}/shooting-supplies-and-firearms/ammunition/shotgun-ammunition?page=${p}&setCurrencyId=1`,
+        (p) =>
+          `${BASE}/shooting-supplies-and-firearms/ammunition/shotgun-ammunition?page=${p}&setCurrencyId=1&in_stock=1`,
         info,
         selectors
       ).then((items) => helpers.classifyShotgun(items))
@@ -52,7 +54,8 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]> {
     case ItemType.powder:
     case ItemType.primer:
       return scrape(
-        (p) => `${BASE}/shooting-supplies-and-firearms/reloading-uncontrolled-items/?page=${p}&setCurrencyId=1`,
+        (p) =>
+          `${BASE}/shooting-supplies-and-firearms/reloading-uncontrolled-items/?page=${p}&setCurrencyId=1&in_stock=1`,
         info,
         selectors
       )

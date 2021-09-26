@@ -9,7 +9,7 @@ import {
   MARSTAR,
   NAS,
   BULLS_EYE,
-  NICKS_SPORTS,
+  //NICKS_SPORTS,
   CANADA_FIRST_AMMO,
   TENDA,
   //GREAT_NORTH_PRECISION,
@@ -248,13 +248,14 @@ export const VENDORS: IVendor[] = (
           provinces: [Province.ON],
           location: 'St Ann',
         },
-        {
-          name: 'Durham Outdoors',
-          link: 'durhamoutdoors.ca',
-          logo: 'duram-logo.png',
-          provinces: [Province.ON],
-          location: 'Orono',
-        },
+        // 20210926 no ammo listed on site any more
+        // {
+        //   name: 'Durham Outdoors',
+        //   link: 'durhamoutdoors.ca',
+        //   logo: 'duram-logo.png',
+        //   provinces: [Province.ON],
+        //   location: 'Orono',
+        // },
         {
           name: 'Soley Outdoors',
           link: 'solelyoutdoors.com',
@@ -356,13 +357,14 @@ export const VENDORS: IVendor[] = (
           provinces: [Province.NB],
           location: 'McAdam',
         },
-        {
-          name: 'WASP Munitions',
-          link: 'waspmunitions.ca',
-          logo: 'waspmunitions-logo.png',
-          provinces: [Province.AB],
-          location: 'Sylvan Lake',
-        },
+        // 20210926 sites wont load
+        // {
+        //   name: 'WASP Munitions',
+        //   link: 'waspmunitions.ca',
+        //   logo: 'waspmunitions-logo.png',
+        //   provinces: [Province.AB],
+        //   location: 'Sylvan Lake',
+        // },
         //GREAT_NORTH_PRECISION as IVendor, // no ammo anymore as of aug 2021
         {
           name: 'Tesro',
@@ -401,7 +403,7 @@ export const VENDORS: IVendor[] = (
         MARSTAR as IVendor,
         NAS as IVendor,
         BULLS_EYE as IVendor,
-        NICKS_SPORTS as IVendor,
+        // NICKS_SPORTS as IVendor, // they have tmp closed their online store
         CANADA_FIRST_AMMO as IVendor,
         VICTORY_RIDGE_SPORTS as IVendor,
         // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
