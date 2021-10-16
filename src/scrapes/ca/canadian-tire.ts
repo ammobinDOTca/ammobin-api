@@ -13,7 +13,7 @@ function work(page: string): Promise<IItemListing[]> {
       {
         headers: {
           'User-Agent':
-            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
           Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
         },
       }
