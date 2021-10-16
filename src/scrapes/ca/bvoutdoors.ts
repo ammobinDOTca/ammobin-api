@@ -12,13 +12,13 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product-list-item',
-    name: '.productnameTitle',
-    img: '.image-thumb',
-    link: '.product-link',
-    price: '.text-price',
+    item: '.product-element',
+    name: '.product-title',
+    img: 'meta[itemprop="image"]',
+    link: 'a',
+    price: '.new-price',
     //brand: '.caption h6',
-    nextPage: '.button-small.next',
+    nextPage: '.next :not(.disabled)',
     //    outOfStock: '.out-of-stock',
   }
 

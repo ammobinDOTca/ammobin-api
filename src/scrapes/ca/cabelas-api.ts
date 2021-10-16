@@ -6,7 +6,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { Info, Selectors, scrape } from '../common'
 
 const columns = [
-  ['link', 'Article #'],
+  ['link', 'Article #', 'C:'],
   ['brand', 'Brand'],
   ['type', 'Generic Name'],
   ['calibre', 'Gauge', 'Calibre', 'Caliber'],
@@ -34,6 +34,7 @@ const selectors: Selectors = {
 const BASE = 'https://www.' + info.link
 
 function classify(d) {
+  console.log(d.titles, d.items)
   if (!d.titles || !d.items) {
     return null
   }
@@ -85,7 +86,7 @@ function classify(d) {
 
 async function makeCabelasCalibre(ammotype, subtype) {
   await helpers.delayScrape(BASE)
-
+  console.log(`${BASE}/checkproductvariantavailability/${ammotype}?${subtype ? 'specs=' + subtype : ''}`)
   return axios
     .get(`${BASE}/checkproductvariantavailability/${ammotype}?${subtype ? 'specs=' + subtype : ''}`)
     .then((r) => {
