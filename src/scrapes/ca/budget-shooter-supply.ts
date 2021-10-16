@@ -12,7 +12,7 @@ export function budgetShooterSupply(type: ItemType): Promise<IItemListing[]> {
 
   const selectors: Selectors = {
     item: '.product',
-    name: '.product-title',
+    name: '.wd-entities-title',
     img: '.attachment-woocommerce_thumbnail',
     link: 'a',
     price: '.price',
