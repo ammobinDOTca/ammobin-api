@@ -21,10 +21,10 @@ export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
     outOfStock: '.out-of-stock',
   }
 
-  const work = (t) => scrape((p) => `https://www.solelyoutdoors.com/${t}/page${p}.html`, info, selectors)
+  const work = (t) => scrape((p) => `https://www.solelyoutdoors.com/${t}/page${p}.html?limit=72`, info, selectors)
   switch (type) {
     case ItemType.rimfire:
-      return work('ammunition/rimfire')
+      return work('ammunition/rimfire-ammo')
 
     case ItemType.centerfire:
       return Promise.all(
