@@ -63,6 +63,7 @@ function work(page: string): Promise<IItemListing[]> {
             Host: 'www.canadiantire.ca',
             Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
           },
+          timeout: 5000, //ms
         })
         .then((r) => {
           const list = Object.keys(r.data).map((k) => r.data[k])
