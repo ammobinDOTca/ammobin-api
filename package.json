@@ -10,7 +10,6 @@
     "start:refresher": "node ./dist/refresher/redis-refresher.js",
     "test:lint": "tslint ./src/**/*.ts",
     "test": "npm run test:lint && npm run build",
-    "format": "pretty-quick",
     "build": "tsc",
     "build-lambda": "webpack  && cp graphql.gql lambda/graphql",
     "dev": "DEV=true ts-node-dev ./src/api/api.ts",
@@ -18,8 +17,6 @@
     "dev:worker": "DEV=true ts-node-dev ./src/worker/redis-worker.ts",
     "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-refresher.ts",
     "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
     "build:cloudflare": "webpack --config webpack.cloudflare.js"
   },
   "types": "dist/index.d.ts",
@@ -48,7 +45,6 @@
     "puppeteer-core": "^10",
     "redis": "^3.1.2",
     "rsmq-worker": "^0.5.2",
-    "snyk": "^1.465.0",
     "throat": "^5.0.0",
     "winston": "^3.3.3"
   },
@@ -62,7 +58,6 @@
     "@types/puppeteer": "^5.4.3",
     "copy-webpack-plugin": "^5.1.2",
     "gql2ts": "^1.10.1",
-    "husky": "^4.3.8",
     "json-loader": "^0.5.7",
     "nodemon": "^2.0.7",
     "prettier": "^2.3.0",
@@ -74,11 +69,5 @@
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^1.7.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": " pretty-quick --staged && npm t"
-    }
-  },
-  "snyk": true
+  }
 }
