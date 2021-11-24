@@ -2,7 +2,7 @@
   "name": "ammobin-api",
   "version": "2.0.1",
   "description": "ammobin.ca api",
-  "main": "./dist/api/index.js",
+  "main": "./dist/worker.js",
   "scripts": {
     "clean": "rm -rf dist lambda",
     "start": "node ./dist/api/api.js",
@@ -19,7 +19,8 @@
     "dev:refresher": "DEV=true ts-node-dev ./src/refresher/redis-refresher.ts",
     "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "build:cloudflare": "webpack --config webpack.cloudflare.js"
   },
   "types": "dist/index.d.ts",
   "author": "Simon Ramsay",
@@ -52,6 +53,8 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^3.0.0",
+    "@types/jest": "^26.0.23",
     "@types/boom": "^7.3.0",
     "@types/graphql": "^14.5.0",
     "@types/hapi": "^18.0.5",

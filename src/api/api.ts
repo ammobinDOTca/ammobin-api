@@ -3,12 +3,14 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, vendors, bestPrices } from './graphql'
-import { getItemsFlatListings, getScrapeResponses } from './shared'
+import { get24HourCacheRefreshExpiry, getItemsFlatListings, getScrapeResponses } from './shared'
 import { getRedisItems } from './redis-getter'
 import { getApi } from './common-api'
+import { getDyanmoItems } from './dynamo-getter'
 // import { getRecordFn } from './types'
 
 const DEV = process.env.DEV === 'true'
+const REDIS_URL = process.env.REDIS_URL
 // const client = redis.createClient({ host: 'redis' })
 
 // const getRecordFromRedis: getRecordFn = async (itemType, subType, vendor, link) => {
@@ -34,30 +36,33 @@ async function doWork() {
       // getRecordFromRedis
     )
 
+    // todo: imp redis getter + enable redis getter IFF REDIS_URL
+    const getter = process.env.REDIS_URL ? getRedisItems : getDyanmoItems
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers: {
         Query: {
           vendors,
           bestPrices,
-          itemsListings: (_, params) => getScrapeResponses(params, getRedisItems),
-          itemsFlatListings: (_, params) => getItemsFlatListings(params, getRedisItems),
+          itemsListings: (_, params) => getScrapeResponses(params, getter),
+          itemsFlatListings: (_, params) => getItemsFlatListings(params, getter),
         },
       },
       debug: DEV,
       tracing: DEV,
-      cache: !DEV
-        ? new RedisCache({
-            host: 'redis',
-          })
-        : undefined,
+      cache:
+        !DEV && REDIS_URL
+          ? new RedisCache({
+              host: REDIS_URL,
+            })
+          : undefined,
       formatError: (error) => {
         server.log('error', { type: 'graphql-error', error: error.toString() })
         return error
       },
-      plugins: !DEV ? [responseCachePlugin()] : undefined,
+      plugins: (!DEV ? [responseCachePlugin()] : undefined) as any,
       cacheControl: {
-        defaultMaxAge: DEV ? 0 : 4 * 60 * 60, // 4hrs in seconds
+        defaultMaxAge: DEV ? 0 : get24HourCacheRefreshExpiry(),
       },
     })
     await apolloServer.applyMiddleware({

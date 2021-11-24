@@ -1,2 +1,10 @@
 node_modules
 dist
+
+fly.toml
+wrangler.toml
+azure-pipelines.yml
+docker-compose.yml
+
+logs
+test

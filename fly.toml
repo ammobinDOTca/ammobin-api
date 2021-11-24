@@ -1,0 +1,54 @@
+# fly.toml file generated for ammobin-ca-api on 2021-11-23T20:23:57-08:00
+
+app = "ammobin-ca-api"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+REGION = "CA"
+STAGE = "PROD"
+# these are used for accessing the dynamo (for now)
+AWS_DEFAULT_REGION = "ca-central-1"
+AWS_REGION = "ca-central-1"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+
+  [[services.http_checks]]
+    interval = 10000
+    grace_period = "5s"
+    method = "get"
+    path = "/api/ping"
+    protocol = "http"
+    timeout = 500
+    tls_skip_verify = true
+    [services.http_checks.headers]
+      canary = "fly.io health check"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

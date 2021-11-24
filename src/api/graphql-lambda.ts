@@ -5,7 +5,7 @@
 import { Callback, Context, APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { ApolloServer } from 'apollo-server-lambda'
 import { getDyanmoItems } from './dynamo-getter'
-import { getScrapeResponses, getItemsFlatListings } from './shared'
+import { getScrapeResponses, getItemsFlatListings, get24HourCacheRefreshExpiry } from './shared'
 import { typeDefs, vendors, bestPrices } from './graphql'
 import { logger } from '../logger'
 import { createHmac } from 'crypto'
@@ -28,11 +28,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
 
   const ip = event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
-  const sessionId = ip
-    ? createHmac('sha256', secret)
-        .update(ip)
-        .digest('hex')
-    : 'unknown_ip'
+  const sessionId = ip ? createHmac('sha256', secret).update(ip).digest('hex') : 'unknown_ip'
   delete event.headers['X-Forwarded-For']
 
   const startTime = new Date().getTime()
@@ -42,7 +38,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     if (method === 'POST' && event.body) {
       const r = JSON.parse(event.body)
       const queries = Array.isArray(r) ? r : [r]
-      queries.forEach(rr => {
+      queries.forEach((rr) => {
         query = rr.query
         variables = rr.variables
         opName = rr.opName
@@ -96,10 +92,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       sessionId,
     })
     const now = new Date()
-    const maxAge =
-      !DEV && event.httpMethod === 'GET'
-        ? Math.max((24 - now.getUTCHours()) * 60 * 60 + (60 - now.getUTCMinutes()) * 60 + (60 - now.getUTCSeconds()), 2)
-        : 1
+    const maxAge = !DEV && event.httpMethod === 'GET' ? get24HourCacheRefreshExpiry() : 1
     console.log(`maxAge DEV? ${DEV} method ${event.httpMethod} now ${now} maxAge ${maxAge}`)
 
     result.headers['Cache-Control'] = 'max-age=' + maxAge

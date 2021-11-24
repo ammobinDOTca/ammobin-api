@@ -347,3 +347,17 @@ export async function getItemsFlatListings(
 }
 
 // todo: merge the 2 functions together...
+
+/**
+ * calculate number of seconds till 00:15 UTC (when everything should be refreshed)
+ * @returns seconds
+ */
+export function get24HourCacheRefreshExpiry() {
+  const now = new Date()
+  const fiveMinsInSeconds = 15 * 60
+
+  return (
+    Math.max((24 - now.getUTCHours()) * 60 * 60 + (60 - now.getUTCMinutes()) * 60 + (60 - now.getUTCSeconds()), 2) +
+    fiveMinsInSeconds
+  )
+}
