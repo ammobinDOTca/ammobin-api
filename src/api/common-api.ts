@@ -243,9 +243,8 @@ export async function getApi(config) {
           body: request.payload,
           headers: request.headers,
         },
-        string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${
-          request.url.pathname
-        } because:  ${(request.response as any)._error.message}`,
+        string: `Error response (500) sent for request: ${request.method.toUpperCase()} ${request.url.pathname
+          } because:  ${(request.response as any)._error.message}`,
       })
     }
   })
@@ -262,10 +261,14 @@ export async function getApi(config) {
   })
 
   server.events.on('request', (request, event) => {
-    const ip = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || request.info.remoteAddress
+    const ip = request.headers['fly-client-ip'] ||
+      request.headers['x-forwarded-for'] ||
+      request.headers['x-real-ip'] ||
+      request.info.remoteAddress
     const sessionId = ip ? crypto.createHmac('sha256', secret).update(ip).digest('hex') : 'unknown_ip'
     delete request.headers['x-forwarded-for']
     delete request.headers['x-real-ip']
+    delete request.headers['fly-client-ip']
     const requestId = request.info.id
     logger.info({ ...event.data, sessionId, requestId, REGION, STAGE })
   })
