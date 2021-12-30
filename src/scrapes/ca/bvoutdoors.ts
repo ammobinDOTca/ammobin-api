@@ -18,7 +18,7 @@ export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
     link: 'a',
     price: '.new-price',
     //brand: '.caption h6',
-    nextPage: '.next :not(.disabled)',
+    // nextPage: '.next :not(.disabled)',
     //    outOfStock: '.out-of-stock',
   }
 
