@@ -7,14 +7,14 @@ function work(page: string): Promise<IItemListing[]> {
   console.log('canadian tire page ' + page)
   return axios
     .get(
-      `http://api.canadiantire.ca/search/api/v0/product/en/?site=ct;store=0600;x1=c.cat-level-1;q1=Playing;x2=c.cat-level-2;q2=Hunting;x3=c.cat-level-3;q3=Ammunition;x4=c.cat-level-4;q4=${encodeURIComponent(
+      `https://api.canadiantire.ca/search/api/v0/product/en/?site=ct;store=0600;x1=c.cat-level-1;q1=Playing;x2=c.cat-level-2;q2=Hunting;x3=c.cat-level-3;q3=Ammunition;x4=c.cat-level-4;q4=${encodeURIComponent(
         page
       )};format=json;count=36;q=*;callback=callback`,
       {
         headers: {
           'User-Agent':
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-          Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
+          Refer: 'https://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
         },
         timeout: 5000
       }
@@ -27,7 +27,7 @@ function work(page: string): Promise<IItemListing[]> {
         const item = ff.field
         return {
           name: item['prod-name'],
-          link: 'http://www.canadiantire.ca' + item['pdp-url'],
+          link: 'https://www.canadiantire.ca' + item['pdp-url'],
           img: item['thumb-img-url'],
           vendor: 'Canadian Tire',
           provinces: [
@@ -47,9 +47,9 @@ function work(page: string): Promise<IItemListing[]> {
           _id: item['prod-id'],
         }
       })
-      console.log('got ' + items.length + ' items')
+      console.log('got ' + items.length + ' items. check price')
       return axios
-        .get('http://www.canadiantire.ca/ESB/PriceAvailability', {
+        .get('https://www.canadiantire.ca/ESB/PriceAvailability', {
           params: {
             _: new Date().getTime(),
             Product: items.map((ff) => ff[`_id`]).join(','),
@@ -62,7 +62,7 @@ function work(page: string): Promise<IItemListing[]> {
             'User-Agent':
               'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
             Host: 'www.canadiantire.ca',
-            Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
+            Refer: 'https://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
           },
           timeout: 5000, //ms
         })
