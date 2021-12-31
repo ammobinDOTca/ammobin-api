@@ -4,7 +4,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 
 function work(page: string): Promise<IItemListing[]> {
   // TODO: need to get all result pages  ("pagination": {"total": 6, )
-
+  console.log('canadian tire page ' + page)
   return axios
     .get(
       `http://api.canadiantire.ca/search/api/v0/product/en/?site=ct;store=0600;x1=c.cat-level-1;q1=Playing;x2=c.cat-level-2;q2=Hunting;x3=c.cat-level-3;q3=Ammunition;x4=c.cat-level-4;q4=${encodeURIComponent(
@@ -16,6 +16,7 @@ function work(page: string): Promise<IItemListing[]> {
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
           Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
         },
+        timeout: 5000
       }
     )
     .then((res) => {
@@ -46,7 +47,7 @@ function work(page: string): Promise<IItemListing[]> {
           _id: item['prod-id'],
         }
       })
-
+      console.log('got ' + items.length + ' items')
       return axios
         .get('http://www.canadiantire.ca/ESB/PriceAvailability', {
           params: {
@@ -59,7 +60,7 @@ function work(page: string): Promise<IItemListing[]> {
           },
           headers: {
             'User-Agent':
-              'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+              'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
             Host: 'www.canadiantire.ca',
             Refer: 'http://www.canadiantire.ca/en/sports-rec/hunting/ammunition.html',
           },
@@ -67,7 +68,7 @@ function work(page: string): Promise<IItemListing[]> {
         })
         .then((r) => {
           const list = Object.keys(r.data).map((k) => r.data[k])
-
+          console.log('got ' + list.length + ' avails')
           return items.map((i) => {
             i.price = (list.find((rr) => rr.Product === i[`_id`]) || {}).Price
             return i
