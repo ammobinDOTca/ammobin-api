@@ -24,10 +24,10 @@
   "license": "MIT",
   "dependencies": {
     "ammobin-classifier": "^0.1",
-    "apollo-server": "^2.25.0",
+    "apollo-server": "^3.0.0",
     "apollo-server-cache-redis": "^1.5.0",
-    "apollo-server-hapi": "^2.25.0",
-    "apollo-server-lambda": "^2.25.0",
+    "apollo-server-hapi": "^3.0.0",
+    "apollo-server-lambda": "^3.0.0",
     "apollo-server-plugin-response-cache": "^0.3.11",
     "aws-sdk": "^2.920.0",
     "axios": "^0.21.1",
