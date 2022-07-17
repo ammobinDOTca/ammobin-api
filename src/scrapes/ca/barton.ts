@@ -147,7 +147,14 @@ export function barton(type: ItemType): Promise<IItemListing[]> {
         ].map((t) => throttle(() => work('ammunition/centerfire-pistol/' + t))),
       ]).then(helpers.combineResults)
     case ItemType.shotgun:
-      return work('ammunition/shotgun')
+      return Promise.all([
+        //  '410-bore',
+        '28ga',
+        '20ga',
+        '16ga',
+        '10ga',
+        '12ga'
+      ].map(t => throttle(() => work('ammunition/shotgun/' + t)))).then(helpers.combineResults)
 
     case ItemType.shot:
       return work('reloading/bullets')

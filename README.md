@@ -39,3 +39,8 @@ refactor lambda and docker stuff into shared logic
 ### docker hub
 
 https://hub.docker.com/r/ammobindotca/ammobin-api/
+
+
+
+# how to verify scrapes
+URL=wolverinesupplies.com TYPE=rimfire npx ts-node src/random/test.ts 

@@ -12,16 +12,16 @@ export function siwashSports(type: ItemType): Promise<IItemListing[]> {
   }
 
   const selectors: Selectors = {
-    item: '.product',
+    item: '.product-block-holder',
     name: '.title',
     img: 'img',
     link: '.title',
-    price: '.price',
+    price: '.product-block-price',
     nextPage: '.next.enabled',
-    outOfStock: '.outstock',
+    outOfStock: '.out-of-stock',
   }
 
-  const work = (t) => scrape((p) => `https://www.${info.link}/${t}/page${p}.html`, info, selectors)
+  const work = (t) => scrape((p) => `https://www.${info.link}/${t}/page${p}.html?limit=100`, info, selectors)
 
   switch (type) {
     case ItemType.rimfire:

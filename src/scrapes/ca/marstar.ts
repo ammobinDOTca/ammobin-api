@@ -15,7 +15,7 @@ export function marstar(type: ItemType): Promise<IItemListing[]> {
     link: 'a',
     price: '.price',
     // nextPage: '.pagination-item-next-link',
-    // outOfStock: '.outofstock',
+    outOfStock: '.now_sold',
   }
   const work = (t) =>
     scrape(

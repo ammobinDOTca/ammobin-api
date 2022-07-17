@@ -11,7 +11,7 @@ export function backcountrysports(type: ItemType): Promise<IItemListing[]> {
 
   const selectors: Selectors = {
     item: '.product',
-    name: '.woocommerce-loop-product__title',
+    name: '.product-title',
     img: 'img',
     link: 'a',
     price: '.price .amount',
@@ -23,18 +23,18 @@ export function backcountrysports(type: ItemType): Promise<IItemListing[]> {
   const BASE = 'https://' + info.link
   switch (type) {
     case ItemType.rimfire:
-      return scrape((p) => `${BASE}/product-category/ammunition-sales-canada/rimfire-ammunition`, info, selectors)
+      return scrape((p) => `${BASE}/product-category/ammunition-sales-canada/rimfire-ammunition?product_count=72&stock=instock`, info, selectors)
     case ItemType.centerfire:
       return Promise.all(
         [
           'product-category/ammunition-sales-canada/handgun-ammunition',
           // 'product-category/ammunition-sales-canada/bulk-ammunition',
           'product-category/ammunition-sales-canada/rifle-ammunition',
-        ].map((t) => throttle(() => scrape((p) => `${BASE}/${t}`, info, selectors)))
+        ].map((t) => throttle(() => scrape((p) => `${BASE}/${t}?product_count=72&stock=instock`, info, selectors)))
       ).then(helpers.combineResults)
 
     case ItemType.shotgun:
-      return scrape((p) => `${BASE}/product-category/ammunition-sales-canada/shotgun-ammunition`, info, selectors)
+      return scrape((p) => `${BASE}/product-category/ammunition-sales-canada/shotgun-ammunition?product_count=72&stock=instock`, info, selectors)
     case ItemType.shot:
     case ItemType.case:
     case ItemType.powder:

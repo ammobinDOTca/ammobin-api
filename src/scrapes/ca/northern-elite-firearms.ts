@@ -13,12 +13,12 @@ export function northernEliteFirearms(type: ItemType): Promise<IItemListing[]> {
 
   const selectors: Selectors = {
     item: '.product',
-    name: '.product-title',
-    img: '.attachment-woocommerce_thumbnail',
-    link: '.product-title a',
+    name: '.woocommerce-loop-product__title',
+    img: 'img',
+    link: 'a',
     price: '.price',
     nextPage: '.next',
-    outOfStock: '.out-stock',
+    outOfStock: '.outofstock_label',
   }
 
   const BASE = 'https://www.northernelitefirearms.ca/product-category'

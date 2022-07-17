@@ -162,13 +162,14 @@ export const VENDORS: IVendor[] = (
         provinces: [Province.ON],
         location: 'Newmarket',
       },
-      {
-        name: 'Trade Ex Canada',
-        link: 'tradeexcanada.com',
-        logo: 'tradex-logo.png',
-        provinces: [Province.ON],
-        location: 'Hawkesburry',
-      },
+      // no more
+      // {
+      //   name: 'Trade Ex Canada',
+      //   link: 'tradeexcanada.com',
+      //   logo: 'tradex-logo.png',
+      //   provinces: [Province.ON],
+      //   location: 'Hawkesburry',
+      // },
       {
         name: 'Frontier Firearms',
         link: 'frontierfirearms.ca',
@@ -241,13 +242,14 @@ export const VENDORS: IVendor[] = (
         provinces: [Province.AB],
         location: 'Calgary',
       },
-      {
-        name: 'Lanz Shooting Supplies',
-        link: 'lanzshootingsupplies.com',
-        logo: 'lanz-logo.png',
-        provinces: [Province.ON],
-        location: 'St Ann',
-      },
+      // does not ship ammo
+      // {
+      //   name: 'Lanz Shooting Supplies',
+      //   link: 'lanzshootingsupplies.com',
+      //   logo: 'lanz-logo.png',
+      //   provinces: [Province.ON],
+      //   location: 'St Ann',
+      // },
       // 20210926 no ammo listed on site any more
       // {
       //   name: 'Durham Outdoors',
