@@ -64,6 +64,7 @@ import {
   TENDA,
   GREAT_NORTH_PRECISION,
   VICTORY_RIDGE_SPORTS,
+  NECHAKO,
 } from '../../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -74,6 +75,7 @@ import { marstar } from './marstar'
 import { nickssportshop } from './nickssportshop'
 import { canadaFirstAmmo } from './canada-first-ammo'
 import { victoryRidge } from './victory-ridge'
+import { nechako } from './nechako'
 
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
   switch (source) {
@@ -236,6 +238,8 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return prophetRiver(type)
     case NICKS_SPORTS.link:
       return nickssportshop(type)
+    case NECHAKO.link:
+      return nechako(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

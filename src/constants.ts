@@ -14,6 +14,7 @@ import {
   TENDA,
   //GREAT_NORTH_PRECISION,
   VICTORY_RIDGE_SPORTS,
+  NECHAKO,
   // PRECISION_OPTICS,
 } from './vendors'
 import {
@@ -408,6 +409,7 @@ export const VENDORS: IVendor[] = (
       // NICKS_SPORTS as IVendor, // they have tmp closed their online store
       CANADA_FIRST_AMMO as IVendor,
       VICTORY_RIDGE_SPORTS as IVendor,
+      NECHAKO as IVendor,
       // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
     ]
     : ([
