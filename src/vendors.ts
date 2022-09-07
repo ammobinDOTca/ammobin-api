@@ -133,7 +133,7 @@ export const VICTORY_RIDGE_SPORTS: Vendor = {
 export const NECHAKO: Vendor = {
   name: 'Nechako Outdoors',
   link: 'nechakooutdoors.ca',
-  logo: 'nechako',
+  logo: 'nechako-logo.png',
   provinces: [Province.BC],
   location: 'Vanderhoof',
   hasReloadingItems: true
