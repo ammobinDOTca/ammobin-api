@@ -29,10 +29,10 @@
     "apollo-server-hapi": "^2.25.0",
     "apollo-server-lambda": "^2.25.0",
     "apollo-server-plugin-response-cache": "^0.3.11",
-    "aws-sdk": "^2",
-    "axios": "^0.27",
+    "aws-sdk": "^2.920.0",
+    "axios": "^0.21.1",
     "boom": "^7.3.0",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.0.0-rc.9",
     "chrome-aws-lambda": "^10",
     "delay": "^4.4.1",
     "fluent-logger": "^3.4.1",
@@ -43,10 +43,10 @@
     "moment": "^2.29.1",
     "node-cron": "^2.0.3",
     "puppeteer-core": "^10",
-    "redis": "^3",
+    "redis": "^3.1.2",
     "rsmq-worker": "^0.5.2",
     "throat": "^5.0.0",
-    "winston": "^3"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.0.0",
