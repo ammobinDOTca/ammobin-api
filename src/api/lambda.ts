@@ -51,6 +51,9 @@ export async function handler(event: APIGatewayEvent) {
     _server = await init()
   }
 
+  if ((event as any).rawPath) {
+    event.path = (event as any).rawPath
+  }
   const request = transformRequest(event)
 
   // handle cors here if needed
