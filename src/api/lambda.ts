@@ -51,6 +51,12 @@ export async function handler(event: APIGatewayEvent) {
     _server = await init()
   }
 
+  console.log(JSON.stringify(event))
+
+  // handle lambdafunction url using rawPath....
+  if ((event as any).rawPath) {
+    event.path = (event as any).rawPath
+  }
   const request = transformRequest(event)
 
   // handle cors here if needed
