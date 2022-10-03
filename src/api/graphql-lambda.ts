@@ -27,7 +27,7 @@ const server = new ApolloServer({ typeDefs, resolvers })
 exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
 
-  const ip = event.headers['X-Forwarded-For'] || event.requestContext.identity.sourceIp
+  const ip = event.headers['X-Forwarded-For'] || event.requestContext?.identity?.sourceIp
   const sessionId = ip ? createHmac('sha256', secret).update(ip).digest('hex') : 'unknown_ip'
   delete event.headers['X-Forwarded-For']
 
