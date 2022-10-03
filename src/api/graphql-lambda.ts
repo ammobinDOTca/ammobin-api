@@ -31,6 +31,10 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const sessionId = ip ? createHmac('sha256', secret).update(ip).digest('hex') : 'unknown_ip'
   delete event.headers['X-Forwarded-For']
 
+  if ((event as any).rawPath) {
+    event.path = (event as any).rawPath
+  }
+
   const startTime = new Date().getTime()
   let query, variables, opName
   const method = event.httpMethod
