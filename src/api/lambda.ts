@@ -52,7 +52,9 @@ export async function handler(event: APIGatewayEvent) {
   }
 
   if ((event as any).rawPath) {
+    // handle lambda function url diffs... https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-payloads
     event.path = (event as any).rawPath
+    event.httpMethod = (event as any).requestContext.http.method
   }
   const request = transformRequest(event)
 
