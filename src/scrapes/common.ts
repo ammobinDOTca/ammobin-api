@@ -25,7 +25,7 @@ export interface Info {
   provinces: string[]
 }
 
-function correctUrl(baseUrl: string, url: string): string|null {
+function correctUrl(baseUrl: string|null, url: string|null|undefined): string|null {
   // note: assuming everyone is on https b/c its 2019
   if (!url || !baseUrl) {
     return null

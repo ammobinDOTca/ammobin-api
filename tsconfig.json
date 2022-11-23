@@ -7,6 +7,7 @@
     "declaration": true,
     "noUnusedLocals": true,
     "baseUrl": ".",
+    "lib": ["DOM"],
     "paths": {
       "*": ["node_modules/*", "src/types/*"],
       "~": ["./src"]
