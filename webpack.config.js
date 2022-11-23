@@ -25,7 +25,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.mjs'],
   },
   externals: {
-    'aws-sdk': 'aws-sdk', // dont build in aws-sdk since it is already provided by lambda env
+    //'aws-sdk': 'aws-sdk', // dont build in aws-sdk since it is already provided by lambda env TODO upgrade for node18 + sdk v3
     'chrome-aws-lambda': 'chrome-aws-lambda',
     lambdafs: 'lambdafs',
   },
