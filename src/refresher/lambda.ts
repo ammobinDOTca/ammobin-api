@@ -49,7 +49,7 @@ function getQueueUrl(source: string, type: ItemType): string {
   return process.env.QueueUrl || 'SHIT'
 }
 
-const sqs = new SQS()
+const sqs = new SQS({})
 export async function handler(e: ScheduledEvent) {
   /**
    * 20200119 most of AWS bill is DynamoDB, and 97% of the cost is due to writes.

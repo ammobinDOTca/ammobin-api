@@ -45,7 +45,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     } else {
       console.debug('no Crawl-delay found for ' + site)
     }
-  } catch (e) {
+  } catch (e:any) {
     console.error('ERROR ' + site, e && e.message ? e.message : e)
   }
 

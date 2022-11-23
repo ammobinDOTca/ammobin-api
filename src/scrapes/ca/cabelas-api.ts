@@ -92,18 +92,18 @@ async function makeCabelasCalibre(ammotype, subtype) {
     .then((r) => {
       const $ = cheerio.load(r.data)
 
-      const titles = []
+      const titles :string[]= []
       $('thead')
         .find('th')
         .each((index, row) => {
           titles.push($(row).text())
         })
 
-      const items = []
+      const items :any[]= []
       $('tbody')
         .find('tr')
         .each((index, row) => {
-          const result = []
+          const result:any[] =[]
           result.push($(row).find('a').prop('href'))
           $(row)
             .find('td')

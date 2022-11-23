@@ -1,7 +1,7 @@
 import winston from 'winston'
 import axios from 'axios'
 import TransportStream from 'winston-transport'
-
+import {URL} from 'url'
 class esLogger extends TransportStream {
   private url: URL
   constructor(options: { url: URL }) {
@@ -25,7 +25,7 @@ class esLogger extends TransportStream {
 }
 
 function createLogger(tag: string) {
-  const transports = []
+  const transports:any[] = []
   if (process.env.FLUENT) {
     let config = {
       host: 'fluent',

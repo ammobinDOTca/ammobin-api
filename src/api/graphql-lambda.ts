@@ -57,7 +57,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       })
     } else if (method === 'GET' && event.queryStringParameters) {
       query = event.queryStringParameters.query
-      variables = JSON.parse(event.queryStringParameters.variables)
+      variables = JSON.parse(event.queryStringParameters.variables!)
       opName = event.queryStringParameters.opName
 
       logger.info({
@@ -84,7 +84,7 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
       origin: true,
     },
   })
-  h(event, context, (err, result: APIGatewayProxyResult) => {
+  h(event, context, (err, result: APIGatewayProxyResult|any) => {
     logger.info({
       type: 'api-req',
       statusCode: result.statusCode,
@@ -100,6 +100,6 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     console.log(`maxAge DEV? ${DEV} method ${event.httpMethod} now ${now} maxAge ${maxAge}`)
 
     result.headers['Cache-Control'] = 'max-age=' + maxAge
-    cb(err, result)
+    cb(err, result as any)
   })
 }

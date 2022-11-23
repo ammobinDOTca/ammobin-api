@@ -145,7 +145,7 @@ worker.on('message', async (msg, next /* , id*/) => {
         })
         next(e)
       })
-  } catch (e) {
+  } catch (e:any) {
     logger.info({
       type: 'failed-scrape',
       source,

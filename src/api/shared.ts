@@ -66,9 +66,9 @@ export async function getBestPrices(): Promise<IBestPrice[]|null> {
 
 export async function getScrapeResponses(
   params: IItemsListingsOnQueryArguments,
-  valueGetter: (types: ItemType[], subTypes: string[], vendors: IVendor[]) => Promise<IItemListing[]|null>
+  valueGetter: (types: ItemType[], subTypes: string[], vendors: IVendor[]) => Promise<IItemListing[]>
 ): Promise<IItemListings> {
-  let { itemType, page, pageSize, subType, province, vendor, query, sortField, sortOrder, brand } = params
+  let { itemType, page, pageSize, subType, province, vendor, query, sortField, sortOrder, brand } = params as any
 
   if (!sortOrder) {
     sortOrder = SortOrder.ASC
@@ -111,8 +111,8 @@ export async function getScrapeResponses(
     vendors = VENDORS.filter((v) => v.provinces.includes(province))
   }
 
-  const subTypes = subType ? [subType] : itemTypes.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
-  let results: IItemListing[] = await valueGetter(itemTypes, subTypes, vendors)
+  const subTypes = subType ? [subType] : itemTypes.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t) as any), [])
+  let results: IItemListing[] = await valueGetter(itemTypes, subTypes, vendors) as any
 
   const result: IItemListing[] = results
     .filter(
@@ -160,8 +160,8 @@ export async function getScrapeResponses(
         if (val.minUnitCost === 0) {
           val.minUnitCost = item.unitCost
         }
-        val.minUnitCost = Math.min(item.unitCost, val.minUnitCost)
-        val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost)
+        val.minUnitCost = Math.min(item.unitCost, val.minUnitCost!)
+        val.maxUnitCost = Math.max(item.unitCost, val.maxUnitCost!)
       }
 
       if (val.img) {
@@ -204,7 +204,7 @@ export async function getScrapeResponses(
   // and then sort vendor listings within the selected groups
   let items = res.slice((page - 1) * pageSize, page * pageSize).map((row) => {
     row.vendors = row.vendors.sort((a, b) => {
-      let groupedKey: string
+      let groupedKey: string =''
       switch (sortField) {
         case SortField.minUnitCost:
           groupedKey = 'unitCost'
@@ -256,7 +256,7 @@ export async function getItemsFlatListings(
   args: IItemsFlatListingsOnQueryArguments,
   valueGetter: valueGetterFn
 ): Promise<IItemFlatListings> {
-  let { itemType, page, pageSize, subType, province, vendor, sortField, sortOrder, query, brand } = args
+  let { itemType, page, pageSize, subType, province, vendor, sortField, sortOrder, query, brand } = args as any
 
   if (!sortOrder) {
     sortOrder = SortOrder.ASC
@@ -298,8 +298,8 @@ export async function getItemsFlatListings(
   } else if (province) {
     vendors = VENDORS.filter((v) => v.provinces.includes(province))
   }
-  const subTypes = subType ? [subType] : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)), [])
-  let results: IItemListing[] = await valueGetter(types, subTypes, vendors)
+  const subTypes = subType ? [subType] : types.reduce((lst, t) => lst.concat(helpers.itemTypeToStubTypes(t)as any), [])
+  let results: IItemListing[] = await valueGetter(types, subTypes, vendors) as any
 
   // only filters out ammo without subType set (not setup for reloading yet)
   const result: IItemListing[] = results.filter(

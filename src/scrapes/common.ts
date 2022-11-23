@@ -193,7 +193,7 @@ export async function scrape(
       return
     }
     result.link = correctUrl(info.link, tha.find(selectors.link).prop('href'))!
-    result.img = correctUrl(info.link, tha.find(selectors.img).prop('src'))
+    result.img = correctUrl(info.link, tha.find(selectors.img!).prop('src'))
 
     result.name = tha.find(selectors.name).text().trim()
     const priceTxt = tha.find(selectors.price).last().text() // sale price come last...

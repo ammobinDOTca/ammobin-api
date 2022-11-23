@@ -9,7 +9,7 @@ async function work(type = 'doesnt matter', page = 1): Promise<IItemListing[]> {
 
   return axios.get(`${domain}/product-category/ammunition`).then((r) => {
     const $ = cheerio.load(r.data)
-    const items = []
+    const items : any []= []
     $('.product').each((index, row) => {
       const result: any = {}
       const tha = $(row)

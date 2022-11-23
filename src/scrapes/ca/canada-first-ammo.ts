@@ -3,6 +3,7 @@ import { combineResults } from '../../helpers'
 import throat from 'throat'
 import { CANADA_FIRST_AMMO } from '../../vendors'
 import axios from 'axios'
+import {URL} from 'url'
 
 // import { RENDERTRON_URL } from '../../constants'
 

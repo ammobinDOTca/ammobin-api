@@ -9,7 +9,7 @@ import { logger } from '../logger'
 import moment from 'moment'
 import * as zlib from 'zlib'
 import  {DynamoDBClient} from '@aws-sdk/client-dynamodb'
-import  {DynamoDBDocumentClient} from '@aws-sdk/lib-dynamodb'
+import  {DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 
 const docClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
@@ -152,24 +152,21 @@ export async function handler(event: SQSEvent) {
                 const values = zlib.gzipSync(JSON.stringify(e[1])).toString('base64')
                 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html#limits-expression-parameters
                 // size limits The maximum length of all substitution variables in an expression is 2 MB. This is the sum of the lengths of all ExpressionAttributeNames and ExpressionAttributeValues.
-                return docClient
-                  .update({
-                    TableName: 'ammobinItems', // todo: make this env
-                    Key: {
-                      id: e[0],
-                    },
-                    UpdateExpression: 'set #vendor = :val',
-                    ExpressionAttributeNames: {
-                      '#vendor': names,
-                    },
-                    ExpressionAttributeValues: {
-                      ':val': values,
-                    },
-                  })
-                  .promise()
-              })
-            )
-          })
+                return docClient.send(new UpdateCommand({
+                  TableName: 'ammobinItems', // todo: make this env
+                  Key: {
+                    id: e[0],
+                  },
+                  UpdateExpression: 'set #vendor = :val',
+                  ExpressionAttributeNames: {
+                    '#vendor': names,
+                  },
+                  ExpressionAttributeValues: {
+                    ':val': values,
+                  },
+                }))
+          }))
+        })
           .catch((e) => {
             logger.info({
               type: 'failed-scrape',
@@ -178,7 +175,7 @@ export async function handler(event: SQSEvent) {
               msg: e.message,
             })
           })
-      } catch (e) {
+      } catch (e:any) {
         logger.info({
           type: 'failed-scrape',
           source,
