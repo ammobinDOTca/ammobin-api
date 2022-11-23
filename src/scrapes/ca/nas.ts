@@ -4,7 +4,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import { NAS } from '../../vendors'
 
-export function nas(type: ItemType): Promise<IItemListing[]> {
+export function nas(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = NAS
 

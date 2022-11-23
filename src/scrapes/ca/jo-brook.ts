@@ -3,7 +3,7 @@ import { Province, IItemListing, ItemType } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import throat from 'throat'
 
-export function jobrook(type: ItemType): Promise<IItemListing[]> {
+export function jobrook(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   const info: Info = {

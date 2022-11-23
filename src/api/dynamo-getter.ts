@@ -1,11 +1,10 @@
 import { IItemListing, ItemType, IVendor } from '../graphql-types'
-
-import { DynamoDB } from 'aws-sdk'
 import * as zlib from 'zlib'
 
-const docClient = new DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION || 'ca-central-1',
-})
+import  {DynamoDBClient} from '@aws-sdk/client-dynamodb'
+import  {DynamoDBDocumentClient} from '@aws-sdk/lib-dynamodb'
+
+const docClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
 export async function getDyanmoItems(
   types: ItemType[],
@@ -32,7 +31,6 @@ export async function getDyanmoItems(
         },
       },
     })
-    .promise()
 
   const results = docs.Responses[`ammobinItems`].reduce<IItemListing[]>((_res, doc) => {
     vendors.forEach((v) => {

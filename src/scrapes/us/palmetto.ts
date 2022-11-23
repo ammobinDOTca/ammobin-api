@@ -12,7 +12,7 @@ import { combineResults } from '../../helpers'
 import { RENDERTRON_URL } from '../../constants'
 const throttle = throat(1)
 
-export function palmetto(type: ItemType): Promise<IItemListing[]> {
+export function palmetto(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.item',
     name: '.name',

@@ -1,7 +1,7 @@
 import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
-export async function tillsonburg(type: ItemType): Promise<IItemListing[]> {
+export async function tillsonburg(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'tillsonburggunshop.com',
     name: 'Tillsonburg Gun Shop',

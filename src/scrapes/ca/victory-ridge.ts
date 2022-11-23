@@ -20,7 +20,7 @@ function work(path: String = 'shop/category/ammunition') {
   )
 }
 
-export function victoryRidge(type: ItemType): Promise<IItemListing[]> {
+export function victoryRidge(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
     case ItemType.shotgun:

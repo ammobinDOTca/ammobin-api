@@ -2,7 +2,7 @@ import helpers = require('../../helpers')
 import throat from 'throat'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
-function work(type: string): Promise<IItemListing[]> {
+function work(type: string): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'frontierfirearms.ca',
     name: `Frontier Firearms`,
@@ -22,7 +22,7 @@ function work(type: string): Promise<IItemListing[]> {
   return scrape((p) => `https://${info.link}/ammunition-reloading/${type}.html`, info, selectors)
 }
 
-export function frontierfirearms(type: ItemType): Promise<IItemListing[]> {
+export function frontierfirearms(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

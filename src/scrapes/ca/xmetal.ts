@@ -2,7 +2,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 
 import { scrape, Info, Selectors } from '../common'
 
-export function xmetal(type: ItemType): Promise<IItemListing[]> {
+export function xmetal(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'xmetaltargets.com',
     name: `Xmetal Targets`,

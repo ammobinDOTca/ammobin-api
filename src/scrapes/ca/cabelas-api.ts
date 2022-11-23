@@ -121,11 +121,11 @@ function makeCabelasReq(itemType) {
   return makeCabelasCalibre(itemType, null)
 }
 
-function work(path: String): Promise<IItemListing[]> {
+function work(path: String): Promise<IItemListing[]|null> {
   return scrape((p) => `${BASE}/category/${path}/?pagesize=100`, info, selectors)
 }
 
-export function cabelas(type: ItemType): Promise<IItemListing[]> {
+export function cabelas(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

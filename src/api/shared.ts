@@ -15,7 +15,7 @@ import {
 } from '../graphql-types'
 import { valueGetterFn } from './types'
 
-export async function getBestPrices(): Promise<IBestPrice[]> {
+export async function getBestPrices(): Promise<IBestPrice[]|null> {
   return Promise.resolve(null)
   // TODO: not used
   // const type = params.type || ItemType.centerfire
@@ -66,7 +66,7 @@ export async function getBestPrices(): Promise<IBestPrice[]> {
 
 export async function getScrapeResponses(
   params: IItemsListingsOnQueryArguments,
-  valueGetter: (types: ItemType[], subTypes: string[], vendors: IVendor[]) => Promise<IItemListing[]>
+  valueGetter: (types: ItemType[], subTypes: string[], vendors: IVendor[]) => Promise<IItemListing[]|null>
 ): Promise<IItemListings> {
   let { itemType, page, pageSize, subType, province, vendor, query, sortField, sortOrder, brand } = params
 

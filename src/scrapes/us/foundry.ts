@@ -8,7 +8,7 @@ import throat from 'throat'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function foundry(type: ItemType): Promise<IItemListing[]> {
+export function foundry(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.product-grid-item',
     name: '.product-name',

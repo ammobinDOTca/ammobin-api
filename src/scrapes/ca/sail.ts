@@ -3,7 +3,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { Info } from '../common'
 import * as helpers from '../../helpers'
 
-export function sail(type: ItemType): Promise<IItemListing[]> {
+export function sail(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'sail.ca',
     name: `Sail`,

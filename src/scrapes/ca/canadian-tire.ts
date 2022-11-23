@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 
-function work(page: string): Promise<IItemListing[]> {
+function work(page: string): Promise<IItemListing[]|null> {
   // TODO: need to get all result pages  ("pagination": {"total": 6, )
   console.log('canadian tire page ' + page)
   return axios
@@ -77,7 +77,7 @@ function work(page: string): Promise<IItemListing[]> {
     })
 }
 
-export function canadiantire(type: ItemType): Promise<IItemListing[]> {
+export function canadiantire(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
       return work('Rimfire Ammunition')

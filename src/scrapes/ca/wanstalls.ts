@@ -5,7 +5,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 const throttle = throat(1)
 
-export function wanstalls(type: ItemType): Promise<IItemListing[]> {
+export function wanstalls(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'wanstallsonline.com',
     name: 'Wanstalls',

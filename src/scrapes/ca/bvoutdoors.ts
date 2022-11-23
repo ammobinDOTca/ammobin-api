@@ -3,7 +3,7 @@ import { scrape, Info, Selectors } from '../common'
 import { combineResults } from '../../helpers'
 import throat from 'throat'
 
-export function bvoutdoors(type: ItemType): Promise<IItemListing[]> {
+export function bvoutdoors(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = {
     link: 'bvoutdoors.com',

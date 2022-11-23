@@ -6,7 +6,7 @@ import axios from 'axios'
 
 // import { RENDERTRON_URL } from '../../constants'
 
-export function canadaFirstAmmo(type: ItemType): Promise<IItemListing[]> {
+export function canadaFirstAmmo(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info = CANADA_FIRST_AMMO
 

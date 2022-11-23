@@ -6,12 +6,12 @@ import { IItemListing } from '../graphql-types'
 import { RENDERTRON_URL } from '../constants'
 import chromium from 'chrome-aws-lambda'
 import { URL } from 'url'
-
+declare const document 
 export interface Selectors {
   item: string
   outOfStock?: string
   name: string
-  img: string
+  img: string | null
   link: string
   price: string
   pricePerRound?: string // TODO use this
@@ -25,7 +25,7 @@ export interface Info {
   provinces: string[]
 }
 
-function correctUrl(baseUrl: string, url: string): string {
+function correctUrl(baseUrl: string, url: string): string|null {
   // note: assuming everyone is on https b/c its 2019
   if (!url || !baseUrl) {
     return null
@@ -64,7 +64,7 @@ async function getPage(url: string) {
       // Strip only script tags that contain JavaScript (either no type attribute or one that contains "javascript")
       const elements = document.querySelectorAll('script:not([type]), script[type*="javascript"], link[rel=import]')
       for (const e of Array.from(elements)) {
-        e.remove()
+        (e as any).remove()
       }
     }
 
@@ -109,7 +109,7 @@ async function getPage(url: string) {
     page.evaluateOnNewDocument('ShadyDOM = {force: true}')
     page.evaluateOnNewDocument('ShadyCSS = {shimcssproperties: true}')
 
-    let response = null
+    let response
     // Capture main frame response. This is used in the case that rendering
     // times out, which results in puppeteer throwing an error. This allows us
     // to return a partial response for what was able to be rendered in that
@@ -184,7 +184,7 @@ export async function scrape(
   console.log(getUrl(page))
   const r = await getPage(getUrl(page))
   let $ = cheerio.load(r.data)
-  const items = []
+  const items:IItemListing[] = []
   $(selectors.item).each((index, row) => {
     const result = {} as IItemListing
     const tha = $(row)
@@ -192,7 +192,7 @@ export async function scrape(
     if (selectors.outOfStock && tha.find(selectors.outOfStock).length > 0) {
       return
     }
-    result.link = correctUrl(info.link, tha.find(selectors.link).prop('href'))
+    result.link = correctUrl(info.link, tha.find(selectors.link).prop('href'))!
     result.img = correctUrl(info.link, tha.find(selectors.img).prop('src'))
 
     result.name = tha.find(selectors.name).text().trim()
@@ -207,9 +207,9 @@ export async function scrape(
   })
 
   if (selectors.nextPage && $(selectors.nextPage).length > 0 && items.length > 0) {
-    $ = null // dont hold onto page for recursion
+    $ = null as any // dont hold onto page for recursion
     const more = await scrape(getUrl, info, selectors, page + 1)
-    return items.concat(more)
+    return items.concat(more as any)
   } else {
     return items
   }

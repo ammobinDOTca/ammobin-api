@@ -1,5 +1,4 @@
 import * as classifier from 'ammobin-classifier'
-import { DynamoDB } from 'aws-sdk'
 import { SQSEvent } from 'aws-lambda'
 
 import { AMMO_TYPES, PROXY_URL } from '../constants'
@@ -9,7 +8,11 @@ import { ItemType, IItemListing } from '../graphql-types'
 import { logger } from '../logger'
 import moment from 'moment'
 import * as zlib from 'zlib'
-const docClient = new DynamoDB.DocumentClient()
+import  {DynamoDBClient} from '@aws-sdk/client-dynamodb'
+import  {DynamoDBDocumentClient} from '@aws-sdk/lib-dynamodb'
+
+const docClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
+
 
 function proxyImages(items) {
   return items.map((i) => {

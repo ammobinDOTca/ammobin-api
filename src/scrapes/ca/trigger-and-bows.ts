@@ -2,7 +2,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { Info } from '../common'
 import Axios from 'axios'
 
-export function triggerAndBows(type: ItemType): Promise<IItemListing[]> {
+export function triggerAndBows(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'triggersandbows.com',
     name: `Triggers & Bows`,

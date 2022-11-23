@@ -24,7 +24,7 @@ function work(path: String) {
   )
 }
 
-export function canadaammo(type: ItemType): Promise<IItemListing[]> {
+export function canadaammo(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
     case ItemType.case:

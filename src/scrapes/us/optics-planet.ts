@@ -9,7 +9,7 @@ import throat from 'throat'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function OpticsPlanet(type: ItemType): Promise<IItemListing[]> {
+export function OpticsPlanet(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.product',
     name: '.grid__text',

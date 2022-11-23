@@ -9,7 +9,7 @@ import { ItemType, IItemListing } from '../graphql-types'
 import { makeSearch as ca_makeSearch } from './ca'
 import { makeSearch as us_makeSearch } from './us'
 
-export function makeSearch(source: string, type: ItemType, country): Promise<IItemListing[]> {
+export function makeSearch(source: string, type: ItemType, country): Promise<IItemListing[]|null> {
   if (country === 'US') {
     return us_makeSearch(source, type)
   } else if (country === 'CA') {

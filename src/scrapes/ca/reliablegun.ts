@@ -4,7 +4,7 @@ import throat from 'throat'
 import { Province, IItemListing, ItemType } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 const throttle = throat(1)
-export function reliablegun(type: ItemType): Promise<IItemListing[]> {
+export function reliablegun(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'reliablegun.com',
     name: `Reliable Gun`,

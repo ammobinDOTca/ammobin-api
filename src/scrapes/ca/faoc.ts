@@ -24,7 +24,7 @@ function makeFaocReq(ammotype: String) {
   return scrape((p) => `https://www.${info.link}/${ammotype}?limit=all`, info, selectors)
 }
 
-export function faoc(type: ItemType): Promise<IItemListing[]> {
+export function faoc(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
       return makeFaocReq('ammo/rimfire-ammunition')

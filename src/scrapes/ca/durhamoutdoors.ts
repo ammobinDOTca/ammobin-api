@@ -2,7 +2,7 @@ import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape } from '../common'
 
-export function durhamoutdoors(type: ItemType): Promise<IItemListing[]> {
+export function durhamoutdoors(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.centerfire:
       return scrape(

@@ -7,7 +7,7 @@ import { RENDERTRON_URL } from '../../constants'
 import { GREAT_NORTH_PRECISION } from '../../vendors'
 const throttle = throat(1)
 
-export async function greatNorthPercision(type: ItemType): Promise<IItemListing[]> {
+export async function greatNorthPercision(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = GREAT_NORTH_PRECISION
   const selectors: Selectors = {
     item: '.facets-item-cell-grid',

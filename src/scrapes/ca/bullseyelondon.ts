@@ -2,7 +2,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { Selectors, scrape } from '../common'
 import { BULLS_EYE } from '../../vendors'
 
-function work(path: String): Promise<IItemListing[]> {
+function work(path: String): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.productListing',
     name: '.name',
@@ -14,7 +14,7 @@ function work(path: String): Promise<IItemListing[]> {
   return scrape((p) => `${BASE}/${path}/browse/perpage/999`, BULLS_EYE, selectors)
 }
 
-export function bullseyelondon(type: ItemType): Promise<IItemListing[]> {
+export function bullseyelondon(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition-rimfire')

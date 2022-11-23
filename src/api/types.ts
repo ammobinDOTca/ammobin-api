@@ -7,7 +7,7 @@ export type valueGetterFn = (
   types: ItemType[],
   subTypes: string[],
   vendors: IVendor[]
-) => Promise<IItemListing[]>
+) => Promise<IItemListing[]|null>
 
 /**
  * function to get record for tracking a click

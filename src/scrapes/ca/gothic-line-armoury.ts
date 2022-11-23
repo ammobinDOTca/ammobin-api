@@ -28,7 +28,7 @@ async function work(type = 'doesnt matter', page = 1): Promise<IItemListing[]> {
   })
 }
 
-export function gothicLineArmoury(type: ItemType): Promise<IItemListing[]> {
+export function gothicLineArmoury(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.case:
     case ItemType.powder:

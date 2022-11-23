@@ -3,7 +3,7 @@ import { scrape, Info, Selectors } from '../common'
 
 import { NORDIC_MARKSMAN } from '../../vendors'
 
-export function nordicMarksman(type: ItemType): Promise<IItemListing[]> {
+export function nordicMarksman(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = NORDIC_MARKSMAN
 
   const selectors: Selectors = {

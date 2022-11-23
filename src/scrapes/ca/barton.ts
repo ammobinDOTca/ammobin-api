@@ -36,7 +36,7 @@ function work(path: String) {
   }
 }
 
-export function barton(type: ItemType): Promise<IItemListing[]> {
+export function barton(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

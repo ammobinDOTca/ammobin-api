@@ -7,7 +7,7 @@ import throat from 'throat'
 /**
  *
  */
-export function rangeviewsports(thang: ItemType): Promise<IItemListing[]> {
+export function rangeviewsports(thang: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = {
     link: 'rangeviewsports.ca',

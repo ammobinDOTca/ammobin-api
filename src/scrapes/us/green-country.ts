@@ -7,7 +7,7 @@ import throat from 'throat'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function greenCountry(type: ItemType): Promise<IItemListing[]> {
+export function greenCountry(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.product-item',
     name: '.name',

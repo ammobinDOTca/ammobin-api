@@ -2,7 +2,7 @@ import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 
-export function waspMunitions(type: ItemType): Promise<IItemListing[]> {
+export function waspMunitions(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'waspmunitions.ca',
     name: `WASP Munitions`,

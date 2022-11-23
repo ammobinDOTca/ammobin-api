@@ -3,7 +3,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import throat from 'throat'
 
-export function rustyWood(type: ItemType): Promise<IItemListing[]> {
+export function rustyWood(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'rustywood.ca',
     name: `Rusty Wood`,

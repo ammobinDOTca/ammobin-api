@@ -1,7 +1,7 @@
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 
-export function gunhub(type: ItemType): Promise<IItemListing[]> {
+export function gunhub(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'gun-hub.mybigcommerce.com',
     name: `Canadian Gunhub`,
