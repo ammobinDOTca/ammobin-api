@@ -26,3 +26,5 @@ jobs:
         run: npm ci
       - name: build
         run: npm run build
+      - name: build lambda
+        run: npm run build-lambda
