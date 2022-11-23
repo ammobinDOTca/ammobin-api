@@ -3,7 +3,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
 import { typeDefs, vendors, bestPrices } from './graphql'
-import { get24HourCacheRefreshExpiry, getItemsFlatListings, getScrapeResponses } from './shared'
+import {  getItemsFlatListings, getScrapeResponses } from './shared'
 import { getRedisItems } from './redis-getter'
 import { getApi } from './common-api'
 import { getDyanmoItems } from './dynamo-getter'
@@ -49,7 +49,7 @@ async function doWork() {
         },
       },
       debug: DEV,
-      tracing: DEV,
+      //tracing: DEV,
       cache:
         !DEV && REDIS_URL
           ? new RedisCache({
@@ -61,16 +61,16 @@ async function doWork() {
         return error
       },
       plugins: (!DEV ? [responseCachePlugin()] : undefined) as any,
-      cacheControl: {
-        defaultMaxAge: DEV ? 0 : get24HourCacheRefreshExpiry(),
-      },
+      // cacheControl: {
+      //   defaultMaxAge: DEV ? 0 : get24HourCacheRefreshExpiry(),
+      // },
     })
     await apolloServer.applyMiddleware({
       app: server,
       path: '/api/graphql',
     })
 
-    await apolloServer.installSubscriptionHandlers(server.listener)
+   // await apolloServer.installSubscriptionHandlers(server.listener) // todo restore
 
     await server.start()
     server.log('info', { type: 'server-started', uri: server.info.uri })

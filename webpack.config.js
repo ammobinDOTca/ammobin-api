@@ -10,7 +10,7 @@ module.exports = {
   mode: 'production',
   target: 'node',
   entry: {
-    graphql: './src/api/graphql-lambda.ts',
+   graphql: './src/api/graphql-lambda.ts',
     api: './src/api/lambda.ts',
     refresher: './src/refresher/lambda.ts',
     worker: './src/worker/lambda.ts',
@@ -25,18 +25,21 @@ module.exports = {
     extensions: ['.ts', '.js', '.mjs'],
   },
   externals: {
-    //'aws-sdk': 'aws-sdk', // dont build in aws-sdk since it is already provided by lambda env TODO upgrade for node18 + sdk v3
+    '@aws-sdk/client-dynamodb': '@aws-sdk/client-dynamodb',
+    '@aws-sdk/client-sqs': '@aws-sdk/client-sqs',
+    '@aws-sdk/lib-dynamodb': '@aws-sdk/lib-dynamodb',
     'chrome-aws-lambda': 'chrome-aws-lambda',
     lambdafs: 'lambdafs',
   },
   plugins: [
-    new CopyWebpackPlugin([
+    new CopyWebpackPlugin({      patterns: [
+
       {
         from: 'node_modules/chrome-aws-lambda',
         to: 'worker/node_modules/chrome-aws-lambda',
       },
       { from: 'node_modules/lambdafs', to: 'worker/node_modules/lambdafs' },
-    ]),
+    ]}),
   ],
   module: {
     // configuration regarding modules
