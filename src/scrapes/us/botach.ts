@@ -2,7 +2,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { BOTACH } from '../../vendors-us'
 
-export function botach(type: ItemType): Promise<IItemListing[]> {
+export function botach(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.page-content .product',
     name: '.card-title',

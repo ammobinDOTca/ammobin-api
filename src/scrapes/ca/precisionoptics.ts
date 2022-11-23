@@ -5,11 +5,11 @@ import { ItemType, IItemListing } from '../../graphql-types'
 
 import { PRECISION_OPTICS } from '../../vendors'
 
-export function precisionOptics(type: ItemType): Promise<IItemListing[]> {
+export function precisionOptics(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = PRECISION_OPTICS
 
-  const selectors: Selectors = null
+  const selectors: Selectors = null as any
 
   const BASE = `https://www.${info.link}`
   const work = (t) => scrape((p) => `${BASE}category_s/${t}.htm`, info, selectors)

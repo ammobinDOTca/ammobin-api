@@ -3,7 +3,7 @@ import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 
-export function siwashSports(type: ItemType): Promise<IItemListing[]> {
+export function siwashSports(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = {
     link: 'siwashsports.ca',

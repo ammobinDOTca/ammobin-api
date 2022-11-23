@@ -3,10 +3,11 @@ import { combineResults } from '../../helpers'
 import throat from 'throat'
 import { CANADA_FIRST_AMMO } from '../../vendors'
 import axios from 'axios'
+import {URL} from 'url'
 
 // import { RENDERTRON_URL } from '../../constants'
 
-export function canadaFirstAmmo(type: ItemType): Promise<IItemListing[]> {
+export function canadaFirstAmmo(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info = CANADA_FIRST_AMMO
 

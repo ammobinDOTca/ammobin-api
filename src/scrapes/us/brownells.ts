@@ -4,7 +4,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { BROWNELLS } from '../../vendors-us'
 
-export function brownells(type: ItemType): Promise<IItemListing[]> {
+export function brownells(type: ItemType): Promise<IItemListing[]|null> {
   // todo - break out more info
 
   const selectors: Selectors = {

@@ -3,7 +3,7 @@ import * as helpers from '../../helpers'
 import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 
-export function hirsch(type: ItemType): Promise<IItemListing[]> {
+export function hirsch(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'hirschprecision.com',
     name: `Hirsch Precision`,
@@ -43,7 +43,7 @@ export function hirsch(type: ItemType): Promise<IItemListing[]> {
   }
 }
 
-export function hirschss(type: ItemType): Promise<IItemListing[]> {
+export function hirschss(type: ItemType): Promise<IItemListing[]|null> {
   function fn(ammotype) {
     return helpers.makeWrapApiReq('hirschprecision', ammotype).then((d) => d.items || [])
   }

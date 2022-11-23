@@ -28,7 +28,7 @@ import { greenCountry } from './green-country'
 import { impact } from './impact'
 import { lucky } from './lucky'
 
-export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
+export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]|null> {
   switch (source) {
     case BOTACH.link:
       return botach(type)

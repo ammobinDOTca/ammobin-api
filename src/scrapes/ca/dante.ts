@@ -1,7 +1,7 @@
 import { scrape, Info, Selectors } from '../common'
 
 import { Province, ItemType, IItemListing } from '../../graphql-types'
-function work(type: String): Promise<IItemListing[]> {
+function work(type: String): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'dantesports.com',
     name: `Dante Sports`,
@@ -25,7 +25,7 @@ function work(type: String): Promise<IItemListing[]> {
     selectors
   )
 }
-export function dante(type: ItemType): Promise<IItemListing[]> {
+export function dante(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition/rimfire')

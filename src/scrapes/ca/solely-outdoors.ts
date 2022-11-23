@@ -4,7 +4,7 @@ import { combineResults } from '../../helpers'
 import throat from 'throat'
 const throttle = throat(1)
 
-export function solelyOutdoors(type: ItemType): Promise<IItemListing[]> {
+export function solelyOutdoors(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'solelyoutdoors.com',
     name: `Soley Outdoors`,

@@ -13,7 +13,7 @@ async function work(product: string, page = 0) {
 
   return axios.get(`${SITE}/produits/${product}?page=${page}`).then((r) => {
     let $ = cheerio.load(r.data)
-    const items = []
+    const items:any[] = []
     $('.views-view-grid .col-1, .views-view-grid .col-2, .views-view-grid .col-3, .views-view-grid .col-4').each(
       (index, row) => {
         const result: any = {}
@@ -37,7 +37,7 @@ async function work(product: string, page = 0) {
     )
 
     if ($('.pager-last.last').length) {
-      $ = null // dont hold onto page
+      $ = (null as any) // dont hold onto page
       return work(product, page + 1).then((res) => items.concat(res))
     } else {
       return items
@@ -45,14 +45,14 @@ async function work(product: string, page = 0) {
   })
 }
 
-export function tradex(type: ItemType): Promise<IItemListing[]> {
+export function tradex(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.centerfire:
     case ItemType.shotgun:
     case ItemType.rimfire:
       return work('78', 0)
     case ItemType.shot:
-      return Promise.all(['87', '88'].map((t) => throttle(() => work(t, 0)))).then(helpers.combineResults)
+      return Promise.all(['87', '88'].map((t) => throttle<any>(() => work(t, 0)))).then(helpers.combineResults)
     case ItemType.case:
     case ItemType.primer:
       return work('87', 0)

@@ -45,7 +45,7 @@ export async function getCrawlDelayMS(site: string): Promise<number> {
     } else {
       console.debug('no Crawl-delay found for ' + site)
     }
-  } catch (e) {
+  } catch (e:any) {
     console.error('ERROR ' + site, e && e.message ? e.message : e)
   }
 
@@ -64,8 +64,8 @@ export const getKey = (source: string, type: ItemType, subType: string) => {
   return `${moment.utc().format(DATE_FORMAT)}_${source}_${type}_${subType.split(' ').join('')}`.toLowerCase()
 }
 
-export function combineResults(results: IItemListing[][]): IItemListing[] {
-  return results.reduce((final, r) => (r ? final.concat(r) : final), [])
+export function combineResults(results: (IItemListing[]|null)[]): IItemListing[] {
+  return results.reduce((final, r) => (r ? final!.concat(r) : final), []) as any
 }
 export function classifyRimfire(items: IItemListing[]): IItemListing[] {
   return items.map((i) => {
@@ -87,14 +87,15 @@ export function classifyShotgun(items: IItemListing[]): IItemListing[] {
 }
 
 export function classify(ammo: ItemType) {
-  return (items: IItemListing[]) => classifyBullets(items, ammo)
+  return (items: (IItemListing|null)[]) => classifyBullets(items, ammo)
 }
 
-export function classifyBullets(items: IItemListing[], ammo: ItemType): IItemListing[] {
+export function classifyBullets(items: (IItemListing|null)[], ammo: ItemType): IItemListing[] {
   /**
    * classify all items of a certain type, then remove all those which where not classified
    */
-  return items
+  return (items as IItemListing[])
+    .filter(i=>!!i)
     .map((i) => {
       const f = classifier.classifyAmmo(i.name || '')
 
@@ -104,7 +105,7 @@ export function classifyBullets(items: IItemListing[], ammo: ItemType): IItemLis
 
       return i
     })
-    .filter((f) => f.subType)
+    .filter((f) =>  f.subType)
 }
 export function makeWrapApiReq(
   target: string,

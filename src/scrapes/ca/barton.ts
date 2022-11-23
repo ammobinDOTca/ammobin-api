@@ -24,7 +24,7 @@ function work(path: String) {
   const BASE = 'https://' + info.link
   try {
     return scrape((p) => `${BASE}/${path}?limit=100`, info, selectors)
-  } catch (e) {
+  } catch (e:any) {
     if (
       e.message.contains('Request failed with status code 403') ||
       e.message.contains('Request failed with status code 404')
@@ -36,7 +36,7 @@ function work(path: String) {
   }
 }
 
-export function barton(type: ItemType): Promise<IItemListing[]> {
+export function barton(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

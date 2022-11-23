@@ -6,7 +6,7 @@ import { scrape, Info, Selectors } from '../common'
 
 import { LONDEROS_SPORTS } from '../../vendors'
 
-export function londerosports(type: ItemType): Promise<IItemListing[]> {
+export function londerosports(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = LONDEROS_SPORTS
 

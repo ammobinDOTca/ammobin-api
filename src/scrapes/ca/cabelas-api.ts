@@ -92,18 +92,18 @@ async function makeCabelasCalibre(ammotype, subtype) {
     .then((r) => {
       const $ = cheerio.load(r.data)
 
-      const titles = []
+      const titles :string[]= []
       $('thead')
         .find('th')
         .each((index, row) => {
           titles.push($(row).text())
         })
 
-      const items = []
+      const items :any[]= []
       $('tbody')
         .find('tr')
         .each((index, row) => {
-          const result = []
+          const result:any[] =[]
           result.push($(row).find('a').prop('href'))
           $(row)
             .find('td')
@@ -121,11 +121,11 @@ function makeCabelasReq(itemType) {
   return makeCabelasCalibre(itemType, null)
 }
 
-function work(path: String): Promise<IItemListing[]> {
+function work(path: String): Promise<IItemListing[]|null> {
   return scrape((p) => `${BASE}/category/${path}/?pagesize=100`, info, selectors)
 }
 
-export function cabelas(type: ItemType): Promise<IItemListing[]> {
+export function cabelas(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

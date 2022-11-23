@@ -4,7 +4,7 @@ import throat from 'throat'
 import { Province, IItemListing, ItemType } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 
-async function work(type, page = 1): Promise<IItemListing[]> {
+async function work(type, page = 1): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'lanzshootingsupplies.com',
     name: `Lanz Shooting Supplies`,

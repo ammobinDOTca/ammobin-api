@@ -9,8 +9,8 @@ async function work() {
       process.env.TYPE || ('shotgun' as any),
       process.env.COUNTRY || 'CA'
     )
-    console.log(f, f.length)
-  } catch (e) {
+    console.log(f, f!.length)
+  } catch (e:any) {
     console.error('Failed', e.request, e.code, e.message)
   }
   console.timeEnd('makeSearch')

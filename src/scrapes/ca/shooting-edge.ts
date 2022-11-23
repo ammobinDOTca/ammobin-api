@@ -5,7 +5,7 @@ import { scrape, Info, Selectors } from '../common'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function shootingEdge(type: ItemType): Promise<IItemListing[]> {
+export function shootingEdge(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'theshootingedge.com',
     name: `The Shooting Edge`,

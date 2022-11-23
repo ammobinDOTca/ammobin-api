@@ -77,7 +77,7 @@ import { canadaFirstAmmo } from './canada-first-ammo'
 import { victoryRidge } from './victory-ridge'
 import { nechako } from './nechako'
 
-export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]> {
+export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]|null> {
   switch (source) {
     case VICTORY_RIDGE_SPORTS.link:
       return victoryRidge(type)

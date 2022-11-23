@@ -21,7 +21,7 @@ function work(path: String) {
   )
 }
 
-export function nechako(type: ItemType): Promise<IItemListing[]> {
+export function nechako(type: ItemType): Promise<IItemListing[]|null> {
   switch (type) {
     case ItemType.rimfire:
       return work('ammunition/rimfire')

@@ -1,11 +1,10 @@
 import { IItemListing, ItemType, IVendor } from '../graphql-types'
-
-import { DynamoDB } from 'aws-sdk'
 import * as zlib from 'zlib'
 
-const docClient = new DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION || 'ca-central-1',
-})
+import  {DynamoDBClient} from '@aws-sdk/client-dynamodb'
+import  {BatchGetCommand, DynamoDBDocumentClient} from '@aws-sdk/lib-dynamodb'
+
+const docClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
 export async function getDyanmoItems(
   types: ItemType[],
@@ -17,24 +16,22 @@ export async function getDyanmoItems(
     [] as string[]
   )
 
-  const docs = await docClient
-    .batchGet({
-      RequestItems: {
-        ammobinItems: {
-          ExpressionAttributeNames: vendors.reduce((m, v, i) => {
-            m['#' + i] = v.name
-            return m
-          }, {}),
-          ProjectionExpression: vendors.map((_, i) => '#' + i).join(','),
-          Keys: keys.map((k) => ({
-            id: k, // lol. thanks API DOCS...
-          })),
-        },
+  const docs = await docClient.send(new BatchGetCommand({
+    RequestItems: {
+      ammobinItems: {
+        ExpressionAttributeNames: vendors.reduce((m, v, i) => {
+          m['#' + i] = v.name
+          return m
+        }, {}),
+        ProjectionExpression: vendors.map((_, i) => '#' + i).join(','),
+        Keys: keys.map((k) => ({
+          id: k, // lol. thanks API DOCS...
+        })),
       },
-    })
-    .promise()
+    },
+  }))
 
-  const results = docs.Responses[`ammobinItems`].reduce<IItemListing[]>((_res, doc) => {
+  const results = docs.Responses![`ammobinItems`].reduce<IItemListing[]>((_res, doc) => {
     vendors.forEach((v) => {
       if (doc[v.name]) {
         let vals

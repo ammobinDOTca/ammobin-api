@@ -9,7 +9,7 @@ import throat from 'throat'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function lucky(type: ItemType): Promise<IItemListing[]> {
+export function lucky(type: ItemType): Promise<IItemListing[]|null> {
   const selectors: Selectors = {
     item: '.item',
     name: '.product-name',

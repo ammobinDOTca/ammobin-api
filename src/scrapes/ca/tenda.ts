@@ -6,7 +6,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import { TENDA } from '../../vendors'
 
-export function tenda(type): Promise<IItemListing[]> {
+export function tenda(type): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = TENDA
 

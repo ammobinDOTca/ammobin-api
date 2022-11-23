@@ -4,7 +4,7 @@ import { scrape, Info, Selectors } from '../common'
 import * as helpers from '../../helpers'
 import throat from 'throat'
 
-export function westCoastHunting(type: ItemType): Promise<IItemListing[]> {
+export function westCoastHunting(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = {
     link: 'westcoasthunting.ca',

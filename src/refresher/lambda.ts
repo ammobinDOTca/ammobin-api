@@ -1,7 +1,7 @@
 /**
  * queues rounds of scrapes every 6 hrs
  */
-import { SQS } from 'aws-sdk'
+import { SQS } from '@aws-sdk/client-sqs'
 import { ScheduledEvent } from 'aws-lambda'
 import { SOURCES, TYPES } from '../constants'
 import { logger } from '../logger'
@@ -49,7 +49,7 @@ function getQueueUrl(source: string, type: ItemType): string {
   return process.env.QueueUrl || 'SHIT'
 }
 
-const sqs = new SQS()
+const sqs = new SQS({})
 export async function handler(e: ScheduledEvent) {
   /**
    * 20200119 most of AWS bill is DynamoDB, and 97% of the cost is due to writes.
@@ -81,7 +81,6 @@ export async function handler(e: ScheduledEvent) {
                 QueueUrl: getQueueUrl(source, t),
                 MessageBody: JSON.stringify({ source, type: t }),
               })
-              .promise()
           )
         ),
       [] as Promise<any>[]

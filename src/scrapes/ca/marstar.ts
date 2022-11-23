@@ -4,7 +4,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import { MARSTAR } from '../../vendors'
 
-export function marstar(type: ItemType): Promise<IItemListing[]> {
+export function marstar(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = MARSTAR
 

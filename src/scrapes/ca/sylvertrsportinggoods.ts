@@ -4,7 +4,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 import { SYLVESTRE_SPORTING_GOODS } from '../../vendors'
 
-export function sylvertrsportinggoods(type: ItemType): Promise<IItemListing[]> {
+export function sylvertrsportinggoods(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   const info: Info = SYLVESTRE_SPORTING_GOODS

@@ -25,7 +25,7 @@ function work(path: String) {
   return scrape((p) => `${BASE}/product-category/ammunition/${path}/page/${p}`, info, selectors)
 }
 
-export function g4c(type: ItemType): Promise<IItemListing[]> {
+export function g4c(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

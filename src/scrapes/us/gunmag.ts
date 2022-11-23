@@ -2,7 +2,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { GUNMAG } from '../../vendors-us'
 
-export function gunmag(type: ItemType): Promise<IItemListing[]> {
+export function gunmag(type: ItemType): Promise<IItemListing[]|null> {
   // TODO: https://gunmagwarehouse.com/affiliates/
 
   const selectors: Selectors = {

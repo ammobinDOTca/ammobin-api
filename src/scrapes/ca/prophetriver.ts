@@ -6,7 +6,7 @@ import { scrape, Info, Selectors } from '../common'
 
 import { PROPHET_RIVER } from '../../vendors'
 
-export function prophetRiver(type: ItemType): Promise<IItemListing[]> {
+export function prophetRiver(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
   const info: Info = PROPHET_RIVER
 

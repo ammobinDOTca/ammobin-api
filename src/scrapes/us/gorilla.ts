@@ -2,7 +2,7 @@ import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { GORILLA } from '../../vendors-us'
 
-export function gorilla(type: ItemType): Promise<IItemListing[]> {
+export function gorilla(type: ItemType): Promise<IItemListing[]|null> {
   // todo - break out more info
 
   const selectors: Selectors = {

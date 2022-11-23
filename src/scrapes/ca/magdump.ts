@@ -21,7 +21,7 @@ async function work(type) {
 // TODO: need to pull item counts out from each page
 // TODO: should pull list calibres... instead of hardcoded list
 
-export async function magdump(type: ItemType): Promise<IItemListing[]> {
+export async function magdump(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   switch (type) {

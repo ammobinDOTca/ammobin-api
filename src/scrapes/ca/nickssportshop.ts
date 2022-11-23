@@ -5,7 +5,7 @@ import * as helpers from '../../helpers'
 import { NICKS_SPORTS } from '../../vendors'
 import throat from 'throat'
 
-export function nickssportshop(type: ItemType): Promise<IItemListing[]> {
+export function nickssportshop(type: ItemType): Promise<IItemListing[]|null> {
   const throttle = throat(1)
 
   const info: Info = NICKS_SPORTS

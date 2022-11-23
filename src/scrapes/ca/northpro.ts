@@ -9,7 +9,7 @@ function work(type, page = 1) {
     .get(`http://northprosports.com/index.php?route=product/category&path=766_${type}&limit=250`)
     .then((r) => {
       const $ = cheerio.load(r.data)
-      const items = []
+      const items :any[]= []
       $('.product-list div').each((index, row) => {
         const result: any = {}
         const tha = $(row)

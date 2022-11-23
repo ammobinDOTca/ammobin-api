@@ -3,7 +3,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import throat from 'throat'
 import { scrape, Info, Selectors } from '../common'
 const throttle = throat(1)
-export function tesro(type: ItemType): Promise<IItemListing[]> {
+export function tesro(type: ItemType): Promise<IItemListing[]|null> {
   const info: Info = {
     link: 'tesro.ca',
     name: `Tesro`,

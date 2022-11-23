@@ -69,10 +69,10 @@ const appendGAParam = (items: IItemListing[]) =>
 function groupItemsBySubType(items: IItemListing[]): [string, ItemType[]][] {
   return Object.entries(
     items.reduce((m, item) => {
-      if (!m[item.subType]) {
-        m[item.subType] = []
+      if (!m[item.subType!]) {
+        m[item.subType!] = []
       }
-      m[item.subType].push(item)
+      m[item.subType!].push(item)
       return m
     }, {})
   )
@@ -145,7 +145,7 @@ worker.on('message', async (msg, next /* , id*/) => {
         })
         next(e)
       })
-  } catch (e) {
+  } catch (e:any) {
     logger.info({
       type: 'failed-scrape',
       source,
