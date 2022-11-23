@@ -79,11 +79,13 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   }
 
   const h = server.createHandler({
-    cors: {
-      maxAge: 999999999,
-      origin: true,
-    },
+
+    // cors: {
+    //   maxAge: 999999999,
+    //   origin: true,
+    // },
   })
+
   h(event, context, (err, result: APIGatewayProxyResult|any) => {
     logger.info({
       type: 'api-req',

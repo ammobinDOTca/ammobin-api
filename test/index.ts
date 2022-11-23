@@ -29,7 +29,7 @@ export async function handler(event) {
     })
 
     return true
-  } catch (e) {
+  } catch (e:any) {
     logger.info({
       type: 'test-run-failed',
       event,
