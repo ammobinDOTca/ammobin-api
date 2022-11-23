@@ -10,10 +10,10 @@ module.exports = {
   mode: 'production',
   target: 'node',
   entry: {
-   // graphql: './src/api/graphql-lambda.ts',
-   // api: './src/api/lambda.ts',
+   graphql: './src/api/graphql-lambda.ts',
+    api: './src/api/lambda.ts',
     refresher: './src/refresher/lambda.ts',
-   // worker: './src/worker/lambda.ts',
+    worker: './src/worker/lambda.ts',
     test: './test/index.ts',
   },
   output: {
