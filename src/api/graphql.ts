@@ -1,4 +1,3 @@
-const { gql } = require('apollo-server')
 import { VENDORS } from '../constants'
 import fs from 'fs'
 import { getBestPrices } from './shared'
@@ -7,7 +6,7 @@ const schema = fs.readFileSync(process.cwd() + '/graphql.gql')
 /**
  * graphql type definition
  */
-export const typeDefs: any = gql`
+export const typeDefs: any =`
   ${schema}
 `
 

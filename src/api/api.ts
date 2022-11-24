@@ -1,4 +1,5 @@
-import { ApolloServer } from 'apollo-server-hapi'
+import { ApolloServer,  } from "@apollo/server";
+import hapiApollo from "@as-integrations/hapi";
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { RedisCache } from 'apollo-server-cache-redis'
 
@@ -48,7 +49,7 @@ async function doWork() {
           itemsFlatListings: (_, params) => getItemsFlatListings(params, getter),
         },
       },
-      debug: DEV,
+      //debug: DEV,
       //tracing: DEV,
       cache:
         !DEV && REDIS_URL
@@ -65,14 +66,16 @@ async function doWork() {
       //   defaultMaxAge: DEV ? 0 : get24HourCacheRefreshExpiry(),
       // },
     })
-    await apolloServer.applyMiddleware({
-      app: server,
-      path: '/api/graphql',
-    })
+    await apolloServer.start()
+    await server.register({
+      plugin: hapiApollo,
+      options: {
+        apolloServer,
+        path: '/api/graphql'
+      }
+    });
 
-   // await apolloServer.installSubscriptionHandlers(server.listener) // todo restore
-
-    await server.start()
+    await server.start();
     server.log('info', { type: 'server-started', uri: server.info.uri })
   } catch (e) {
     console.error(e)

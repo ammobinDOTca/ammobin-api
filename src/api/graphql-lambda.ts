@@ -2,8 +2,10 @@
  * basic lambda to expose graphql as own endpoint
  * without the other cruff
  */
-import { Callback, Context, APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { ApolloServer } from 'apollo-server-lambda'
+import { Callback, Context, APIGatewayEvent, } from 'aws-lambda'
+import { startServerAndCreateLambdaHandler, } from '@as-integrations/aws-lambda';
+import { ApolloServer } from '@apollo/server';
+
 import { getDyanmoItems } from './dynamo-getter'
 import { getScrapeResponses, getItemsFlatListings, get24HourCacheRefreshExpiry } from './shared'
 import { typeDefs, vendors, bestPrices } from './graphql'
@@ -78,18 +80,10 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     console.error(e)
   }
 
-  const h = server.createHandler({
-
-    // cors: {
-    //   maxAge: 999999999,
-    //   origin: true,
-    // },
-  })
-
-  h(event, context, (err, result: APIGatewayProxyResult|any) => {
+  return startServerAndCreateLambdaHandler(server)(event,context,(err,result)=>{
     logger.info({
       type: 'api-req',
-      statusCode: result.statusCode,
+      statusCode: result!.statusCode,
       path: event.path,
       timeMs: new Date().getTime() - startTime,
       method: event.httpMethod,
@@ -101,7 +95,9 @@ exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
     const maxAge = !DEV && event.httpMethod === 'GET' ? get24HourCacheRefreshExpiry() : 1
     console.log(`maxAge DEV? ${DEV} method ${event.httpMethod} now ${now} maxAge ${maxAge}`)
 
-    result.headers['Cache-Control'] = 'max-age=' + maxAge
+    result!.headers!['Cache-Control'] = 'max-age=' + maxAge
     cb(err, result as any)
-  })
+  });
+
+
 }
