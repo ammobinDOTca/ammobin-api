@@ -29,7 +29,7 @@
     "@aws-sdk/client-dynamodb": "^3.216.0",
     "@aws-sdk/client-sqs": "^3.216.0",
     "@aws-sdk/lib-dynamodb": "^3.216.0",
-    "@hapi/hapi": "^18.1.0",
+    "@hapi/hapi": "^19.0.0",
     "ammobin-classifier": "^0.1",
     "apollo-server-cache-redis": "^3",
     "apollo-server-plugin-response-cache": "^3",
