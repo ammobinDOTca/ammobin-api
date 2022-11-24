@@ -24,7 +24,7 @@ const resolvers = {
 const secret = process.env.HASH_SECRET || Math.random().toString()
 const DEV = process.env.DEV === 'true'
 
-const server = new ApolloServer({ typeDefs, resolvers })
+const server = new ApolloServer({ typeDefs, resolvers, csrfPrevention:false })
 
 exports.handler = (event: APIGatewayEvent, context: Context, cb: Callback) => {
   const requestId = event.requestContext.requestId
