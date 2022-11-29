@@ -4,9 +4,10 @@ import cheerio from 'cheerio'
 import * as helpers from '../helpers'
 import { IItemListing } from '../graphql-types'
 import { RENDERTRON_URL } from '../constants'
-import chromium from 'chrome-aws-lambda'
+import chromium from "@sparticuz/chromium"
+import puppeteer from "puppeteer-core"
 import { URL } from 'url'
-declare const document 
+declare const document
 export interface Selectors {
   item: string
   outOfStock?: string
@@ -48,7 +49,7 @@ async function getPage(url: string) {
     // todo: cleaner alternative should be considered in the future
     url = url.replace(RENDERTRON_URL + '/render/', '')
 
-    const browser = await chromium.puppeteer.launch({
+    const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
