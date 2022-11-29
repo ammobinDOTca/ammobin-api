@@ -28,18 +28,16 @@ module.exports = {
     '@aws-sdk/client-dynamodb': '@aws-sdk/client-dynamodb',
     '@aws-sdk/client-sqs': '@aws-sdk/client-sqs',
     '@aws-sdk/lib-dynamodb': '@aws-sdk/lib-dynamodb',
-    'chrome-aws-lambda': 'chrome-aws-lambda',
-    lambdafs: 'lambdafs',
   },
   plugins: [
-    new CopyWebpackPlugin({      patterns: [
+    // new CopyWebpackPlugin({      patterns: [
 
-      {
-        from: 'node_modules/chrome-aws-lambda',
-        to: 'worker/node_modules/chrome-aws-lambda',
-      },
-      { from: 'node_modules/lambdafs', to: 'worker/node_modules/lambdafs' },
-    ]}),
+    //   {
+    //     from: 'node_modules/chrome-aws-lambda',
+    //     to: 'worker/node_modules/chrome-aws-lambda',
+    //   },
+    //   { from: 'node_modules/lambdafs', to: 'worker/node_modules/lambdafs' },
+    // ]}),
   ],
   module: {
     // configuration regarding modules
