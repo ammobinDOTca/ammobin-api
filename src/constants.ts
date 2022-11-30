@@ -97,14 +97,13 @@ export const VENDORS: IVendor[] = (
         location: 'Vancover',
       },
       TENDA as IVendor,
-      // 20200119: cert issues
-      // {
-      //   name: 'Canada Ammo',
-      //   link: 'canadaammo.com',
-      //   logo: 'canada-ammo-logo.jpg',
-      //   provinces: [Province.BC, Province.ON],
-      //   location: 'all over the place',
-      // },
+      {
+        name: 'Canada Ammo',
+        link: 'canadaammo.com',
+        logo: 'canada-ammo-logo.jpg',
+        provinces: [Province.BC, Province.ON],
+        location: 'all over the place',
+      },
       {
         name: 'Wolverine Supplies',
         link: 'wolverinesupplies.com',
