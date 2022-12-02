@@ -1,8 +1,10 @@
 import { ItemType, IItemListing } from '../../graphql-types'
 import { scrape, Selectors } from '../common'
 import { GORILLA } from '../../vendors-us'
+import { combineResults } from '../../helpers'
+import throat from 'throat'
 
-export function gorilla(type: ItemType): Promise<IItemListing[]|null> {
+export function gorilla(type: ItemType): Promise<IItemListing[] | null> {
   // todo - break out more info
 
   const selectors: Selectors = {
@@ -15,19 +17,21 @@ export function gorilla(type: ItemType): Promise<IItemListing[]|null> {
     // outOfStock: '.card-bulkOrder-action [data-event-type="product-click"]', // handled by url
   }
   //
+  const throttle = throat(1)
+
   const work = (t) =>
     scrape(
       (p) =>
-        `https://www.${GORILLA.link}/shop/page/${p}/?product_cat=view-ammo-by-caliber&source_id=590&source_tax=product_cat&instock_filter=1`,
+        `https://www.${GORILLA.link}/product-category/${t}/page/${p}`,
       GORILLA,
       selectors
     )
   switch (type) {
-    case ItemType.rimfire:
     case ItemType.centerfire:
-    case ItemType.shotgun:
-      return work('')
+      return Promise.all(['gorilla-hunt-ammunition', 'gorilla-defense', 'gorilla-pistol-ammo', 'gorilla-subsonic', 'gorilla-target'].map(t => throttle(() => work(t)))).then(combineResults)
 
+    case ItemType.shotgun:
+    case ItemType.rimfire:
     case ItemType.primer:
     case ItemType.case:
     case ItemType.shot:

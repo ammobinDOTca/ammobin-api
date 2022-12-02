@@ -18,13 +18,13 @@ import {
   // PRECISION_OPTICS,
 } from './vendors'
 import {
-  BOTACH,
+  //BOTACH,
   BROWNELLS,
   FOUNDRY,
   GORILLA,
   GREEN_COUNTRY,
   GUNMAG,
-  NATCHEZ,
+  //NATCHEZ,
   OPTICS_PLANET,
   // PALMETTO,
   RAINER,
@@ -413,11 +413,11 @@ export const VENDORS: IVendor[] = (
       // PRECISION_OPTICS as IVendor, // 20200101 their html is too silly to deal with..
     ]
     : ([
-      BOTACH,
+      //BOTACH, // 20221201 CSR
       BROWNELLS,
       GORILLA,
       GUNMAG,
-      NATCHEZ,
+      // NATCHEZ, 20221201 they moved to csr + graphql, figure out later
       OPTICS_PLANET,
       // PALMETTO, // TODO: figureout new way, no bots allowed access...
       RAINER,

@@ -9,7 +9,7 @@ import throat from 'throat'
 import { combineResults } from '../../helpers'
 const throttle = throat(1)
 
-export function sportsman(type: ItemType): Promise<IItemListing[]|null> {
+export function sportsman(type: ItemType): Promise<IItemListing[] | null> {
   const selectors: Selectors = {
     item: '.product-item',
     name: '.name',
@@ -24,7 +24,7 @@ export function sportsman(type: ItemType): Promise<IItemListing[]|null> {
   const work = (t) =>
     scrape(
       (p) =>
-        `https://www.${SPORTSMAN.link}/shooting-gear-gun-supplies/ammunition-ammo-for-hunting-shooting-sports/shotgun-ammo-hunting-shooting-sports/c/${t}?pageSize=100&q=%3Arelevance%3AinStockFlag%3Atrue`,
+        `https://www.${SPORTSMAN.link}/shooting-gear-gun-supplies/ammunition-ammo-for-hunting-shooting-sports/shotgun-ammo-hunting-shooting-sports/c/${t}?pageSize=100&q=%3Arelevance%3AinStockFlag%3Atrue&page=${p}`,
       SPORTSMAN,
       selectors
     )
