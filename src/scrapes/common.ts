@@ -26,7 +26,7 @@ export interface Info {
   provinces: string[]
 }
 
-function correctUrl(baseUrl: string|null, url: string|null|undefined): string|null {
+function correctUrl(baseUrl: string | null, url: string | null | undefined): string | null {
   // note: assuming everyone is on https b/c its 2019
   if (!url || !baseUrl) {
     return null
@@ -170,6 +170,9 @@ async function getPage(url: string) {
     return { data: result }
   } else {
     return axios.get(url).catch((e) => {
+      if (!e?.response?.status) {
+        console.error(e)
+      }
       throw new Error(`scrape failed http${e?.response?.status || ' unknown'} for ${url}`)
     })
   }
@@ -185,7 +188,7 @@ export async function scrape(
   console.log(getUrl(page))
   const r = await getPage(getUrl(page))
   let $ = cheerio.load(r.data)
-  const items:IItemListing[] = []
+  const items: IItemListing[] = []
   $(selectors.item).each((index, row) => {
     const result = {} as IItemListing
     const tha = $(row)

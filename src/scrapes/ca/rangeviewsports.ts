@@ -7,7 +7,7 @@ import throat from 'throat'
 /**
  *
  */
-export function rangeviewsports(thang: ItemType): Promise<IItemListing[]|null> {
+export function rangeviewsports(thang: ItemType): Promise<IItemListing[] | null> {
   const throttle = throat(1)
   const info: Info = {
     link: 'rangeviewsports.ca',
@@ -16,19 +16,19 @@ export function rangeviewsports(thang: ItemType): Promise<IItemListing[]|null> {
   }
 
   const selectors: Selectors = {
-    item: '.product.purchasable',
-    name: '.woocommerce-loop-product__title',
+    item: '.product',
+    name: '.product-name',
     img: 'img',
-    link: '.woocommerce-loop-product__link',
+    link: 'a',
     price: '.price',
     nextPage: '.page-numbers .next',
-    outOfStock: '.badge--sold-out',
+    outOfStock: '.out-of-stock',
   }
 
   const work = (t) =>
     scrape(
       (p) =>
-        `https://www.${info.link}/product-category/${t}/page/${p}?sort_by=best-selling&pagesize=60&instock_filter=1`,
+        `https://www.${info.link}/product-category/${t}/page/${p}?per_page=144&stock=instock`,
       info,
       selectors
     )

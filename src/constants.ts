@@ -228,13 +228,14 @@ export const VENDORS: IVendor[] = (
       //   provinces: [Province.BC],
       //   location: 'Vancouver',
       // },
-      {
-        name: 'Bartons Big Country',
-        link: 'bartonsbigcountry.ca',
-        logo: 'logo-bartons.png',
-        provinces: [Province.AB],
-        location: 'Grande Prairie',
-      },
+      // 20221201 they keep droping the scrape connection
+      // {
+      //   name: 'Bartons Big Country',
+      //   link: 'bartonsbigcountry.ca',
+      //   logo: 'logo-bartons.png',
+      //   provinces: [Province.AB],
+      //   location: 'Grande Prairie',
+      // },
       {
         name: 'The Shooting Edge',
         link: 'theshootingedge.com',

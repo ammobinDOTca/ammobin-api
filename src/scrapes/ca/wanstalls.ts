@@ -5,7 +5,7 @@ import { ItemType, IItemListing, Province } from '../../graphql-types'
 import { scrape, Info, Selectors } from '../common'
 const throttle = throat(1)
 
-export function wanstalls(type: ItemType): Promise<IItemListing[]|null> {
+export function wanstalls(type: ItemType): Promise<IItemListing[] | null> {
   const info: Info = {
     link: 'wanstallsonline.com',
     name: 'Wanstalls',
@@ -13,12 +13,12 @@ export function wanstalls(type: ItemType): Promise<IItemListing[]|null> {
   }
 
   const selectors: Selectors = {
-    item: '.product',
+    item: '.prod-item',
     link: 'a',
-    name: '.card-title',
+    name: '.prod-name',
     img: 'img',
-    price: '.price--withoutTax',
-    nextPage: '.pagination-item--next',
+    price: '.prod-price',
+    //nextPage: '.showMoreProduct',
   }
 
   const getStuff = (t) => scrape((p) => `https://${info.link}/${t}?page=${p}`, info, selectors)
