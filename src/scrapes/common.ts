@@ -201,7 +201,7 @@ export async function scrape(
 
     result.name = tha.find(selectors.name).text().trim()
     const priceTxt = tha.find(selectors.price).last().text() // sale price come last...
-    //console.log('priceTxt', priceTxt)
+    // console.log('priceTxt', priceTxt||'not found')
     result.price = parseFloat(priceTxt.replace(/[^\d\.]*/g, ''))
 
     result.vendor = info.name

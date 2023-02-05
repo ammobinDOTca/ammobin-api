@@ -65,6 +65,7 @@ import {
   GREAT_NORTH_PRECISION,
   VICTORY_RIDGE_SPORTS,
   NECHAKO,
+  OLEY,
 } from '../../vendors'
 import { backcountrysports } from './backcountrysports'
 import { sylvertrsportinggoods } from './sylvertrsportinggoods'
@@ -76,6 +77,7 @@ import { nickssportshop } from './nickssportshop'
 import { canadaFirstAmmo } from './canada-first-ammo'
 import { victoryRidge } from './victory-ridge'
 import { nechako } from './nechako'
+import { oley } from './oleys-armoury'
 
 export function makeSearch(source: string, type: ItemType): Promise<IItemListing[]|null> {
   switch (source) {
@@ -240,6 +242,8 @@ export function makeSearch(source: string, type: ItemType): Promise<IItemListing
       return nickssportshop(type)
     case NECHAKO.link:
       return nechako(type)
+    case OLEY.link:
+      return oley(type)
     default:
       throw new Error(`unknown source: ${source} + type: ${type}`)
   }

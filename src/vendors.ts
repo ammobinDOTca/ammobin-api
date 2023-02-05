@@ -138,3 +138,12 @@ export const NECHAKO: Vendor = {
   location: 'Vanderhoof',
   hasReloadingItems: true
 }
+
+export const OLEY: Vendor = {
+  name: `Oley's Armoury`,
+  link: 'oleysarmoury.com',
+  logo: 'oley-logo.png',
+  provinces: [Province.ON],
+  location: 'Powassan',
+  hasReloadingItems: false
+}
