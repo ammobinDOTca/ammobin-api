@@ -67,8 +67,8 @@ export const MARSTAR: Vendor = {
 }
 
 export const NAS: Vendor = {
-  name: 'N.A.S. Guns and Ammo',
-  link: 'nasguns.com',
+  name: 'N.A.S. Outdoors',
+  link: 'nasoutdoors.com',
   logo: 'nas-logo.jpg',
   provinces: [Province.ON],
   location: 'Niagara and Sault Ste. Marie',
