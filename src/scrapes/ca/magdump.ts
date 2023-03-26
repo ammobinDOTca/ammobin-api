@@ -28,20 +28,20 @@ export async function magdump(type: ItemType): Promise<IItemListing[]|null> {
     case 'rimfire':
       return Promise.all(
         [
-          '13-22-long-rifle',
+          '13-22-lr',
           // '17-hmr'
         ].map((t) => throttle(() => work(t)))
       ).then(helpers.combineResults)
 
     case 'centerfire':
       return Promise.all(
-        ['16-9mm', '17-223-rem', '18-308-win', '19-12-gauge', '20-762x39mm', '21-45-acp'].map((t) =>
+        ['16-9mm', '17-223-rem','18-308-win','33-40-sw','21-45-acp','38-surplus'].map((t) =>
           throttle(() => work(t))
         )
       ).then(helpers.combineResults)
 
     case 'shotgun':
-      return Promise.all(['17-12-gauge'].map((t) => throttle(() => work(t)))).then(helpers.combineResults)
+      return Promise.all(['19-12-gauge'].map((t) => throttle(() => work(t)))).then(helpers.combineResults)
     case ItemType.shot:
     case ItemType.primer:
     case ItemType.case:
