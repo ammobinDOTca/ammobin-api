@@ -20,7 +20,7 @@ function work(type: String): Promise<IItemListing[]|null> {
   }
 
   return scrape(
-    (_) => `https://www.${info.link}/en/product-category/${type}/?availability=in-stock`,
+    (_) => `https://www.${info.link}/en/product-category/${type}/?availability=in-stock&per_page=48`,
     info,
     selectors
   )
