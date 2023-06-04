@@ -13,6 +13,7 @@ module.exports = {
    graphql: './src/api/graphql-lambda.ts',
     api: './src/api/lambda.ts',
     refresher: './src/refresher/lambda.ts',
+    cleaner: './src/cleaner/lambda.ts',
     worker: './src/worker/lambda.ts',
     test: './test/index.ts',
   },
