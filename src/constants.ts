@@ -98,13 +98,13 @@ export const VENDORS: IVendor[] = (
         location: 'Vancover',
       },
       TENDA as IVendor,
-      {
-        name: 'Canada Ammo',
-        link: 'canadaammo.com',
-        logo: 'canada-ammo-logo.jpg',
-        provinces: [Province.BC, Province.ON],
-        location: 'all over the place',
-      },
+      // { // july 2023 site dead?
+      //   name: 'Canada Ammo',
+      //   link: 'canadaammo.com',
+      //   logo: 'canada-ammo-logo.jpg',
+      //   provinces: [Province.BC, Province.ON],
+      //   location: 'all over the place',
+      // },
       {
         name: 'Wolverine Supplies',
         link: 'wolverinesupplies.com',
