@@ -35,8 +35,8 @@ export function alflahertys(type: ItemType): Promise<IItemListing[]|null> {
 
     case ItemType.centerfire:
       return Promise.all(
-        ['shooting-supplies-and-firearms/ammunition/bulk-centerfire', 'centerfire-ammo'].map((t) =>
-          throttle(() => scrape((p) => `${BASE}/${t}?page=${p}&setCurrencyId=1&in_stock=1`, info, selectors))
+        ['shooting-supplies-and-firearms/ammunition/bulk-centerfire', 'shooting-supplies-firearms-ammunition/ammunition/centerfire-ammunition'].map((t) =>
+          throttle(() => scrape((p) => `${BASE}/${t}?page=${p}&setCurrencyId=1&in_stock=1&limit=100`, info, selectors))
         )
       )
         .then(helpers.combineResults)
