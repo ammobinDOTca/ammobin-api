@@ -1,6 +1,6 @@
 {
   "name": "ammobin-api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "ammobin.ca api",
   "main": "./dist/worker.js",
   "scripts": {
