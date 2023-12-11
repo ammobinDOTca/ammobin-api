@@ -19,8 +19,12 @@
     "generate-types": "gql2ts graphql.gql > src/graphql-types.ts && sh export-graphql-types.sh",
     "build:cloudflare": "webpack --config webpack.cloudflare.js"
   },
+  "dist":[
+    "./dist/*",
+    "./lambda/*"
+  ],
   "types": "dist/index.d.ts",
-  "author": "Simon Ramsay",
+  "author": "ammobin",
   "license": "MIT",
   "dependencies": {
     "@apollo/server": "^4.2.1",
