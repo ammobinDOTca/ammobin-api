@@ -43,7 +43,7 @@
     "@sparticuz/chromium": "^92.0.0",
     "delay": "^4.4.1",
     "fluent-logger": "^3.4.1",
-    "graphql": "^16",
+    "graphql": "^16.8.1",
     "hapi-lambda": "^1.0.0",
     "jsonp": "^0.2.1",
     "moment": "^2.29.4",
